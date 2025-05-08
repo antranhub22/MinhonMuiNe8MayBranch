@@ -11,6 +11,8 @@ import { StaffLogin, StaffDashboard } from "@/pages";
 import Home from './pages/Home';
 import CallDetails from './pages/CallDetails';
 import CallHistory from './pages/CallHistory';
+import GuestLayout from './layouts/GuestLayout';
+import StaffLayout from './layouts/StaffLayout';
 
 // Lazy-loaded components
 const CallHistoryComponent = React.lazy(() => import('@/pages/CallHistory'));
@@ -47,12 +49,14 @@ function Router() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/call-history" component={CallHistoryComponent} />
-        <Route path="/call/:callId" component={CallDetailsComponent} />
+        {/* Guest UI */}
+        <Route path="/" component={() => <GuestLayout><Home /></GuestLayout>} />
+        <Route path="/call-history" component={() => <GuestLayout><CallHistoryComponent /></GuestLayout>} />
+        <Route path="/call/:callId" component={() => <GuestLayout><CallDetailsComponent /></GuestLayout>} />
         <Route path="/email-test" component={EmailTestPage} />
-        <Route path="/staff/login" component={StaffLogin} />
-        <Route path="/staff/dashboard" component={StaffDashboard} />
+        {/* Staff UI */}
+        <Route path="/staff/login" component={() => <StaffLayout><StaffLogin /></StaffLayout>} />
+        <Route path="/staff/dashboard" component={() => <StaffLayout><StaffDashboard /></StaffLayout>} />
         <Route path="/" component={VoiceAssistant} />
         <Route component={NotFound} />
       </Switch>
