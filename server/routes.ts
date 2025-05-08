@@ -13,6 +13,11 @@ import axios from "axios";
 import { Reference, IReference } from './models/Reference';
 import express, { type Request, Response } from 'express';
 import { verifyJWT } from './middleware/auth';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { Staff } from './models/Staff';
+import { Request as StaffRequest } from './models/Request';
+import { Message as StaffMessage } from './models/Message';
 
 // Initialize OpenAI client 
 const openai = new OpenAI({
@@ -24,6 +29,38 @@ interface WebSocketClient extends WebSocket {
   callId?: string;
   isAlive?: boolean;
 }
+
+// Dummy staff data (thay bằng DB thực tế)
+const staffList: Staff[] = [
+  {
+    id: 1,
+    username: 'admin',
+    passwordHash: bcrypt.hashSync('admin123', 10),
+    role: 'admin',
+    createdAt: new Date(),
+  },
+  {
+    id: 2,
+    username: 'staff1',
+    passwordHash: bcrypt.hashSync('staffpass', 10),
+    role: 'staff',
+    createdAt: new Date(),
+  },
+];
+
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+
+// Dummy request data
+let requestList: StaffRequest[] = [
+  { id: 1, room: '101', guestName: 'Tony', content: 'Beef burger x 2', time: new Date(), status: 'Đã ghi nhận', notes: '' },
+  { id: 2, room: '202', guestName: 'Anna', content: 'Spa booking at 10:00', time: new Date(), status: 'Đang thực hiện', notes: '' },
+];
+
+// Dummy message data
+let messageList: StaffMessage[] = [
+  { id: 1, requestId: 1, sender: 'guest', content: 'Can I get my order soon?', time: new Date() },
+  { id: 2, requestId: 1, sender: 'staff', content: 'We are preparing your order.', time: new Date() },
+];
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server for express app
@@ -975,6 +1012,63 @@ Mi Nhon Hotel Mui Ne`
       console.error('Invalid REFERENCE_MAP env var:', error);
       res.status(500).json({ error: 'Invalid REFERENCE_MAP JSON' });
     }
+  });
+
+  // Staff login route
+  app.post('/api/staff/login', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Missing username or password' });
+    }
+    const staff = staffList.find(s => s.username === username);
+    if (!staff) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const valid = await bcrypt.compare(password, staff.passwordHash);
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    // Tạo JWT token
+    const token = jwt.sign({ id: staff.id, username: staff.username, role: staff.role }, JWT_SECRET, { expiresIn: '8h' });
+    res.json({ token, staff: { id: staff.id, username: staff.username, role: staff.role } });
+  });
+
+  // Lấy danh sách request
+  app.get('/api/staff/requests', verifyJWT, (req, res) => {
+    res.json(requestList);
+  });
+
+  // Cập nhật trạng thái request
+  app.patch('/api/staff/requests/:id/status', verifyJWT, (req, res) => {
+    const id = parseInt(req.params.id);
+    const { status } = req.body;
+    const reqIdx = requestList.findIndex(r => r.id === id);
+    if (reqIdx === -1) return res.status(404).json({ error: 'Request not found' });
+    requestList[reqIdx].status = status;
+    res.json(requestList[reqIdx]);
+  });
+
+  // Lấy lịch sử tin nhắn của request
+  app.get('/api/staff/requests/:id/messages', verifyJWT, (req, res) => {
+    const id = parseInt(req.params.id);
+    const msgs = messageList.filter(m => m.requestId === id);
+    res.json(msgs);
+  });
+
+  // Gửi tin nhắn tới guest
+  app.post('/api/staff/requests/:id/message', verifyJWT, (req, res) => {
+    const id = parseInt(req.params.id);
+    const { content } = req.body;
+    if (!content) return res.status(400).json({ error: 'Missing content' });
+    const msg: StaffMessage = {
+      id: messageList.length + 1,
+      requestId: id,
+      sender: 'staff',
+      content,
+      time: new Date(),
+    };
+    messageList.push(msg);
+    res.status(201).json(msg);
   });
 
   return httpServer;
