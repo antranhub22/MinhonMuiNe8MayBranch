@@ -100,10 +100,12 @@ const CallDetails: React.FC = () => {
     const socket = io(window.location.origin);
     socketRef.current = socket;
 
-    // Join room by callId
-    if (callId) {
-      socket.emit('join_room', callId);
-    }
+    // Chỉ emit join_room sau khi socket đã connect
+    socket.on('connect', () => {
+      if (callId) {
+        socket.emit('join_room', callId);
+      }
+    });
 
     // Chỉ giữ lại logic nhận transcript/Vapi, loại bỏ lắng nghe staff_request_status_update và staff_request_message trên guest
     // (Nếu có logic transcript thì giữ lại ở đây)
