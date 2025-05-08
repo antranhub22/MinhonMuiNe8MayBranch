@@ -14,6 +14,7 @@ const StaffLogin: React.FC = () => {
     }
     setError('');
     // Giả lập chuyển trang
+    localStorage.setItem('staff_logged_in', 'true');
     window.location.href = '/staff/dashboard';
   };
 

@@ -1,9 +1,9 @@
 import React, { Suspense } from "react";
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { Switch, Route, Link } from "wouter";
+import { Switch, Route, Link, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import VoiceAssistant from "@/components/VoiceAssistant";
-import { AssistantProvider, useAssistant } from "@/context/AssistantContext";
+// import { useAssistant } from "@/context/AssistantContext";
 import NotFound from "@/pages/not-found";
 import EmailTester from "@/components/EmailTester";
 import { useWebSocket } from '@/hooks/useWebSocket';
@@ -46,6 +46,8 @@ const EmailTestPage = () => {
 };
 
 function Router() {
+  const [location, setLocation] = useLocation();
+  const isStaffLoggedIn = typeof window !== 'undefined' && localStorage.getItem('staff_logged_in') === 'true';
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Switch>
@@ -56,8 +58,13 @@ function Router() {
         <Route path="/email-test" component={EmailTestPage} />
         {/* Staff UI */}
         <Route path="/staff/login" component={() => <StaffLayout><StaffLogin /></StaffLayout>} />
-        <Route path="/staff/dashboard" component={() => <StaffLayout><StaffDashboard /></StaffLayout>} />
-        <Route path="/" component={VoiceAssistant} />
+        <Route path="/staff/dashboard" component={() => {
+          if (!isStaffLoggedIn) {
+            setLocation('/staff/login');
+            return null;
+          }
+          return <StaffLayout><StaffDashboard /></StaffLayout>;
+        }} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
@@ -65,18 +72,12 @@ function Router() {
 }
 
 const App: React.FC = () => {
-  const { isAuthenticated } = useAssistant();
-
-  // Initialize WebSocket globally to keep connection across routes
   useWebSocket();
-
   return (
-    <AssistantProvider>
-      <ErrorBoundary>
-        <Router />
-        <Toaster />
-      </ErrorBoundary>
-    </AssistantProvider>
+    <ErrorBoundary>
+      <Router />
+      <Toaster />
+    </ErrorBoundary>
   );
 };
 

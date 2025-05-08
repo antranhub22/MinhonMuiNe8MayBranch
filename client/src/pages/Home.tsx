@@ -28,12 +28,13 @@ const Home: React.FC = () => {
                   View Call History
                 </button>
               </Link>
-              <Link href="/staff/login">
+              {/* Ẩn hoàn toàn link Staff Login khỏi giao diện guest */}
+              {/* <Link href="/staff/login">
                 <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center text-sm sm:text-base">
                   <span className="material-icons mr-2">login</span>
                   Staff Login
                 </button>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </main>
