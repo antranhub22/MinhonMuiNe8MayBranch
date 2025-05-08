@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import StaffRequestDetail from '../components/staff/StaffRequestDetail';
+import type { StaffRequestStatus, StaffMessage } from '@/types';
 
 const dummyRequests = [
   {
@@ -7,7 +9,10 @@ const dummyRequests = [
     guest: 'Tony',
     content: '2 beef burgers, 1 orange juice',
     time: '08:30',
-    status: 'New',
+    status: 'New' as StaffRequestStatus,
+    messages: [
+      { id: 'm1', requestId: 'ORD123', sender: 'staff', content: 'Đã nhận request', timestamp: new Date() },
+    ] as StaffMessage[],
   },
   {
     id: 'ORD124',
@@ -15,7 +20,8 @@ const dummyRequests = [
     guest: 'Anna',
     content: 'Extra towels',
     time: '08:32',
-    status: 'Doing',
+    status: 'Doing' as StaffRequestStatus,
+    messages: [] as StaffMessage[],
   },
 ];
 
@@ -27,6 +33,17 @@ const statusColor: Record<string, string> = {
 };
 
 const StaffDashboard: React.FC = () => {
+  const [selected, setSelected] = useState<number|null>(null);
+  const [requests, setRequests] = useState(dummyRequests);
+
+  const handleUpdateStatus = (idx: number, status: StaffRequestStatus) => {
+    setRequests(reqs => reqs.map((r, i) => i === idx ? { ...r, status, messages: [...r.messages, { id: `msg${Date.now()}`, requestId: r.id, sender: 'staff', content: `Cập nhật trạng thái: ${status}`, timestamp: new Date() }] } : r));
+  };
+  const handleSendMessage = (idx: number, msg: string) => {
+    if (!msg.trim()) return;
+    setRequests(reqs => reqs.map((r, i) => i === idx ? { ...r, messages: [...r.messages, { id: `msg${Date.now()}`, requestId: r.id, sender: 'staff', content: msg, timestamp: new Date() }] } : r));
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
       <header className="bg-[#223A7A] text-white py-4 px-8 flex justify-between items-center">
@@ -47,8 +64,8 @@ const StaffDashboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {dummyRequests.map((req, idx) => (
-              <tr key={req.id} className="border-b border-gray-100 hover:bg-[#F0F4FF] cursor-pointer">
+            {requests.map((req, idx) => (
+              <tr key={req.id} className="border-b border-gray-100 hover:bg-[#F0F4FF] cursor-pointer" onClick={() => setSelected(idx)}>
                 <td className="py-2 px-3">{idx + 1}</td>
                 <td className="py-2 px-3 font-semibold">{req.room}</td>
                 <td className="py-2 px-3">{req.id}</td>
@@ -62,6 +79,15 @@ const StaffDashboard: React.FC = () => {
         </table>
         <div className="mt-4 text-gray-500 text-sm">Click vào từng dòng để xem chi tiết & cập nhật trạng thái</div>
       </main>
+      {selected !== null && (
+        <StaffRequestDetail
+          open={true}
+          onClose={() => setSelected(null)}
+          request={requests[selected]}
+          onUpdateStatus={status => handleUpdateStatus(selected, status)}
+          onSendMessage={msg => handleSendMessage(selected, msg)}
+        />
+      )}
     </div>
   );
 };
