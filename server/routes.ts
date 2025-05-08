@@ -1051,8 +1051,9 @@ Mi Nhon Hotel Mui Ne`
   });
 
   // Lấy danh sách request
-  app.get('/api/staff/requests', verifyJWT, (req, res) => {
-    res.json(requestList);
+  app.get('/api/staff/requests', verifyJWT, async (req, res) => {
+    const requests = await db.select().from(requestTable);
+    res.json(requests);
   });
 
   // Cập nhật trạng thái request
