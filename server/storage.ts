@@ -1,6 +1,6 @@
-import { users, type User, type InsertUser, transcripts, type Transcript, type InsertTranscript, orders, type Order, type InsertOrder, callSummaries, type CallSummary, type InsertCallSummary, staffRequests, type StaffRequest, type InsertStaffRequest, staffMessages, type StaffMessage, type InsertStaffMessage } from "@shared/schema";
+import { users, type User, type InsertUser, transcripts, type Transcript, type InsertTranscript, orders, type Order, type InsertOrder, callSummaries, type CallSummary, type InsertCallSummary } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gte, sql, asc } from "drizzle-orm";
+import { eq, and, gte, sql } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -25,17 +25,6 @@ export interface IStorage {
   addCallSummary(summary: InsertCallSummary): Promise<CallSummary>;
   getCallSummaryByCallId(callId: string): Promise<CallSummary | undefined>;
   getRecentCallSummaries(hours: number): Promise<CallSummary[]>;
-  
-  // Staff Request methods
-  createStaffRequest(request: InsertStaffRequest): Promise<StaffRequest>;
-  getStaffRequestById(id: number): Promise<StaffRequest | undefined>;
-  getStaffRequestsByRoomNumber(roomNumber: string): Promise<StaffRequest[]>;
-  updateStaffRequestStatus(id: number, status: string): Promise<StaffRequest | undefined>;
-  getAllStaffRequests(filter: { status?: string; roomNumber?: string }): Promise<StaffRequest[]>;
-  
-  // Staff Message methods
-  addStaffMessage(message: InsertStaffMessage): Promise<StaffMessage>;
-  getStaffMessagesByRequestId(requestId: number): Promise<StaffMessage[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -120,58 +109,6 @@ export class DatabaseStorage implements IStorage {
       .from(callSummaries)
       .where(gte(callSummaries.timestamp, hoursAgo))
       .orderBy(sql`${callSummaries.timestamp} DESC`);
-  }
-
-  // Staff Request methods
-  async createStaffRequest(request: InsertStaffRequest): Promise<StaffRequest> {
-    const result = await db.insert(staffRequests).values(request).returning();
-    return result[0];
-  }
-
-  async getStaffRequestById(id: number): Promise<StaffRequest | undefined> {
-    const result = await db.select().from(staffRequests).where(eq(staffRequests.id, id));
-    return result[0];
-  }
-
-  async getStaffRequestsByRoomNumber(roomNumber: string): Promise<StaffRequest[]> {
-    return await db.select().from(staffRequests).where(eq(staffRequests.roomNumber, roomNumber));
-  }
-
-  async updateStaffRequestStatus(id: number, status: string): Promise<StaffRequest | undefined> {
-    const result = await db
-      .update(staffRequests)
-      .set({ status, updatedAt: new Date() })
-      .where(eq(staffRequests.id, id))
-      .returning();
-    return result[0];
-  }
-
-  async getAllStaffRequests(filter: { status?: string; roomNumber?: string }): Promise<StaffRequest[]> {
-    let query = db.select().from(staffRequests);
-    
-    if (filter.status) {
-      query = query.where(eq(staffRequests.status, filter.status));
-    }
-    
-    if (filter.roomNumber) {
-      query = query.where(eq(staffRequests.roomNumber, filter.roomNumber));
-    }
-    
-    return await query;
-  }
-
-  // Staff Message methods
-  async addStaffMessage(message: InsertStaffMessage): Promise<StaffMessage> {
-    const result = await db.insert(staffMessages).values(message).returning();
-    return result[0];
-  }
-
-  async getStaffMessagesByRequestId(requestId: number): Promise<StaffMessage[]> {
-    return await db
-      .select()
-      .from(staffMessages)
-      .where(eq(staffMessages.requestId, requestId))
-      .orderBy(asc(staffMessages.timestamp));
   }
 }
 

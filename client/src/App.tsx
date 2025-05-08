@@ -2,12 +2,11 @@ import React, { Suspense } from "react";
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Switch, Route, Link } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
+import VoiceAssistant from "@/components/VoiceAssistant";
+import { AssistantProvider } from "@/context/AssistantContext";
 import NotFound from "@/pages/not-found";
 import EmailTester from "@/components/EmailTester";
 import { useWebSocket } from '@/hooks/useWebSocket';
-import GuestHome from '@/pages/guest/Home';
-import StaffLogin from '@/pages/staff/StaffLogin';
-import StaffDashboard from '@/pages/staff/StaffDashboard';
 
 // Lazy-loaded components
 const CallHistory = React.lazy(() => import('@/pages/CallHistory'));
@@ -47,9 +46,7 @@ function Router() {
         <Route path="/call-history" component={CallHistory} />
         <Route path="/call-details/:callId" component={CallDetails} />
         <Route path="/email-test" component={EmailTestPage} />
-        <Route path="/" component={GuestHome} />
-        <Route path="/staff/login" component={StaffLogin} />
-        <Route path="/staff/dashboard" component={StaffDashboard} />
+        <Route path="/" component={VoiceAssistant} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
@@ -57,12 +54,15 @@ function Router() {
 }
 
 function App() {
+  // Initialize WebSocket globally to keep connection across routes
   useWebSocket();
   return (
-    <ErrorBoundary>
-      <Router />
-      <Toaster />
-    </ErrorBoundary>
+    <AssistantProvider>
+      <ErrorBoundary>
+        <Router />
+        <Toaster />
+      </ErrorBoundary>
+    </AssistantProvider>
   );
 }
 

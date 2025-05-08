@@ -77,28 +77,6 @@ export const ordersRelations = relations(orders, ({ many }) => ({
   transcripts: many(transcripts),
 }));
 
-// Staff Request Schema
-export const staffRequests = pgTable('staff_requests', {
-  id: serial('id').primaryKey(),
-  callId: text('call_id').notNull(),
-  roomNumber: text('room_number').notNull(),
-  guestName: text('guest_name'),
-  orderId: text('order_id'),
-  content: text('content').notNull(),
-  status: text('status').notNull().default('New'),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-});
-
-// Staff Message Schema
-export const staffMessages = pgTable('staff_messages', {
-  id: serial('id').primaryKey(),
-  requestId: integer('request_id').references(() => staffRequests.id).notNull(),
-  sender: text('sender').notNull(), // 'staff' or 'system'
-  content: text('content').notNull(),
-  timestamp: timestamp('timestamp').defaultNow(),
-});
-
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
@@ -110,9 +88,3 @@ export type Order = typeof orders.$inferSelect;
 
 export type InsertCallSummary = z.infer<typeof insertCallSummarySchema>;
 export type CallSummary = typeof callSummaries.$inferSelect;
-
-// Types
-export type StaffRequest = typeof staffRequests.$inferSelect;
-export type InsertStaffRequest = typeof staffRequests.$inferInsert;
-export type StaffMessage = typeof staffMessages.$inferSelect;
-export type InsertStaffMessage = typeof staffMessages.$inferInsert;
