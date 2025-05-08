@@ -18,6 +18,8 @@ import jwt from 'jsonwebtoken';
 import { Staff } from './models/Staff';
 import { Request as StaffRequest } from './models/Request';
 import { Message as StaffMessage } from './models/Message';
+import { db } from '../src/db';
+import { request as requestTable } from '../src/db/schema';
 
 // Initialize OpenAI client 
 const openai = new OpenAI({
@@ -634,6 +636,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Respond based on overall success
       if (results.every((r) => r.success)) {
+        // Lưu request vào DB cho staff UI
+        try {
+          await db.insert(requestTable).values({
+            room: callDetails.roomNumber,
+            orderId: callDetails.orderReference || orderReference,
+            guestName: callDetails.guestName || 'Guest',
+            content: vietnameseSummary,
+            time: new Date(callDetails.timestamp || Date.now()),
+            status: 'Đã ghi nhận',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+        } catch (dbError) {
+          console.error('Lỗi khi lưu request vào DB:', dbError);
+        }
         res.json({ success: true, recipients: toEmails, orderReference });
       } else {
         throw new Error('Failed to send call summary to all recipients');
