@@ -103,3 +103,13 @@ export interface ActiveOrder {
   requestedAt: Date;
   estimatedTime: string;
 }
+
+export type StaffRequestStatus = 'New' | 'Doing' | 'Done' | 'Error' | 'Delivering' | 'Confirmed';
+
+export interface StaffMessage {
+  id: string;
+  requestId: string;
+  sender: 'staff' | 'system';
+  content: string;
+  timestamp: Date;
+}

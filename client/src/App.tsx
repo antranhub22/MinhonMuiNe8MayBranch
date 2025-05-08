@@ -7,6 +7,7 @@ import { AssistantProvider } from "@/context/AssistantContext";
 import NotFound from "@/pages/not-found";
 import EmailTester from "@/components/EmailTester";
 import { useWebSocket } from '@/hooks/useWebSocket';
+import { StaffLogin, StaffDashboard } from "@/pages";
 
 // Lazy-loaded components
 const CallHistory = React.lazy(() => import('@/pages/CallHistory'));
@@ -46,6 +47,8 @@ function Router() {
         <Route path="/call-history" component={CallHistory} />
         <Route path="/call-details/:callId" component={CallDetails} />
         <Route path="/email-test" component={EmailTestPage} />
+        <Route path="/staff/login" component={StaffLogin} />
+        <Route path="/staff/dashboard" component={StaffDashboard} />
         <Route path="/" component={VoiceAssistant} />
         <Route component={NotFound} />
       </Switch>
