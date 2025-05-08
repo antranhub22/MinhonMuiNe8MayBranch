@@ -9,7 +9,6 @@
   "migrate": "drizzle-kit push",
   "start": "npm run migrate && NODE_ENV=production node dist/index.js",
   "check": "tsc"
-}
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.37.0",
