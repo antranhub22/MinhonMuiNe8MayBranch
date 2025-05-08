@@ -105,20 +105,8 @@ const CallDetails: React.FC = () => {
       socket.emit('join_room', callId);
     }
 
-    // Listen for status updates
-    socket.on('staff_request_status_update', (data: SocketMessage) => {
-      toast.success(`Request status updated: ${data.status}`);
-      queryClient.invalidateQueries({ queryKey: ['summary', callId] });
-      queryClient.invalidateQueries({ queryKey: ['staffRequest', callId] });
-    });
-
-    // Listen for new messages
-    socket.on('staff_request_message', (data: SocketMessage) => {
-      if (data.message) {
-        toast.success(`New message from staff: ${data.message.content}`);
-        queryClient.invalidateQueries({ queryKey: ['staffRequest', callId] });
-      }
-    });
+    // Chỉ giữ lại logic nhận transcript/Vapi, loại bỏ lắng nghe staff_request_status_update và staff_request_message trên guest
+    // (Nếu có logic transcript thì giữ lại ở đây)
 
     return () => {
       socket.disconnect();
