@@ -485,33 +485,32 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
 
     // Create a prompt for generating the summary in user's language only
     const prompt = `
-      You are a hotel service summarization specialist for Mi Nhon Hotel. 
-      Summarize the following conversation between a Hotel Assistant and a Guest in a very concise and professional manner.
-      
-      IMPORTANT: For EACH separate request from the guest, structure your summary in the following format:
-      
-      Request 1:
-      - Type of service: [service category name]
-      - Request details: [comprehensive details of the request]
-      
-      Request 2:
-      - Type of service: [service category name]
-      - Request details: [comprehensive details of the request]
-      
-      For example:
-      
-      Request 1:
-      - Type of service: Room Service
-      - Request details: Guest requested breakfast delivery with 2 eggs, toast, coffee to room 301 at 7:30 AM tomorrow. Guest specified hot coffee with milk on the side.
-      
-      Request 2:
-      - Type of service: Transportation
-      - Request details: Guest needs taxi to airport tomorrow at 10:00 AM for 3 people with 4 large suitcases. Requested an SUV or larger vehicle.
-      
+      You are a hotel service summarization specialist for Mi Nhon Hotel.
+      Summarize the following conversation between a Hotel Assistant and a Guest in a concise, professional manner.
+
+      IMPORTANT: For EACH separate request from the guest, structure your summary in the following format (repeat for as many requests as needed, do NOT limit the number of requests):
+
+      REQUEST 1: [Service Type]
+      • Service Timing: [Requested completion time]
+      • Order Details:
+          • [Item/Service] x [Quantity] - [Special notes]
+          • [Item/Service] x [Quantity] - [Special notes]
+      • Special Requirements: [Guest special request details]
+
+      REQUEST 2: [Other Service Type] (if applicable)
+      • Service Timing: [Requested completion time]
+      • Details:
+          • [Service details]
+      • Special Requirements: [Guest special request details]
+
+      (Continue numbering REQUEST 3, REQUEST 4, etc. for all guest requests, do NOT limit the number of requests.)
+
+      Next Step: Please Press Send To Reception in order to complete your request
+
       IMPORTANT INSTRUCTIONS:
       1. Provide the summary only in the guest's original language (English, Russian, Korean, Chinese, or German)
       2. Be EXTREMELY comprehensive - include EVERY service request mentioned in the conversation
-      3. Format with bullet points for easy scanning by hotel staff
+      3. Format with bullet points and indentation as shown above
       4. ALWAYS ASK FOR AND INCLUDE ROOM NUMBER - This is the most critical information for every request
       5. If room number is not mentioned in the conversation, make a clear note that "Room number needs to be confirmed with guest"
       6. For ALL service details, include times, locations, quantities, and any specific requirements
