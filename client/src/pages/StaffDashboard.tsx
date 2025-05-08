@@ -1,28 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StaffRequestDetailModal from '../components/StaffRequestDetailModal';
 import StaffMessagePopup from '../components/StaffMessagePopup';
-
-// Dummy data mẫu cho request
-const sampleRequests = [
-  {
-    id: 'ORD-10001',
-    room: '101',
-    guestName: 'Tony',
-    content: 'Beef burger x 2',
-    time: '2024-05-08 09:00',
-    status: 'Đã ghi nhận',
-    notes: '',
-  },
-  {
-    id: 'ORD-10002',
-    room: '202',
-    guestName: 'Anna',
-    content: 'Spa booking at 10:00',
-    time: '2024-05-08 09:05',
-    status: 'Đang thực hiện',
-    notes: '',
-  },
-];
 
 const statusOptions = [
   'Đã ghi nhận',
@@ -43,19 +21,27 @@ const statusColor = (status: string) => {
   }
 };
 
-// Dummy messages
-const dummyMessages = [
-  { id: '1', sender: 'guest', content: 'Can I get my order soon?', time: '09:01' },
-  { id: '2', sender: 'staff', content: 'We are preparing your order.', time: '09:02' },
-];
-
 const StaffDashboard: React.FC = () => {
-  const [requests, setRequests] = useState(sampleRequests);
+  const [requests, setRequests] = useState<any[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showMessagePopup, setShowMessagePopup] = useState(false);
-  const [messages, setMessages] = useState(dummyMessages);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loadingMsg, setLoadingMsg] = useState(false);
+
+  // Fetch requests from API
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const res = await fetch('/api/staff/requests', { credentials: 'include' });
+        const data = await res.json();
+        setRequests(data);
+      } catch (err) {
+        console.error('Failed to fetch requests:', err);
+      }
+    };
+    fetchRequests();
+  }, []);
 
   // Mở modal chi tiết
   const handleOpenDetail = (req: any) => {
@@ -68,30 +54,53 @@ const StaffDashboard: React.FC = () => {
     setSelectedRequest(null);
   };
   // Cập nhật trạng thái request
-  const handleStatusChange = (status: string) => {
+  const handleStatusChange = async (status: string) => {
     if (!selectedRequest) return;
-    setRequests(reqs => reqs.map(r => r.id === selectedRequest.id ? { ...r, status } : r));
-    setSelectedRequest({ ...selectedRequest, status });
-    // TODO: Gọi API cập nhật trạng thái thực tế
+    try {
+      await fetch(`/api/staff/requests/${selectedRequest.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status })
+      });
+      setRequests(reqs => reqs.map(r => r.id === selectedRequest.id ? { ...r, status } : r));
+      setSelectedRequest({ ...selectedRequest, status });
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    }
   };
   // Mở popup nhắn tin
-  const handleOpenMessage = () => {
+  const handleOpenMessage = async () => {
     setShowMessagePopup(true);
-    // TODO: Fetch messages thực tế từ API
+    if (!selectedRequest) return;
+    try {
+      const res = await fetch(`/api/staff/requests/${selectedRequest.id}/messages`, { credentials: 'include' });
+      const data = await res.json();
+      setMessages(data);
+    } catch (err) {
+      setMessages([]);
+    }
   };
   // Đóng popup nhắn tin
   const handleCloseMessage = () => setShowMessagePopup(false);
   // Gửi tin nhắn
-  const handleSendMessage = (msg: string) => {
+  const handleSendMessage = async (msg: string) => {
     setLoadingMsg(true);
-    setTimeout(() => {
+    try {
+      await fetch(`/api/staff/requests/${selectedRequest.id}/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ content: msg })
+      });
       setMessages(msgs => [
         ...msgs,
         { id: (msgs.length + 1).toString(), sender: 'staff', content: msg, time: new Date().toLocaleTimeString().slice(0,5) }
       ]);
-      setLoadingMsg(false);
-      // TODO: Gọi API gửi tin nhắn thực tế
-    }, 500);
+    } catch (err) {
+      // handle error
+    }
+    setLoadingMsg(false);
   };
 
   return (
@@ -115,7 +124,7 @@ const StaffDashboard: React.FC = () => {
               {requests.map(req => (
                 <tr key={req.id} className="border-b hover:bg-blue-50">
                   <td className="py-2 px-3 font-semibold">{req.room}</td>
-                  <td className="py-2 px-3">{req.id}</td>
+                  <td className="py-2 px-3">{req.orderId || req.id}</td>
                   <td className="py-2 px-3">{req.guestName}</td>
                   <td className="py-2 px-3">{req.content}</td>
                   <td className="py-2 px-3">{req.time}</td>
@@ -151,11 +160,11 @@ const StaffDashboard: React.FC = () => {
         />
       )}
       {/* Popup nhắn tin */}
-      {showMessagePopup && (
+      {showMessagePopup && selectedRequest && (
         <StaffMessagePopup
           messages={messages}
-          onSend={handleSendMessage}
           onClose={handleCloseMessage}
+          onSend={handleSendMessage}
           loading={loadingMsg}
         />
       )}
