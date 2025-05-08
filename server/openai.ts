@@ -514,7 +514,10 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
       4. ALWAYS ASK FOR AND INCLUDE ROOM NUMBER - This is the most critical information for every request
       5. If room number is not mentioned in the conversation, make a clear note that "Room number needs to be confirmed with guest"
       6. For ALL service details, include times, locations, quantities, and any specific requirements
-      7. End with any required follow-up actions or confirmation needed from staff
+      7. For Order Details, ALWAYS extract and list each specific item/service, quantity, and any special notes as mentioned by the guest. DO NOT use generic phrases like 'to order' or 'food items'. For example, if the guest requests '2 beef burgers and 1 orange juice', the summary must show:
+          • Beef burger x 2
+          • Orange juice x 1
+      8. End with any required follow-up actions or confirmation needed from staff
 
       Conversation transcript:
       ${conversationText}
