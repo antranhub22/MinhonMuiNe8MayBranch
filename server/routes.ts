@@ -1031,6 +1031,16 @@ Mi Nhon Hotel Mui Ne`
     }
   });
 
+  app.get('/api/staff/requests/stats', async (req, res) => {
+    try {
+      // TODO: Thay thế bằng logic thống kê thực tế nếu cần
+      // Ví dụ trả về số lượng request, trạng thái, v.v.
+      res.json({ totalRequests: 0, requestsByStatus: {}, avgProcessingTime: 0, newToday: 0 });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to get staff request stats' });
+    }
+  });
+
   app.get('/api/staff/requests/:id', async (req, res) => {
     try {
       const id = parseInt(req.params.id, 10);
