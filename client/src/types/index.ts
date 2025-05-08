@@ -1,18 +1,15 @@
 export interface Transcript {
-  id: number;
-  callId: string;
-  role: 'user' | 'assistant';
+  id: string;
+  role: 'assistant' | 'user';
   content: string;
-  timestamp: Date;
-  isModelOutput?: boolean;
+  timestamp: string | Date;
 }
 
 export interface CallSummary {
-  id: number;
-  callId: string;
+  id: string;
   content: string;
-  timestamp: Date;
   roomNumber?: string;
+  timestamp: string | Date;
   duration?: string;
 }
 
@@ -108,8 +105,20 @@ export type StaffRequestStatus = 'New' | 'Doing' | 'Done' | 'Error' | 'Deliverin
 
 export interface StaffMessage {
   id: string;
-  requestId: string;
   sender: 'staff' | 'system';
   content: string;
-  timestamp: Date;
+  timestamp: string | Date;
+}
+
+export interface StaffRequest {
+  id: string;
+  status: string;
+  messages: StaffMessage[];
+  timestamp: string | Date;
+}
+
+export interface SocketMessage {
+  requestId: string;
+  status?: string;
+  message?: StaffMessage;
 }

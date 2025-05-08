@@ -3,15 +3,18 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { Switch, Route, Link } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import VoiceAssistant from "@/components/VoiceAssistant";
-import { AssistantProvider } from "@/context/AssistantContext";
+import { AssistantProvider, useAssistant } from "@/context/AssistantContext";
 import NotFound from "@/pages/not-found";
 import EmailTester from "@/components/EmailTester";
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { StaffLogin, StaffDashboard } from "@/pages";
+import Home from './pages/Home';
+import CallDetails from './pages/CallDetails';
+import CallHistory from './pages/CallHistory';
 
 // Lazy-loaded components
-const CallHistory = React.lazy(() => import('@/pages/CallHistory'));
-const CallDetails = React.lazy(() => import('@/pages/CallDetails'));
+const CallHistoryComponent = React.lazy(() => import('@/pages/CallHistory'));
+const CallDetailsComponent = React.lazy(() => import('@/pages/CallDetails'));
 
 // Loading fallback
 const LoadingFallback = () => (
@@ -44,8 +47,9 @@ function Router() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Switch>
-        <Route path="/call-history" component={CallHistory} />
-        <Route path="/call-details/:callId" component={CallDetails} />
+        <Route path="/" component={Home} />
+        <Route path="/call-history" component={CallHistoryComponent} />
+        <Route path="/call/:callId" component={CallDetailsComponent} />
         <Route path="/email-test" component={EmailTestPage} />
         <Route path="/staff/login" component={StaffLogin} />
         <Route path="/staff/dashboard" component={StaffDashboard} />
@@ -56,9 +60,12 @@ function Router() {
   );
 }
 
-function App() {
+const App: React.FC = () => {
+  const { isAuthenticated } = useAssistant();
+
   // Initialize WebSocket globally to keep connection across routes
   useWebSocket();
+
   return (
     <AssistantProvider>
       <ErrorBoundary>
@@ -67,6 +74,6 @@ function App() {
       </ErrorBoundary>
     </AssistantProvider>
   );
-}
+};
 
 export default App;

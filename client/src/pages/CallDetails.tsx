@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect, useRef } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link } from 'wouter';
-import { Transcript } from '@/types';
+import { Transcript, StaffRequest, StaffMessage, SocketMessage } from '@/types';
+import { io, Socket } from 'socket.io-client';
+import { toast } from 'react-hot-toast';
+import Loading from '@/components/Loading';
+import Error from '@/components/Error';
+import Toast from '@/components/Toast';
 
 const CallDetails: React.FC = () => {
   const { callId } = useParams();
   const [copying, setCopying] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
+  const queryClient = useQueryClient();
   
-  // Fetch call summary
+  // Fetch call summary with auto-refresh
   const { data: summary, isLoading: summaryLoading, isError: summaryError } = useQuery({
     queryKey: ['summary', callId],
     queryFn: async () => {
@@ -17,9 +24,10 @@ const CallDetails: React.FC = () => {
       }
       return response.json();
     },
+    refetchInterval: 30000, // Auto-refresh every 30 seconds
   });
   
-  // Fetch call transcripts
+  // Fetch call transcripts with auto-refresh
   const { data: transcripts, isLoading: transcriptsLoading, isError: transcriptsError } = useQuery({
     queryKey: ['transcripts', callId],
     queryFn: async () => {
@@ -29,6 +37,19 @@ const CallDetails: React.FC = () => {
       }
       return response.json();
     },
+    refetchInterval: 30000,
+  });
+  
+  // Fetch staff request history with auto-refresh
+  const { data: staffRequest, refetch: refetchStaffRequest } = useQuery<StaffRequest>({
+    queryKey: ['staffRequest', callId],
+    queryFn: async () => {
+      const res = await fetch(`/api/staff/requests/${callId}`);
+      if (!res.ok) throw new Error('Failed to fetch staff request');
+      return res.json();
+    },
+    refetchInterval: 30000,
+    enabled: !!callId
   });
   
   // Format date for display
@@ -52,7 +73,7 @@ const CallDetails: React.FC = () => {
     return duration;
   };
   
-  // Handle copy to clipboard
+  // Handle copy to clipboard with toast notification
   const handleCopyTranscript = async () => {
     if (!transcripts?.length) return;
     
@@ -63,34 +84,67 @@ const CallDetails: React.FC = () => {
       ).join('\n\n');
       
       await navigator.clipboard.writeText(transcriptText);
+      toast.success('Transcript copied to clipboard!');
       
-      // Show success animation
       setTimeout(() => {
         setCopying(false);
       }, 1500);
     } catch (error) {
       console.error('Could not copy text: ', error);
+      toast.error('Failed to copy transcript');
       setCopying(false);
     }
   };
+  
+  useEffect(() => {
+    // Connect to socket.io
+    const socket = io(window.location.origin);
+    socketRef.current = socket;
+
+    // Join room by callId
+    if (callId) {
+      socket.emit('join_room', callId);
+    }
+
+    // Listen for status updates
+    socket.on('staff_request_status_update', (data: SocketMessage) => {
+      toast.success(`Request status updated: ${data.status}`);
+      queryClient.invalidateQueries({ queryKey: ['summary', callId] });
+      queryClient.invalidateQueries({ queryKey: ['staffRequest', callId] });
+    });
+
+    // Listen for new messages
+    socket.on('staff_request_message', (data: SocketMessage) => {
+      if (data.message) {
+        toast.success(`New message from staff: ${data.message.content}`);
+        queryClient.invalidateQueries({ queryKey: ['staffRequest', callId] });
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [callId, queryClient]);
   
   const isLoading = summaryLoading || transcriptsLoading;
   const isError = summaryError || transcriptsError;
   
   return (
-    <div className="container mx-auto p-5">
-      <header className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-primary">Call Details</h1>
-          <div className="flex space-x-3">
+    <div className="container mx-auto max-w-full md:max-w-5xl p-2 sm:p-5">
+      <Toast />
+      
+      <header className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2 sm:gap-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary">Call Details</h1>
+          <div className="flex space-x-2 sm:space-x-3 w-full sm:w-auto">
             <Link to="/call-history">
-              <button className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors flex items-center">
+              <button className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center text-sm sm:text-base">
                 <span className="material-icons align-middle mr-1 text-sm">history</span>
                 Call History
               </button>
             </Link>
             <Link to="/">
-              <button className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors flex items-center">
+              <button className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center text-sm sm:text-base">
                 <span className="material-icons align-middle mr-1 text-sm">home</span>
                 Home
               </button>
@@ -99,26 +153,52 @@ const CallDetails: React.FC = () => {
         </div>
       </header>
       
-      <main className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <main className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {isLoading ? (
-          <div className="col-span-1 lg:col-span-3 bg-white p-6 rounded-lg shadow-sm flex justify-center items-center h-64">
-            <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-              <p className="text-gray-500">Loading call details...</p>
+          <>
+            {/* Skeleton for Call Information */}
+            <div className="col-span-1 lg:col-span-3">
+              <div className="bg-white p-6 rounded-lg shadow-sm animate-pulse">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="h-6 bg-gray-200 rounded w-1/4 mb-2"></div>
+                  <div className="h-4 bg-gray-100 rounded w-1/6"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="bg-gray-50 p-3 rounded-lg">
+                      <div className="h-3 bg-gray-200 rounded w-1/2 mb-1"></div>
+                      <div className="h-4 bg-gray-100 rounded w-2/3"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+            {/* Skeleton for Conversation History */}
+            <div className="col-span-1 lg:col-span-2">
+              <div className="bg-white p-6 rounded-lg shadow-sm h-full animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-4 bg-gray-100 rounded w-full mb-3"></div>
+                ))}
+              </div>
+            </div>
+            {/* Skeleton for Call Summary */}
+            <div className="col-span-1">
+              <div className="bg-white p-6 rounded-lg shadow-sm h-full animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+                <div className="h-4 bg-gray-100 rounded w-full mb-2"></div>
+                <div className="h-4 bg-gray-100 rounded w-2/3"></div>
+              </div>
+            </div>
+          </>
         ) : isError ? (
-          <div className="col-span-1 lg:col-span-3 bg-red-50 p-6 rounded-lg shadow-sm flex justify-center items-center h-64">
-            <div className="flex flex-col items-center text-center">
-              <span className="material-icons text-red-500 text-4xl mb-3">error_outline</span>
-              <p className="text-red-700 mb-2">Unable to load call details</p>
-              <p className="text-red-500 text-sm">The call may not exist or has been deleted.</p>
-              <Link to="/call-history">
-                <button className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors">
-                  Return to Call History
-                </button>
-              </Link>
-            </div>
+          <div className="col-span-1 lg:col-span-3">
+            <Error 
+              message="Unable to load call details"
+              subMessage="The call may not exist or has been deleted."
+              actionText="Return to Call History"
+              actionLink="/call-history"
+            />
           </div>
         ) : (
           <>
@@ -237,9 +317,56 @@ const CallDetails: React.FC = () => {
         )}
       </main>
       
-      <div className="mt-6 text-center text-gray-500 text-sm">
+      <div className="mt-6 text-center text-gray-500 text-xs sm:text-sm">
         <p>Call history is stored for the last 24 hours</p>
       </div>
+
+      {/* Staff Request History Section */}
+      {staffRequest?.messages && staffRequest.messages.length > 0 && (
+        <div className="mt-6 bg-white rounded-lg shadow p-4">
+          <h3 className="font-semibold text-blue-800 mb-2">Request Status & Messages</h3>
+          <div className="max-h-60 overflow-y-auto text-sm space-y-2">
+            {staffRequest.messages.map((msg: StaffMessage, idx: number) => {
+              // Phân loại icon và màu sắc
+              let icon = 'info';
+              let color = 'text-gray-700';
+              let bg = '';
+              let senderLabel = '';
+              if (msg.sender === 'staff') {
+                icon = 'person';
+                color = 'text-blue-700';
+                bg = 'bg-blue-50';
+                senderLabel = 'Staff';
+              } else if (msg.sender === 'system') {
+                icon = 'sync_alt';
+                color = 'text-gray-500';
+                bg = 'bg-gray-50';
+                senderLabel = 'System';
+              }
+              // Nếu là trạng thái (ví dụ: "Status changed to Doing")
+              const isStatusMsg = /status/i.test(msg.content) || /changed to/i.test(msg.content);
+              if (isStatusMsg) {
+                icon = 'autorenew';
+                color = 'text-green-700';
+                bg = 'bg-green-50';
+                senderLabel = 'Status';
+              }
+              return (
+                <div key={msg.id || idx} className={`flex items-start gap-2 rounded p-2 ${bg}`}>
+                  <span className={`material-icons text-base mt-0.5 ${color}`}>{icon}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className={`font-semibold text-xs ${color}`}>{senderLabel}</span>
+                      <span className="text-xs text-gray-400">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                    </div>
+                    <span className="text-gray-800 text-sm whitespace-pre-line">{msg.content}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
