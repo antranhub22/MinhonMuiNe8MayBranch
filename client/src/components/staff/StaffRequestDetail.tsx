@@ -5,7 +5,7 @@ interface StaffRequestDetailProps {
   open: boolean;
   onClose: () => void;
   request: {
-    id: string;
+    id: number;
     room: string;
     guest: string;
     content: string;

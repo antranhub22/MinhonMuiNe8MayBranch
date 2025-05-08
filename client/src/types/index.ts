@@ -111,7 +111,7 @@ export interface StaffMessage {
 }
 
 export interface StaffRequest {
-  id: string;
+  id: number;
   status: string;
   messages: StaffMessage[];
   timestamp: string | Date;

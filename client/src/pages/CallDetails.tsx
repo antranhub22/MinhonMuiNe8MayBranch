@@ -19,9 +19,7 @@ const CallDetails: React.FC = () => {
     queryKey: ['summary', callId],
     queryFn: async () => {
       const response = await fetch(`/api/summaries/${callId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch call summary');
-      }
+      if (!response.ok) return { message: 'Failed to fetch call summary' };
       return response.json();
     },
     refetchInterval: 30000, // Auto-refresh every 30 seconds
@@ -32,9 +30,7 @@ const CallDetails: React.FC = () => {
     queryKey: ['transcripts', callId],
     queryFn: async () => {
       const response = await fetch(`/api/transcripts/${callId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch call transcripts');
-      }
+      if (!response.ok) return { message: 'Failed to fetch call transcripts' };
       return response.json();
     },
     refetchInterval: 30000,
@@ -44,12 +40,15 @@ const CallDetails: React.FC = () => {
   const { data: staffRequest, refetch: refetchStaffRequest } = useQuery<StaffRequest>({
     queryKey: ['staffRequest', callId],
     queryFn: async () => {
-      const res = await fetch(`/api/staff/requests/${callId}`);
-      if (!res.ok) throw new Error('Failed to fetch staff request');
+      // Chỉ fetch nếu callId là số hợp lệ
+      const id = Number(callId);
+      if (!callId || isNaN(id)) return undefined;
+      const res = await fetch(`/api/staff/requests/${id}`);
+      if (!res.ok) return { message: 'Failed to fetch staff request' };
       return res.json();
     },
     refetchInterval: 30000,
-    enabled: !!callId
+    enabled: !!callId && !isNaN(Number(callId)),
   });
   
   // Format date for display

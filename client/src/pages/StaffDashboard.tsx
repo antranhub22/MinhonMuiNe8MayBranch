@@ -21,7 +21,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarEleme
 
 const dummyRequests = [
   {
-    id: 'ORD123',
+    id: 123,
     room: '201',
     guest: 'Tony',
     content: '2 beef burgers, 1 orange juice',
@@ -32,7 +32,7 @@ const dummyRequests = [
     ] as StaffMessage[],
   },
   {
-    id: 'ORD124',
+    id: 124,
     room: '105',
     guest: 'Anna',
     content: 'Extra towels',
