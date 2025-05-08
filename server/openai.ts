@@ -523,6 +523,21 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
           • Orange juice x 1
       9. End with any required follow-up actions or confirmation needed from staff
 
+      Example conversation:
+      Guest: Hi. My name is Tony. My room is 200. I would like to order 2 beef burgers and 1 orange juice.
+      Assistant: Sure, Tony. 2 beef burgers and 1 orange juice for room 200. Anything else?
+      Guest: No, that's all. Please deliver within 30 minutes.
+
+      Example summary:
+      Room Number: 200
+      Guest's Name (used for Guest with a confirmed reservation): Tony
+      REQUEST 1: Food & Beverage
+      • Service Timing: within 30 minutes
+      • Order Details:
+          • Beef burger x 2
+          • Orange juice x 1
+      • Special Requirements: Not specified
+
       Conversation transcript:
       ${conversationText}
 
