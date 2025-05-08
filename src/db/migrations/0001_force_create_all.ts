@@ -1,5 +1,4 @@
-import { sql } from 'drizzle-orm';
-import { staff, request, message } from '../schema';
+import { request, staff, message } from '../schema';
 
 export async function up(db) {
   await db.schema.createTable(staff);
@@ -11,4 +10,4 @@ export async function down(db) {
   await db.schema.dropTable(message);
   await db.schema.dropTable(request);
   await db.schema.dropTable(staff);
-} 
+}
