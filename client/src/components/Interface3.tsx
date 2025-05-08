@@ -482,7 +482,30 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                 <div id="summary-container" className="mb-3 sm:mb-4">
                   <div className="p-3 sm:p-5 bg-white/80 rounded-xl shadow border border-white/30 mb-3 sm:mb-4 relative" style={{backdropFilter:'blur(2px)'}}>
                     <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2 text-blue-800">Summary</h3>
-                    <p className="text-sm sm:text-base leading-relaxed text-gray-800 whitespace-pre-line" style={{fontWeight: 400}}>{callSummary.content}</p>
+                    <div className="text-sm sm:text-base leading-relaxed text-gray-800 whitespace-pre-line" style={{fontWeight: 400}}>
+                      {/* Custom summary formatting */}
+                      {(() => {
+                        const lines = (callSummary.content || '').split('\n');
+                        return lines.map((line, idx) => {
+                          // Bôi đậm các hạng mục chính
+                          if (/^Room Number:/i.test(line)) return <div key={idx}><b>{line}</b></div>;
+                          if (/^Guest's Name/i.test(line)) return <div key={idx}><b>{line}</b></div>;
+                          if (/^REQUEST \d+:/i.test(line)) return <div key={idx} className="mt-3 mb-1"><b>{line}</b></div>;
+                          if (/^• Service Timing:/i.test(line)) return <div key={idx} style={{marginLeft:16}}><b>{line}</b></div>;
+                          if (/^• Order Details:/i.test(line)) return <div key={idx} style={{marginLeft:16}}><b>{line}</b></div>;
+                          if (/^• Special Requirements:/i.test(line)) return <div key={idx} style={{marginLeft:16}}><b>{line}</b></div>;
+                          if (/^Next Step:/i.test(line)) return <div key={idx} className="mt-4"><b>{line}</b></div>;
+                          // Lùi dòng cho nội dung con của Order Details
+                          if (/^• [^-].+/.test(line)) return <div key={idx} style={{marginLeft:32}}>{line}</div>;
+                          // Lùi dòng cho các dòng bắt đầu bằng dấu chấm hoặc gạch ngang
+                          if (/^\s*[-•]/.test(line)) return <div key={idx} style={{marginLeft:32}}>{line}</div>;
+                          // Dòng trống hoặc phân cách
+                          if (/^\s*$/.test(line)) return <div key={idx} style={{height:8}}></div>;
+                          // Mặc định
+                          return <div key={idx}>{line}</div>;
+                        });
+                      })()}
+                    </div>
                     <div className="mt-2 sm:mt-3 flex justify-end">
                       <div className="text-xs text-gray-500">
                         Generated at {new Date(callSummary.timestamp).toLocaleTimeString()}
