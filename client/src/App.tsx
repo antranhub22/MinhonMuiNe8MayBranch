@@ -1,22 +1,17 @@
 import React, { Suspense } from "react";
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { Switch, Route, Link, useLocation } from "wouter";
+import { Switch, Route, Link } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import VoiceAssistant from "@/components/VoiceAssistant";
-// import { useAssistant } from "@/context/AssistantContext";
+import { AssistantProvider } from "@/context/AssistantContext";
 import NotFound from "@/pages/not-found";
 import EmailTester from "@/components/EmailTester";
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { StaffLogin, StaffDashboard } from "@/pages";
-import Home from './pages/Home';
-import CallDetails from './pages/CallDetails';
-import CallHistory from './pages/CallHistory';
-import GuestLayout from './layouts/GuestLayout';
-import StaffLayout from './layouts/StaffLayout';
 
 // Lazy-loaded components
-const CallHistoryComponent = React.lazy(() => import('@/pages/CallHistory'));
-const CallDetailsComponent = React.lazy(() => import('@/pages/CallDetails'));
+const CallHistory = React.lazy(() => import('@/pages/CallHistory'));
+const CallDetails = React.lazy(() => import('@/pages/CallDetails'));
 
 // Loading fallback
 const LoadingFallback = () => (
@@ -46,39 +41,32 @@ const EmailTestPage = () => {
 };
 
 function Router() {
-  const [location, setLocation] = useLocation();
-  const isStaffLoggedIn = typeof window !== 'undefined' && localStorage.getItem('staff_logged_in') === 'true';
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Switch>
-        {/* Guest UI */}
-        <Route path="/" component={() => <GuestLayout><Home /></GuestLayout>} />
-        <Route path="/call-history" component={() => <GuestLayout><CallHistoryComponent /></GuestLayout>} />
-        <Route path="/call/:callId" component={() => <GuestLayout><CallDetailsComponent /></GuestLayout>} />
+        <Route path="/call-history" component={CallHistory} />
+        <Route path="/call-details/:callId" component={CallDetails} />
         <Route path="/email-test" component={EmailTestPage} />
-        {/* Staff UI */}
-        <Route path="/staff/login" component={() => <StaffLayout><StaffLogin /></StaffLayout>} />
-        <Route path="/staff/dashboard" component={() => {
-          if (!isStaffLoggedIn) {
-            setLocation('/staff/login');
-            return null;
-          }
-          return <StaffLayout><StaffDashboard /></StaffLayout>;
-        }} />
+        <Route path="/staff/login" component={StaffLogin} />
+        <Route path="/staff/dashboard" component={StaffDashboard} />
+        <Route path="/" component={VoiceAssistant} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
   );
 }
 
-const App: React.FC = () => {
+function App() {
+  // Initialize WebSocket globally to keep connection across routes
   useWebSocket();
   return (
-    <ErrorBoundary>
-      <Router />
-      <Toaster />
-    </ErrorBoundary>
+    <AssistantProvider>
+      <ErrorBoundary>
+        <Router />
+        <Toaster />
+      </ErrorBoundary>
+    </AssistantProvider>
   );
-};
+}
 
 export default App;

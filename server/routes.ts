@@ -1004,12 +1004,6 @@ Mi Nhon Hotel Mui Ne`
         content: 'Request created'
       });
       
-      // Realtime: emit new request event
-      const io = req.app.get('io');
-      if (io) {
-        io.to(roomNumber).emit('staff_request_new', { request });
-      }
-      
       res.status(201).json(request);
     } catch (error) {
       console.error('Error creating staff request:', error);
@@ -1031,28 +1025,18 @@ Mi Nhon Hotel Mui Ne`
     }
   });
 
-  app.get('/api/staff/requests/stats', async (req, res) => {
-    try {
-      // TODO: Thay thế bằng logic thống kê thực tế nếu cần
-      // Ví dụ trả về số lượng request, trạng thái, v.v.
-      res.json({ totalRequests: 0, requestsByStatus: {}, avgProcessingTime: 0, newToday: 0 });
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to get staff request stats' });
-    }
-  });
-
   app.get('/api/staff/requests/:id', async (req, res) => {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'Invalid staff request id' });
-      }
+      const id = parseInt(req.params.id);
       const request = await storage.getStaffRequestById(id);
+      
       if (!request) {
         return res.status(404).json({ error: 'Staff request not found' });
       }
+      
       // Get messages for this request
       const messages = await storage.getStaffMessagesByRequestId(id);
+      
       res.json({ ...request, messages });
     } catch (error) {
       console.error('Error getting staff request:', error);
@@ -1062,30 +1046,26 @@ Mi Nhon Hotel Mui Ne`
 
   app.patch('/api/staff/requests/:id/status', async (req, res) => {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'Invalid staff request id' });
-      }
+      const id = parseInt(req.params.id);
       const { status } = req.body;
+      
       if (!status) {
         return res.status(400).json({ error: 'Status is required' });
       }
+      
       const request = await storage.updateStaffRequestStatus(id, status);
+      
       if (!request) {
         return res.status(404).json({ error: 'Staff request not found' });
       }
+      
       // Add system message for status update
       await storage.addStaffMessage({
         requestId: id,
         sender: 'system',
         content: `Status updated to ${status}`
       });
-      // Realtime: emit status update event
-      const io = req.app.get('io');
-      if (io) {
-        io.to(request.roomNumber).emit('staff_request_status_update', { requestId: id, status });
-        io.to(String(id)).emit('staff_request_status_update', { requestId: id, status });
-      }
+      
       res.json(request);
     } catch (error) {
       console.error('Error updating staff request status:', error);
@@ -1095,31 +1075,26 @@ Mi Nhon Hotel Mui Ne`
 
   app.post('/api/staff/requests/:id/messages', async (req, res) => {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'Invalid staff request id' });
-      }
+      const id = parseInt(req.params.id);
       const { content } = req.body;
+      
       if (!content) {
         return res.status(400).json({ error: 'Message content is required' });
       }
+      
       // Verify request exists
       const request = await storage.getStaffRequestById(id);
       if (!request) {
         return res.status(404).json({ error: 'Staff request not found' });
       }
+      
       // Add staff message
       const message = await storage.addStaffMessage({
         requestId: id,
         sender: 'staff',
         content
       });
-      // Realtime: emit message event
-      const io = req.app.get('io');
-      if (io) {
-        io.to(request.roomNumber).emit('staff_request_message', { requestId: id, message });
-        io.to(String(id)).emit('staff_request_message', { requestId: id, message });
-      }
+      
       res.status(201).json(message);
     } catch (error) {
       console.error('Error adding staff message:', error);

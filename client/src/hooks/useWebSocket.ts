@@ -9,7 +9,7 @@ export function useWebSocket() {
 
   // Initialize WebSocket connection
   const initWebSocket = useCallback(() => {
-    // console.log('useWebSocket env VITE_API_HOST:', import.meta.env.VITE_API_HOST);
+    console.log('useWebSocket env VITE_API_HOST:', import.meta.env.VITE_API_HOST);
     if (socket !== null) {
       socket.close();
     }
@@ -42,6 +42,7 @@ export function useWebSocket() {
         // Handle transcript messages
         if (data.type === 'transcript') {
           addTranscript({
+            callId: data.callId,
             role: data.role,
             content: data.content
           });
@@ -83,7 +84,7 @@ export function useWebSocket() {
 
   // Send message through WebSocket
   const sendMessage = useCallback((message: any) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
+    if (socket && connected) {
       socket.send(JSON.stringify(message));
     } else {
       console.error('Cannot send message, WebSocket not connected');
@@ -110,7 +111,7 @@ export function useWebSocket() {
 
   // Re-send init if callDetails.id becomes available after socket is open
   useEffect(() => {
-    if (socket && socket.readyState === WebSocket.OPEN && callDetails?.id) {
+    if (socket && connected && callDetails?.id) {
       console.log('Sending init message with callId after availability', callDetails.id);
       socket.send(JSON.stringify({
         type: 'init',
