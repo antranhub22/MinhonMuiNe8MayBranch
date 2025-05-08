@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StaffRequestDetail from '../components/staff/StaffRequestDetail';
-import type { StaffRequestStatus, StaffMessage } from '@/types';
+import type { StaffRequestStatus, StaffMessage, StaffRequest } from '@/types';
 import { io, Socket } from 'socket.io-client';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '@/components/Loading';
@@ -18,29 +18,6 @@ import {
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Tooltip, Legend);
-
-const dummyRequests = [
-  {
-    id: 123,
-    room: '201',
-    guest: 'Tony',
-    content: '2 beef burgers, 1 orange juice',
-    time: '08:30',
-    status: 'New' as StaffRequestStatus,
-    messages: [
-      { id: 'm1', sender: 'staff', content: 'Đã nhận request', timestamp: new Date() },
-    ] as StaffMessage[],
-  },
-  {
-    id: 124,
-    room: '105',
-    guest: 'Anna',
-    content: 'Extra towels',
-    time: '08:32',
-    status: 'Doing' as StaffRequestStatus,
-    messages: [] as StaffMessage[],
-  },
-];
 
 const defaultStatusColor: Record<string, string> = {
   'New': 'bg-[#223A7A] text-white',
@@ -72,11 +49,21 @@ const demoTopRooms = {
 
 const StaffDashboard: React.FC = () => {
   const [selected, setSelected] = useState<number|null>(null);
-  const [requests, setRequests] = useState(dummyRequests);
   const [statusColor, setStatusColor] = useState<Record<string, string>>(defaultStatusColor);
   const [newStatus, setNewStatus] = useState('');
   const [newStatusColor, setNewStatusColor] = useState('#60A5FA'); // default blue
   const socketRef = React.useRef<Socket | null>(null);
+
+  // Fetch real staff requests
+  const { data: requests = [], isLoading: isLoadingRequests, refetch: refetchRequests } = useQuery<StaffRequest[]>({
+    queryKey: ['staffRequests'],
+    queryFn: async () => {
+      const res = await fetch('/api/staff/requests');
+      if (!res.ok) throw new Error('Failed to fetch staff requests');
+      return res.json();
+    },
+    refetchInterval: 30000,
+  });
 
   const { data, isLoading, isError, refetch } = useQuery<Stats>({
     queryKey: ['staffStats'],
@@ -95,29 +82,21 @@ const StaffDashboard: React.FC = () => {
 
     // Lắng nghe sự kiện tạo request mới
     socket.on('staff_request_new', ({ request }) => {
-      setRequests(prev => [{
-        id: request.id,
-        room: request.roomNumber,
-        guest: request.guestName,
-        content: request.content,
-        time: new Date(request.createdAt).toLocaleTimeString(),
-        status: request.status,
-        messages: [],
-      }, ...prev]);
+      refetchRequests();
     });
 
     // Lắng nghe sự kiện cập nhật trạng thái
-    socket.on('staff_request_status_update', ({ requestId, status }) => {
-      setRequests(prev => prev.map(r => r.id === requestId ? { ...r, status, messages: [...r.messages, { id: `msg${Date.now()}`, requestId, sender: 'system', content: `Cập nhật trạng thái: ${status}`, timestamp: new Date() }] } : r));
+    socket.on('staff_request_status_update', () => {
+      refetchRequests();
     });
 
     // Lắng nghe sự kiện message mới
-    socket.on('staff_request_message', ({ requestId, message }) => {
-      setRequests(prev => prev.map(r => r.id === requestId ? { ...r, messages: [...r.messages, { ...message, timestamp: new Date(message.timestamp) }] } : r));
+    socket.on('staff_request_message', () => {
+      refetchRequests();
     });
 
     // Join vào tất cả các phòng (demo: room theo từng request)
-    requests.forEach(r => {
+    mappedRequests.forEach(r => {
       socket.emit('join_room', r.room);
       socket.emit('join_room', r.id);
     });
@@ -128,11 +107,11 @@ const StaffDashboard: React.FC = () => {
   }, []);
 
   const handleUpdateStatus = (idx: number, status: StaffRequestStatus) => {
-    setRequests(reqs => reqs.map((r, i) => i === idx ? { ...r, status, messages: [...r.messages, { id: `msg${Date.now()}`, requestId: r.id, sender: 'staff', content: `Cập nhật trạng thái: ${status}`, timestamp: new Date() }] } : r));
+    refetchRequests();
   };
   const handleSendMessage = (idx: number, msg: string) => {
     if (!msg.trim()) return;
-    setRequests(reqs => reqs.map((r, i) => i === idx ? { ...r, messages: [...r.messages, { id: `msg${Date.now()}`, requestId: r.id, sender: 'staff', content: msg, timestamp: new Date() }] } : r));
+    refetchRequests();
   };
 
   // Add new status logic
@@ -143,6 +122,17 @@ const StaffDashboard: React.FC = () => {
     setNewStatus('');
     setNewStatusColor('#60A5FA');
   };
+
+  // Map requests từ API sang format UI
+  const mappedRequests = requests.map(r => ({
+    id: r.id,
+    room: (r as any).roomNumber || '',
+    guest: (r as any).guestName || '',
+    content: (r as any).content || '',
+    time: (r as any).createdAt ? new Date((r as any).createdAt).toLocaleTimeString() : '',
+    status: (r.status as StaffRequestStatus),
+    messages: r.messages || [],
+  }));
 
   if (isLoading) {
     return (
@@ -300,6 +290,51 @@ const StaffDashboard: React.FC = () => {
           ))}
         </div>
       </div>
+      <div className="bg-white p-4 rounded-lg shadow-sm mt-6">
+        <h2 className="text-lg font-semibold mb-4">All Requests</h2>
+        {mappedRequests.length === 0 ? (
+          <div className="text-gray-500 text-center">No requests found.</div>
+        ) : (
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="py-2 px-2">ID</th>
+                <th className="py-2 px-2">Room</th>
+                <th className="py-2 px-2">Guest</th>
+                <th className="py-2 px-2">Content</th>
+                <th className="py-2 px-2">Time</th>
+                <th className="py-2 px-2">Status</th>
+                <th className="py-2 px-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mappedRequests.map((req, idx) => (
+                <tr key={req.id} className="border-b hover:bg-gray-50">
+                  <td className="py-2 px-2">{req.id}</td>
+                  <td className="py-2 px-2">{req.room}</td>
+                  <td className="py-2 px-2">{req.guest}</td>
+                  <td className="py-2 px-2">{req.content}</td>
+                  <td className="py-2 px-2">{req.time}</td>
+                  <td className="py-2 px-2">{req.status}</td>
+                  <td className="py-2 px-2">
+                    <button className="text-blue-600 underline" onClick={() => setSelected(idx)}>Details</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      {/* Popup chi tiết request */}
+      {selected !== null && mappedRequests[selected] && (
+        <StaffRequestDetail
+          open={selected !== null}
+          onClose={() => setSelected(null)}
+          request={mappedRequests[selected]}
+          onUpdateStatus={status => handleUpdateStatus(selected, status)}
+          onSendMessage={msg => handleSendMessage(selected, msg)}
+        />
+      )}
     </div>
   );
 };
