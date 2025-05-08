@@ -490,6 +490,9 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
 
       IMPORTANT: For EACH separate request from the guest, structure your summary in the following format (repeat for as many requests as needed, do NOT limit the number of requests):
 
+      Room Number: [Extract and display the room number if the guest provides it anywhere in the conversation. If not provided, write "Not specified".]
+      Guest's Name (used for Guest with a confirmed reservation): [Extract and display the guest's name if provided in the conversation. If not provided, write "Not specified".]
+
       REQUEST 1: [Service Type]
       • Service Timing: [Requested completion time]
       • Order Details:
@@ -511,13 +514,14 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
       1. Provide the summary only in the guest's original language (English, Russian, Korean, Chinese, or German)
       2. Be EXTREMELY comprehensive - include EVERY service request mentioned in the conversation
       3. Format with bullet points and indentation as shown above
-      4. ALWAYS ASK FOR AND INCLUDE ROOM NUMBER - This is the most critical information for every request
-      5. If room number is not mentioned in the conversation, make a clear note that "Room number needs to be confirmed with guest"
-      6. For ALL service details, include times, locations, quantities, and any specific requirements
-      7. For Order Details, ALWAYS extract and list each specific item/service, quantity, and any special notes as mentioned by the guest. DO NOT use generic phrases like 'to order' or 'food items'. For example, if the guest requests '2 beef burgers and 1 orange juice', the summary must show:
+      4. ALWAYS ASK FOR AND INCLUDE ROOM NUMBER - This is the most critical information for every request. If the guest provides a room number anywhere in the conversation, extract and display it in the summary.
+      5. For Guest's Name, if the guest provides their name anywhere in the conversation, extract and display it in the summary.
+      6. If room number or guest name is not mentioned in the conversation, make a clear note that "Not specified".
+      7. For ALL service details, include times, locations, quantities, and any specific requirements
+      8. For Order Details, ALWAYS extract and list each specific item/service, quantity, and any special notes as mentioned by the guest. DO NOT use generic phrases like 'to order' or 'food items'. For example, if the guest requests '2 beef burgers and 1 orange juice', the summary must show:
           • Beef burger x 2
           • Orange juice x 1
-      8. End with any required follow-up actions or confirmation needed from staff
+      9. End with any required follow-up actions or confirmation needed from staff
 
       Conversation transcript:
       ${conversationText}
