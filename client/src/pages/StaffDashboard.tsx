@@ -95,10 +95,12 @@ const StaffDashboard: React.FC = () => {
       refetchRequests();
     });
 
-    // Join vào tất cả các phòng (demo: room theo từng request)
-    mappedRequests.forEach(r => {
-      socket.emit('join_room', r.room);
-      socket.emit('join_room', r.id);
+    // Join vào tất cả các phòng (demo: room theo từng request) chỉ sau khi socket đã connect
+    socket.on('connect', () => {
+      mappedRequests.forEach(r => {
+        socket.emit('join_room', r.room);
+        socket.emit('join_room', r.id);
+      });
     });
 
     return () => {
