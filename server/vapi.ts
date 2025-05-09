@@ -1,4 +1,4 @@
-import { VapiClient } from '@vapi-ai/web';
+import VapiClient from '@vapi-ai/web';
 
 if (!process.env.VITE_VAPI_PUBLIC_KEY) {
   throw new Error('VITE_VAPI_PUBLIC_KEY is not set in environment variables');
