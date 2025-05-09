@@ -1,24 +1,37 @@
 import React from 'react';
+import { t, Lang } from '../i18n';
+import { useAssistant } from '../context/AssistantContext';
 
-const steps = [
-  {
-    icon: 'call',
-    title: 'Press to Call',
-    desc: 'Tap the call button to start your request.',
-  },
-  {
-    icon: 'check_circle',
-    title: 'Confirm Your Request',
-    desc: 'Review and confirm your request for accuracy.',
-  },
-  {
-    icon: 'mail',
-    title: 'Send to Reception',
-    desc: 'Your request will be sent to the reception for processing.',
-  },
-];
+interface InfographicStepsProps {
+  currentStep?: number;
+  compact?: boolean;
+  horizontal?: boolean;
+  language?: Lang;
+}
 
-export default function InfographicSteps({ currentStep = 1, compact = false, horizontal = false }) {
+export default function InfographicSteps({ currentStep = 1, compact = false, horizontal = false, language: propLanguage }: InfographicStepsProps) {
+  // Lấy language từ prop hoặc context
+  const { language: contextLanguage } = useAssistant ? useAssistant() : { language: 'en' };
+  const language: Lang = (propLanguage || contextLanguage || 'en') as Lang;
+
+  const steps = [
+    {
+      icon: 'call',
+      title: t('press_to_call', language),
+      desc: t('press_to_call_desc', language),
+    },
+    {
+      icon: 'check_circle',
+      title: t('confirm_request', language),
+      desc: t('confirm_request_desc', language),
+    },
+    {
+      icon: 'mail',
+      title: t('send_to_reception', language),
+      desc: t('send_to_reception_desc', language),
+    },
+  ];
+
   if (horizontal) {
     return (
       <div className="flex flex-row items-center justify-center w-full gap-2 md:gap-6 py-1">

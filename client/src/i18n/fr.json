@@ -48,5 +48,8 @@
   "order_confirmed_message": "Votre demande a été confirmée et transmise à notre personnel. Elle sera traitée immédiatement.",
   "order_reference": "Référence de la commande",
   "estimated_delivery_time": "Heure de livraison estimée :",
-  "return_to_home": "Retour à l'accueil"
+  "return_to_home": "Retour à l'accueil",
+  "press_to_call_desc": "Appuyez sur le bouton d'appel pour démarrer votre demande.",
+  "confirm_request_desc": "Vérifiez et confirmez votre demande pour plus de précision.",
+  "send_to_reception_desc": "Votre demande sera envoyée à la réception pour traitement."
 } 

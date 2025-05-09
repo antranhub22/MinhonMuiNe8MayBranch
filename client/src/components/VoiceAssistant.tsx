@@ -29,10 +29,15 @@ const VoiceAssistant: React.FC = () => {
           {/* Center: InfographicSteps - luôn ngang, nhỏ lại trên mobile */}
           <div className="flex-1 flex justify-center">
             <div className="w-full max-w-xs sm:max-w-md">
-              <InfographicSteps horizontal compact currentStep={
-                currentInterface === 'interface3' ? 3 :
-                currentInterface === 'interface2' ? 2 : 1
-              } />
+              <InfographicSteps 
+                horizontal 
+                compact 
+                currentStep={
+                  currentInterface === 'interface3' ? 3 :
+                  currentInterface === 'interface2' ? 2 : 1
+                }
+                language={language}
+              />
             </div>
           </div>
           {/* Right: Call History */}

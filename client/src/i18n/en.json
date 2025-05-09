@@ -46,5 +46,8 @@
   "request_management": "Staff Request Management",
   "login": "Login",
   "username": "Username",
-  "password": "Password"
+  "password": "Password",
+  "press_to_call_desc": "Tap the call button to start your request.",
+  "confirm_request_desc": "Review and confirm your request for accuracy.",
+  "send_to_reception_desc": "Your request will be sent to the reception for processing."
 } 
