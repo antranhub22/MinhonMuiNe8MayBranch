@@ -33,9 +33,11 @@ interface VapiMessage {
   [key: string]: any;
 }
 
-export const initVapi = async (language: 'en' | 'fr' = 'en'): Promise<Vapi> => {
+export const initVapi = async (language: 'en' | 'fr' | 'ko' = 'en'): Promise<Vapi> => {
   const PUBLIC_KEY = language === 'fr'
     ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR
+    : language === 'ko'
+    ? import.meta.env.VITE_VAPI_PUBLIC_KEY_KO
     : import.meta.env.VITE_VAPI_PUBLIC_KEY;
 
   try {
