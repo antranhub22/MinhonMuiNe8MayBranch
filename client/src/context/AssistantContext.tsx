@@ -41,6 +41,9 @@ interface AssistantContextType {
   addModelOutput: (output: string) => void;
   language: Language;
   setLanguage: (lang: Language) => void;
+  setTranscripts: (transcripts: Transcript[]) => void;
+  setModelOutput: (output: string[]) => void;
+  setCallDuration: (duration: number) => void;
 }
 
 const initialOrderSummary: OrderSummary = {
@@ -516,6 +519,9 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
     addModelOutput,
     language,
     setLanguage,
+    setTranscripts,
+    setModelOutput,
+    setCallDuration,
   };
 
   return (
