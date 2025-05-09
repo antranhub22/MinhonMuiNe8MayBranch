@@ -472,7 +472,7 @@ export async function translateToVietnamese(text: string): Promise<string> {
   }
 }
 
-export async function generateCallSummary(transcripts: Array<{role: string, content: string}>): Promise<string> {
+export async function generateCallSummary(transcripts: Array<{role: string, content: string}>, language: string = 'en'): Promise<string> {
   try {
     if (!transcripts || transcripts.length === 0) {
       return "No conversation to summarize.";
@@ -483,66 +483,18 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
       .map(t => `${t.role === 'assistant' ? 'Hotel Assistant' : 'Guest'}: ${t.content}`)
       .join('\n');
 
-    // Create a prompt for generating the summary in user's language only
-    const prompt = `
-      You are a hotel service summarization specialist for Mi Nhon Hotel.
-      Summarize the following conversation between a Hotel Assistant and a Guest in a concise, professional manner.
-
-      IMPORTANT: For EACH separate request from the guest, structure your summary in the following format (repeat for as many requests as needed, do NOT limit the number of requests):
-
-      Room Number: [Extract and display the room number if the guest provides it anywhere in the conversation. If not provided, write "Not specified".]
-      Guest's Name (used for Guest with a confirmed reservation): [Extract and display the guest's name if provided in the conversation. If not provided, write "Not specified".]
-
-      REQUEST 1: [Service Type]
-      • Service Timing: [Requested completion time]
-      • Order Details:
-          • [Item/Service] x [Quantity] - [Special notes]
-          • [Item/Service] x [Quantity] - [Special notes]
-      • Special Requirements: [Guest special request details]
-
-      REQUEST 2: [Other Service Type] (if applicable)
-      • Service Timing: [Requested completion time]
-      • Details:
-          • [Service details]
-      • Special Requirements: [Guest special request details]
-
-      (Continue numbering REQUEST 3, REQUEST 4, etc. for all guest requests, do NOT limit the number of requests.)
-
-      Next Step: Please Press Send To Reception in order to complete your request
-
-      IMPORTANT INSTRUCTIONS:
-      1. Provide the summary only in the guest's original language (English, Russian, Korean, Chinese, or German)
-      2. Be EXTREMELY comprehensive - include EVERY service request mentioned in the conversation
-      3. Format with bullet points and indentation as shown above
-      4. ALWAYS ASK FOR AND INCLUDE ROOM NUMBER - This is the most critical information for every request. If the guest provides a room number anywhere in the conversation, extract and display it in the summary.
-      5. For Guest's Name, if the guest provides their name anywhere in the conversation, extract and display it in the summary.
-      6. If room number or guest name is not mentioned in the conversation, make a clear note that "Not specified".
-      7. For ALL service details, include times, locations, quantities, and any specific requirements
-      8. For Order Details, ALWAYS extract and list each specific item/service, quantity, and any special notes as mentioned by the guest. DO NOT use generic phrases like 'to order' or 'food items'. For example, if the guest requests '2 beef burgers and 1 orange juice', the summary must show:
-          • Beef burger x 2
-          • Orange juice x 1
-      9. End with any required follow-up actions or confirmation needed from staff
-
-      Example conversation:
-      Guest: Hi. My name is Tony. My room is 200. I would like to order 2 beef burgers and 1 orange juice.
-      Assistant: Sure, Tony. 2 beef burgers and 1 orange juice for room 200. Anything else?
-      Guest: No, that's all. Please deliver within 30 minutes.
-
-      Example summary:
-      Room Number: 200
-      Guest's Name (used for Guest with a confirmed reservation): Tony
-      REQUEST 1: Food & Beverage
-      • Service Timing: within 30 minutes
-      • Order Details:
-          • Beef burger x 2
-          • Orange juice x 1
-      • Special Requirements: Not specified
-
-      Conversation transcript:
-      ${conversationText}
-
-      Summary:
-    `;
+    let prompt = '';
+    let systemMessage = '';
+    if (language === 'fr') {
+      systemMessage = "Vous êtes un spécialiste professionnel de la synthèse des services hôteliers qui crée des résumés concis et utiles.";
+      prompt = `Vous êtes un spécialiste de la synthèse des services pour l'hôtel Mi Nhon. Résumez la conversation suivante entre un assistant d'hôtel et un client de manière concise et professionnelle.\n\nIMPORTANT : Pour CHAQUE demande distincte du client, structurez votre résumé comme suit (répétez pour chaque demande, ne limitez PAS le nombre de demandes) :\n\nNuméro de chambre : [Extraire et afficher le numéro de chambre si le client le fournit. Sinon, écrivez \"Non spécifié\".]\nNom du client (utilisé pour les clients avec réservation confirmée) : [Extraire et afficher le nom du client si fourni. Sinon, écrivez \"Non spécifié\".]\n\nDEMANDE 1 : [Type de service]\n• Heure de service : [Heure demandée]\n• Détails de la commande :\n    • [Article/Service] x [Quantité] - [Notes spéciales]\n• Exigences spéciales : [Détails des demandes spéciales du client]\n\n(Continuez avec DEMANDE 2, DEMANDE 3, etc. pour toutes les demandes du client)\n\nÉtape suivante : Veuillez appuyer sur Envoyer à la réception pour compléter votre demande\n\nTRANSCRIPTION DE LA CONVERSATION :\n${conversationText}\n\nRésumé :`;
+    } else if (language === 'ko') {
+      systemMessage = "당신은 간결하고 유용한 요약을 작성하는 호텔 서비스 요약 전문 컨설턴트입니다.";
+      prompt = `당신은 미논 호텔의 서비스 요약 전문가입니다. 아래 호텔 어시스턴트와 고객 간의 대화를 간결하고 전문적으로 요약하세요.\n\n중요: 고객의 각 요청마다 아래 형식으로 요약을 작성하세요 (요청 개수에 제한 없이 반복).\n\n객실 번호: [고객이 대화 중 제공했다면 추출, 없으면 \"미지정\"]\n고객 이름(예약이 확인된 경우): [고객이 제공했다면 추출, 없으면 \"미지정\"]\n\n요청 1: [서비스 유형]\n• 서비스 시간: [요청된 완료 시간]\n• 주문 세부사항:\n    • [항목/서비스] x [수량] - [특이사항]\n• 특별 요구사항: [고객의 특별 요청 사항]\n\n(요청 2, 요청 3 등 모든 요청에 대해 계속 작성)\n\n다음 단계: 요청을 완료하려면 \"접수로 전송\" 버튼을 눌러주세요\n\n대화 내용:\n${conversationText}\n\n요약:`;
+    } else {
+      systemMessage = "You are a professional hotel service summarization specialist who creates concise and useful summaries.";
+      prompt = `You are a hotel service summarization specialist for Mi Nhon Hotel. Summarize the following conversation between a Hotel Assistant and a Guest in a concise, professional manner.\n\nIMPORTANT: For EACH separate request from the guest, structure your summary in the following format (repeat for as many requests as needed, do NOT limit the number of requests):\n\nRoom Number: [Extract and display the room number if the guest provides it anywhere in the conversation. If not provided, write \"Not specified\".]\nGuest's Name (used for Guest with a confirmed reservation): [Extract and display the guest's name if provided in the conversation. If not provided, write \"Not specified\".]\n\nREQUEST 1: [Service Type]\n• Service Timing: [Requested completion time]\n• Order Details:\n    • [Item/Service] x [Quantity] - [Special notes]\n• Special Requirements: [Guest special request details]\n\n(Continue numbering REQUEST 2, REQUEST 3, etc. for all guest requests, do NOT limit the number of requests.)\n\nNext Step: Please Press Send To Reception in order to complete your request\n\nConversation transcript:\n${conversationText}\n\nSummary:`;
+    }
 
     // Call the OpenAI API with GPT-4o
     const options = {
@@ -551,15 +503,15 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
     };
     
     const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      model: "gpt-4o",
       messages: [
-        { role: "system", content: "You are a professional hotel service summarization specialist who creates concise and useful summaries." },
+        { role: "system", content: systemMessage },
         { role: "user", content: prompt }
       ],
-      max_tokens: 800, // Increased tokens limit for comprehensive summaries
-      temperature: 0.5, // More deterministic for consistent summaries
-      presence_penalty: 0.1, // Slight penalty to avoid repetition
-      frequency_penalty: 0.1, // Slight penalty to avoid repetition
+      max_tokens: 800,
+      temperature: 0.5,
+      presence_penalty: 0.1,
+      frequency_penalty: 0.1,
     }, options);
 
     // Return the generated summary

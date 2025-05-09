@@ -68,9 +68,13 @@ function getVapiConfig(language: string) {
   return {
     publicKey: language === 'fr'
       ? process.env.VITE_VAPI_PUBLIC_KEY_FR
+      : language === 'ko'
+      ? process.env.VITE_VAPI_PUBLIC_KEY_KO
       : process.env.VITE_VAPI_PUBLIC_KEY,
     assistantId: language === 'fr'
       ? process.env.VITE_VAPI_ASSISTANT_ID_FR
+      : language === 'ko'
+      ? process.env.VITE_VAPI_ASSISTANT_ID_KO
       : process.env.VITE_VAPI_ASSISTANT_ID,
   };
 }
