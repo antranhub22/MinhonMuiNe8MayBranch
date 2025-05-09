@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import StaffRequestDetailModal from '../components/StaffRequestDetailModal';
 import StaffMessagePopup from '../components/StaffMessagePopup';
+import { useHistory } from 'react-router-dom';
 
 const statusOptions = [
   'Đã ghi nhận',
@@ -28,12 +29,29 @@ const StaffDashboard: React.FC = () => {
   const [showMessagePopup, setShowMessagePopup] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMsg, setLoadingMsg] = useState(false);
+  const history = useHistory();
+
+  // Lấy token từ localStorage
+  const getToken = () => localStorage.getItem('staff_token');
 
   // Fetch requests from API
   useEffect(() => {
     const fetchRequests = async () => {
+      const token = getToken();
+      if (!token) {
+        history.push('/staff'); // Chuyển về login nếu chưa có token
+        return;
+      }
       try {
-        const res = await fetch('/api/staff/requests', { credentials: 'include' });
+        const res = await fetch('/api/staff/requests', {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+        if (res.status === 401) {
+          localStorage.removeItem('staff_token');
+          history.push('/staff');
+          return;
+        }
         const data = await res.json();
         setRequests(data);
       } catch (err) {
@@ -41,6 +59,7 @@ const StaffDashboard: React.FC = () => {
       }
     };
     fetchRequests();
+    // eslint-disable-next-line
   }, []);
 
   // Mở modal chi tiết
@@ -56,10 +75,15 @@ const StaffDashboard: React.FC = () => {
   // Cập nhật trạng thái request
   const handleStatusChange = async (status: string) => {
     if (!selectedRequest) return;
+    const token = getToken();
+    if (!token) return history.push('/staff');
     try {
       await fetch(`/api/staff/requests/${selectedRequest.id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         credentials: 'include',
         body: JSON.stringify({ status })
       });
@@ -73,8 +97,13 @@ const StaffDashboard: React.FC = () => {
   const handleOpenMessage = async () => {
     setShowMessagePopup(true);
     if (!selectedRequest) return;
+    const token = getToken();
+    if (!token) return history.push('/staff');
     try {
-      const res = await fetch(`/api/staff/requests/${selectedRequest.id}/messages`, { credentials: 'include' });
+      const res = await fetch(`/api/staff/requests/${selectedRequest.id}/messages`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
       const data = await res.json();
       setMessages(data);
     } catch (err) {
@@ -86,10 +115,15 @@ const StaffDashboard: React.FC = () => {
   // Gửi tin nhắn
   const handleSendMessage = async (msg: string) => {
     setLoadingMsg(true);
+    const token = getToken();
+    if (!token) return history.push('/staff');
     try {
       await fetch(`/api/staff/requests/${selectedRequest.id}/message`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         credentials: 'include',
         body: JSON.stringify({ content: msg })
       });

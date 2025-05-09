@@ -4,11 +4,11 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-  "dev": "NODE_ENV=development tsx server/index.ts",
-  "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-  "migrate": "drizzle-kit push",
-  "start": "npm run migrate && NODE_ENV=production node dist/index.js",
-  "check": "tsc"
+    "dev": "NODE_ENV=development tsx server/index.ts",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "migrate": "drizzle-kit push",
+    "start": "npm run migrate && NODE_ENV=production node dist/index.js",
+    "check": "tsc"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.37.0",
@@ -48,6 +48,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/nodemailer": "^6.4.17",
+    "@types/react-router-dom": "^5.3.3",
     "@vapi-ai/web": "^2.2.7",
     "bcryptjs": "^3.0.2",
     "chart.js": "^4.4.9",
@@ -83,6 +84,7 @@
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.4.0",
     "react-resizable-panels": "^2.1.4",
+    "react-router-dom": "^6.30.0",
     "recharts": "^2.13.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
