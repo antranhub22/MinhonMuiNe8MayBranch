@@ -50,6 +50,15 @@ const staffList: Staff[] = [
   },
 ];
 
+function parseStaffAccounts(envStr: string | undefined): { username: string, password: string }[] {
+  if (!envStr) return [];
+  return envStr.split(',').map((pair: string) => {
+    const [username, password] = pair.split(':');
+    return { username, password };
+  });
+}
+
+const STAFF_ACCOUNTS = parseStaffAccounts(process.env.STAFF_ACCOUNTS);
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 // Dummy request data
@@ -1032,22 +1041,12 @@ Mi Nhon Hotel Mui Ne`
   });
 
   // Staff login route
-  app.post('/api/staff/login', async (req, res) => {
+  app.post('/api/staff/login', (req, res) => {
     const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Missing username or password' });
-    }
-    const staff = staffList.find(s => s.username === username);
-    if (!staff) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    const valid = await bcrypt.compare(password, staff.passwordHash);
-    if (!valid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    // Tạo JWT token
-    const token = jwt.sign({ id: staff.id, username: staff.username, role: staff.role }, JWT_SECRET, { expiresIn: '8h' });
-    res.json({ token, staff: { id: staff.id, username: staff.username, role: staff.role } });
+    const found = STAFF_ACCOUNTS.find(acc => acc.username === username && acc.password === password);
+    if (!found) return res.status(401).json({ error: 'Invalid credentials' });
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1d' });
+    res.json({ token });
   });
 
   // Lấy danh sách request
