@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import EmailTester from "@/components/EmailTester";
 import { useWebSocket } from '@/hooks/useWebSocket';
 import StaffPage from '@/pages/staff';
+import { BrowserRouter } from 'react-router-dom';
 
 // Lazy-loaded components
 const CallHistory = React.lazy(() => import('@/pages/CallHistory'));
@@ -59,12 +60,14 @@ function App() {
   // Initialize WebSocket globally to keep connection across routes
   useWebSocket();
   return (
-    <AssistantProvider>
-      <ErrorBoundary>
-        <Router />
-        <Toaster />
-      </ErrorBoundary>
-    </AssistantProvider>
+    <BrowserRouter>
+      <AssistantProvider>
+        <ErrorBoundary>
+          <Router />
+          <Toaster />
+        </ErrorBoundary>
+      </AssistantProvider>
+    </BrowserRouter>
   );
 }
 
