@@ -11,7 +11,7 @@ interface Interface1Props {
 
 const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
   const assistant = useAssistant();
-  const { startCall, activeOrders, language, setLanguage } = assistant;
+  const { setCurrentInterface, setTranscripts, setModelOutput, setCallDetails, setCallDuration, setEmailSentForCurrentSession, activeOrders, language, setLanguage } = assistant;
   
   // Track current time for countdown calculations
   const [now, setNow] = useState(new Date());
@@ -20,22 +20,24 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // Hàm gọi cho English
-  const handleCallEnglish = async () => {
-    const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
-    const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
-    const vapi = await initVapi('en');
+  // Hàm dùng chung cho cả English và French
+  const handleCall = async (lang: 'en' | 'fr') => {
+    setEmailSentForCurrentSession(false);
+    setCallDetails({
+      id: `call-${Date.now()}`,
+      roomNumber: '',
+      duration: '0',
+      category: ''
+    });
+    setTranscripts([]);
+    setModelOutput([]);
+    setCallDuration(0);
+    const publicKey = lang === 'fr' ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR : import.meta.env.VITE_VAPI_PUBLIC_KEY;
+    const assistantId = lang === 'fr' ? import.meta.env.VITE_VAPI_ASSISTANT_ID_FR : import.meta.env.VITE_VAPI_ASSISTANT_ID;
+    const vapi = await initVapi(lang);
     if (vapi && assistantId) {
       await vapi.start(assistantId);
-    }
-  };
-  // Hàm gọi cho French
-  const handleCallFrench = async () => {
-    const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_FR;
-    const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_FR;
-    const vapi = await initVapi('fr');
-    if (vapi && assistantId) {
-      await vapi.start(assistantId);
+      setCurrentInterface('interface2');
     }
   };
 
@@ -77,7 +79,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             <button 
               id="vapiButtonFr"
               className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={handleCallFrench}
+              onClick={() => handleCall('fr')}
             >
               <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
               <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
@@ -87,7 +89,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             <button 
               id="vapiButtonEn"
               className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={handleCallEnglish}
+              onClick={() => handleCall('en')}
             >
               <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
               <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
