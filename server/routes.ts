@@ -1051,8 +1051,15 @@ Mi Nhon Hotel Mui Ne`
 
   // Lấy danh sách request
   app.get('/api/staff/requests', verifyJWT, async (req, res) => {
-    const requests = await db.select().from(requestTable);
-    res.json(requests);
+    console.log('API /api/staff/requests called');
+    console.log('Authorization header:', req.headers.authorization);
+    try {
+      const dbRequests = await db.select().from(requestTable);
+      res.json(dbRequests);
+    } catch (err) {
+      console.error('Error in /api/staff/requests:', err);
+      res.status(500).json({ error: 'Internal server error', details: (err as any)?.message });
+    }
   });
 
   // Cập nhật trạng thái request
