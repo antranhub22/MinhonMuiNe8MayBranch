@@ -3,6 +3,7 @@ import { useAssistant } from '@/context/AssistantContext';
 import hotelImage from '../assets/hotel-exterior.jpeg';
 import { t } from '../i18n';
 import { ActiveOrder } from '@/types';
+import { initVapi, getVapiInstance } from '@/lib/vapiClient';
 
 interface Interface1Props {
   isActive: boolean;
@@ -18,6 +19,25 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Hàm gọi cho English
+  const handleCallEnglish = async () => {
+    const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+    const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
+    const vapi = await initVapi('en');
+    if (vapi && assistantId) {
+      await vapi.start(assistantId);
+    }
+  };
+  // Hàm gọi cho French
+  const handleCallFrench = async () => {
+    const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_FR;
+    const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_FR;
+    const vapi = await initVapi('fr');
+    if (vapi && assistantId) {
+      await vapi.start(assistantId);
+    }
+  };
 
   return (
     <div 
@@ -53,16 +73,27 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           <div className="absolute inset-0 rounded-full border-4 border-amber-400 animate-[ripple_1.5s_linear_infinite] pointer-events-none transition-opacity duration-300 group-hover:opacity-80 opacity-60"></div>
           <div className="absolute inset-0 rounded-full border-4 border-amber-400/70 animate-[ripple_2s_linear_infinite] pointer-events-none transition-opacity duration-300 group-hover:opacity-60 opacity-40"></div>
           {/* Main Button */}
-          <button 
-            id="vapiButton" 
-            className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-            onClick={startCall}
-          >
-            <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-            <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
-            {/* Sóng âm khi hover */}
-            <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-          </button>
+          {language === 'fr' ? (
+            <button 
+              id="vapiButtonFr"
+              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
+              onClick={handleCallFrench}
+            >
+              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
+              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
+            </button>
+          ) : (
+            <button 
+              id="vapiButtonEn"
+              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
+              onClick={handleCallEnglish}
+            >
+              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
+              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
+            </button>
+          )}
         </div>
         {/* Services Section */}
         <div className="text-center w-full max-w-5xl">
