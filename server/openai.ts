@@ -93,7 +93,7 @@ export interface ServiceRequest {
  */
 export function generateBasicSummary(transcripts: Array<{role: string, content: string}>): string {
   if (!transcripts || transcripts.length === 0) {
-    return "No conversation to summarize.";
+    return "Nous regrettons de vous informer que votre demande ne contient pas suffisamment d'informations pour nous permettre d'y répondre de manière adéquate. Nous vous invitons à actualiser votre page et à préciser votre requête afin que nous puissions mieux vous accompagner.";
   }
   
   // Split into guest and assistant messages for easier analysis
