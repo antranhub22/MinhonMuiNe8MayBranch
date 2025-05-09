@@ -183,9 +183,25 @@ const Interface3Fr: React.FC<Interface3FrProps> = ({ isActive }) => {
             {callSummary ? (
               <div className="p-3 sm:p-5 bg-white/80 rounded-xl shadow border border-white/30 mb-3 sm:mb-4 relative" style={{ backdropFilter: 'blur(2px)' }}>
                 <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2 text-blue-800">{t('summary', 'fr')}</h3>
-                <p className="text-xs sm:text-base leading-relaxed text-gray-800 whitespace-pre-line" style={{ fontWeight: 400 }}>
-                  {callSummary.content}
-                </p>
+                <div className="text-xs sm:text-base leading-relaxed text-gray-800 whitespace-pre-line" style={{ fontWeight: 400 }}>
+                  {(() => {
+                    const lines = (callSummary.content || '').split('\n');
+                    return lines.map((line, idx) => {
+                      let replaced = line
+                        .replace(/^Room Number:/i, `${t('room_number', 'fr')}:`)
+                        .replace(/^Guest's Name.*:/i, `${t('guest_name', 'fr')}:`)
+                        .replace(/^REQUEST (\d+):/i, (m, n) => `DEMANDE ${n} :`)
+                        .replace(/^• Service Timing:/i, `• Heure de service :`)
+                        .replace(/^• Order Details:/i, `• Détails de la commande :`)
+                        .replace(/^• Special Requirements:/i, `• Exigences spéciales :`)
+                        .replace(/^Next Step:/i, `Étape suivante :`)
+                        .replace(/Not specified/gi, 'Non spécifié')
+                        .replace(/Details:/gi, 'Détails :')
+                        .replace(/Assistance or reservation for golf activity requested/gi, 'Assistance ou réservation pour une activité de golf demandée');
+                      return <div key={idx}>{replaced}</div>;
+                    });
+                  })()}
+                </div>
                 <div className="mt-2 sm:mt-3 flex justify-end">
                   <div className="text-xs text-gray-500">
                     {t('generated_at', 'fr')} {new Date(callSummary.timestamp).toLocaleTimeString()}
