@@ -33,13 +33,17 @@ interface VapiMessage {
   [key: string]: any;
 }
 
-export const initVapi = async (publicKey: string): Promise<Vapi> => {
+export const initVapi = async (language: 'en' | 'fr' = 'en'): Promise<Vapi> => {
+  const PUBLIC_KEY = language === 'fr'
+    ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR
+    : import.meta.env.VITE_VAPI_PUBLIC_KEY;
+
   try {
     if (vapiInstance) {
       return vapiInstance;
     }
 
-    vapiInstance = new Vapi(publicKey);
+    vapiInstance = new Vapi(PUBLIC_KEY);
 
     // Add event listeners
     vapiInstance.on('call-start', () => {

@@ -136,7 +136,10 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const setupVapi = async () => {
       try {
-        const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+        // Lấy publicKey theo ngôn ngữ
+        const publicKey = language === 'fr'
+          ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR
+          : import.meta.env.VITE_VAPI_PUBLIC_KEY;
         if (!publicKey) {
           throw new Error('Vapi public key is not configured');
         }
@@ -289,8 +292,10 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Get assistant ID from environment variable
-      const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
+      // Lấy assistantId theo ngôn ngữ
+      const assistantId = language === 'fr'
+        ? import.meta.env.VITE_VAPI_ASSISTANT_ID_FR
+        : import.meta.env.VITE_VAPI_ASSISTANT_ID;
       if (!assistantId) {
         console.error('Assistant ID not configured');
         return;

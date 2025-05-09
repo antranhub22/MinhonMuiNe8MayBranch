@@ -56,4 +56,24 @@ export async function getCallTranscript(callId: string) {
     console.error('Error getting call transcript:', error);
     throw error;
   }
-} 
+}
+
+// Lấy language từ request (giả sử truyền qua query hoặc body)
+function getLanguage(req: any) {
+  return req.query?.language || req.body?.language || 'en';
+}
+
+// Lấy publicKey và assistantId theo ngôn ngữ
+function getVapiConfig(language: string) {
+  return {
+    publicKey: language === 'fr'
+      ? process.env.VITE_VAPI_PUBLIC_KEY_FR
+      : process.env.VITE_VAPI_PUBLIC_KEY,
+    assistantId: language === 'fr'
+      ? process.env.VITE_VAPI_ASSISTANT_ID_FR
+      : process.env.VITE_VAPI_ASSISTANT_ID,
+  };
+}
+
+// Khi sử dụng:
+// const { publicKey, assistantId } = getVapiConfig(getLanguage(req)); 
