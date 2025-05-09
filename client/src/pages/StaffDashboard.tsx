@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import StaffRequestDetailModal from '../components/StaffRequestDetailModal';
 import StaffMessagePopup from '../components/StaffMessagePopup';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const statusOptions = [
   'Đã ghi nhận',
@@ -29,7 +29,7 @@ const StaffDashboard: React.FC = () => {
   const [showMessagePopup, setShowMessagePopup] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMsg, setLoadingMsg] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // Lấy token từ localStorage
   const getToken = () => localStorage.getItem('staff_token');
@@ -39,7 +39,7 @@ const StaffDashboard: React.FC = () => {
     const fetchRequests = async () => {
       const token = getToken();
       if (!token) {
-        history.push('/staff'); // Chuyển về login nếu chưa có token
+        navigate('/staff'); // Chuyển về login nếu chưa có token
         return;
       }
       try {
@@ -49,7 +49,7 @@ const StaffDashboard: React.FC = () => {
         });
         if (res.status === 401) {
           localStorage.removeItem('staff_token');
-          history.push('/staff');
+          navigate('/staff');
           return;
         }
         const data = await res.json();
@@ -76,7 +76,7 @@ const StaffDashboard: React.FC = () => {
   const handleStatusChange = async (status: string) => {
     if (!selectedRequest) return;
     const token = getToken();
-    if (!token) return history.push('/staff');
+    if (!token) return navigate('/staff');
     try {
       await fetch(`/api/staff/requests/${selectedRequest.id}/status`, {
         method: 'PATCH',
@@ -98,7 +98,7 @@ const StaffDashboard: React.FC = () => {
     setShowMessagePopup(true);
     if (!selectedRequest) return;
     const token = getToken();
-    if (!token) return history.push('/staff');
+    if (!token) return navigate('/staff');
     try {
       const res = await fetch(`/api/staff/requests/${selectedRequest.id}/messages`, {
         headers: { 'Authorization': `Bearer ${token}` },
@@ -116,7 +116,7 @@ const StaffDashboard: React.FC = () => {
   const handleSendMessage = async (msg: string) => {
     setLoadingMsg(true);
     const token = getToken();
-    if (!token) return history.push('/staff');
+    if (!token) return navigate('/staff');
     try {
       await fetch(`/api/staff/requests/${selectedRequest.id}/message`, {
         method: 'POST',
