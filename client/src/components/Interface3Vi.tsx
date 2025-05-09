@@ -20,7 +20,8 @@ const Interface3Vi: React.FC<Interface3ViProps> = ({ isActive }) => {
     emailSentForCurrentSession,
     setEmailSentForCurrentSession,
     callDetails,
-    callDuration
+    callDuration,
+    language
   } = useAssistant();
   
   const [isTranslating, setIsTranslating] = useState<boolean>(false);

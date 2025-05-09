@@ -7,7 +7,7 @@ interface Interface4Props {
 }
 
 const Interface4: React.FC<Interface4Props> = ({ isActive }) => {
-  const { order, setCurrentInterface } = useAssistant();
+  const { order, setCurrentInterface, language } = useAssistant();
   
   const handleReturnHome = () => {
     setCurrentInterface('interface1');
