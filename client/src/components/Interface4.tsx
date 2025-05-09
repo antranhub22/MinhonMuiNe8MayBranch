@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAssistant } from '@/context/AssistantContext';
+import { t } from '@/i18n';
 
 interface Interface4Props {
   isActive: boolean;
@@ -26,15 +27,15 @@ const Interface4: React.FC<Interface4Props> = ({ isActive }) => {
               <span className="material-icons text-white text-4xl sm:text-5xl">check</span>
             </div>
           </div>
-          <h2 className="font-poppins font-bold text-xl sm:text-2xl text-primary mb-2 sm:mb-3">Order Confirmed!</h2>
-          <p className="text-gray-700 mb-4 sm:mb-6 text-sm sm:text-base">Your request has been confirmed and forwarded to our staff. They will process it right away.</p>
+          <h2 className="font-poppins font-bold text-xl sm:text-2xl text-primary mb-2 sm:mb-3">{t('order_confirmed', language)}</h2>
+          <p className="text-gray-700 mb-4 sm:mb-6 text-sm sm:text-base">{t('order_confirmed_message', language)}</p>
           {/* Order Tracking Info */}
           <div className="bg-neutral p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
-            <p className="font-medium text-gray-800 text-sm sm:text-base">Order Reference: <span className="font-bold">{order.reference}</span></p>
+            <p className="font-medium text-gray-800 text-sm sm:text-base">{t('order_reference', language)}: <span className="font-bold">{order.reference}</span></p>
           </div>
           {/* Estimated Time */}
           <div className="mb-4 sm:mb-6">
-            <p className="text-gray-600 text-xs sm:text-sm">Estimated delivery time:</p>
+            <p className="text-gray-600 text-xs sm:text-sm">{t('estimated_delivery_time', language)}</p>
             <p className="font-poppins font-bold text-lg sm:text-xl">{order.estimatedTime}</p>
           </div>
           {/* Return to Home Button */}
@@ -42,7 +43,7 @@ const Interface4: React.FC<Interface4Props> = ({ isActive }) => {
             className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-amber-400 text-primary-dark rounded-lg font-poppins font-medium text-sm sm:text-base"
             onClick={handleReturnHome}
           >
-            Return to Home
+            {t('return_to_home', language)}
           </button>
         </div>
       </div>

@@ -44,8 +44,8 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             <option value="fr">{t('french', language)}</option>
           </select>
         </div>
-        <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">Mi Nhon Hotel Mui Ne Test</h2>
-        <p className="text-xs sm:text-lg lg:text-xl text-center max-w-full mb-4 truncate sm:whitespace-nowrap overflow-x-auto">AI-powered Voice Assistant - Supporting All Your Needs</p>
+        <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">{t('hotel_name', language)}</h2>
+        <p className="text-xs sm:text-lg lg:text-xl text-center max-w-full mb-4 truncate sm:whitespace-nowrap overflow-x-auto">{t('hotel_subtitle', language)}</p>
         
         {/* Main Call Button */}
         <div className="relative mb-4 sm:mb-12 flex items-center justify-center">
@@ -59,7 +59,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             onClick={startCall}
           >
             <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-            <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">Press to Call</span>
+            <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
             {/* Sóng âm khi hover */}
             <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
           </button>
@@ -69,7 +69,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-y-2 md:gap-3 text-left mx-auto w-full">
             {/* Room & Stay */}
             <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">Room & Stay</h4>
+              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('room_and_stay', language)}</h4>
               <ul className="grid grid-cols-5 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">login</span></li>
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">hourglass_empty</span></li>
@@ -80,7 +80,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             </div>
             {/* Room Services */}
             <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">Room Services</h4>
+              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('room_services', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">restaurant</span></li>
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">local_bar</span></li>
@@ -93,7 +93,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             </div>
             {/* Bookings & Facilities */}
             <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">Bookings & Facilities</h4>
+              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('bookings_and_facilities', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">event_seat</span></li>
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">spa</span></li>
@@ -106,7 +106,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             </div>
             {/* Tourism & Exploration */}
             <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">Tourism & Exploration</h4>
+              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('tourism_and_exploration', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">location_on</span></li>
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">local_dining</span></li>
@@ -119,7 +119,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             </div>
             {/* Support */}
             <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">Support to book external services</h4>
+              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('support_external_services', language)}</h4>
               <ul className="grid grid-cols-4 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">translate</span></li>
                 <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">rate_review</span></li>
@@ -140,10 +140,10 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               const secs = (diffSec % 60).toString().padStart(2, '0');
               return (
                 <div key={o.reference} className="bg-white/80 backdrop-blur-sm p-2 sm:p-3 rounded-lg text-gray-800 shadow max-w-xs w-[220px] border border-white/40 flex-shrink-0">
-                  <p className="text-xs sm:text-sm mb-0.5"><strong>Order Ref:</strong> {o.reference}</p>
-                  <p className="text-xs sm:text-sm mb-0.5"><strong>Requested At:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
-                  <p className="text-xs sm:text-sm mb-0.5"><strong>Estimated Completion:</strong> {o.estimatedTime}</p>
-                  <p className="text-xs sm:text-sm"><strong>Time Remaining:</strong> {`${mins}:${secs}`}</p>
+                  <p className="text-xs sm:text-sm mb-0.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
+                  <p className="text-xs sm:text-sm mb-0.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
+                  <p className="text-xs sm:text-sm mb-0.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
+                  <p className="text-xs sm:text-sm"><strong>{t('time_remaining', language)}:</strong> {`${mins}:${secs}`}</p>
                 </div>
               );
             })}
