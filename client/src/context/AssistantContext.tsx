@@ -5,6 +5,8 @@ import { apiRequest } from '@/lib/queryClient';
 import { parseSummaryToOrderDetails } from '@/lib/summaryParser';
 import ReactDOM from 'react-dom';
 
+export type Language = 'en' | 'fr';
+
 interface AssistantContextType {
   currentInterface: InterfaceLayer;
   setCurrentInterface: (layer: InterfaceLayer) => void;
@@ -37,6 +39,8 @@ interface AssistantContextType {
   micLevel: number;
   modelOutput: string[];
   addModelOutput: (output: string) => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
 }
 
 const initialOrderSummary: OrderSummary = {
@@ -101,6 +105,7 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
   });
   const [micLevel, setMicLevel] = useState<number>(0);
   const [modelOutput, setModelOutput] = useState<string[]>([]);
+  const [language, setLanguage] = useState<Language>('en');
 
   // Persist activeOrders to localStorage whenever it changes
   useEffect(() => {
@@ -504,6 +509,8 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
     micLevel,
     modelOutput,
     addModelOutput,
+    language,
+    setLanguage,
   };
 
   return (

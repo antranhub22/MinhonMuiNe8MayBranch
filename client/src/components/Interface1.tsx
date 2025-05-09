@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAssistant } from '@/context/AssistantContext';
 import hotelImage from '../assets/hotel-exterior.jpeg';
+import { t } from '../i18n';
+import { ActiveOrder } from '@/types';
 
 interface Interface1Props {
   isActive: boolean;
 }
 
 const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
-  const { startCall, activeOrders } = useAssistant();
+  const assistant = useAssistant();
+  const { startCall, activeOrders, language, setLanguage } = assistant;
   
   // Track current time for countdown calculations
   const [now, setNow] = useState(new Date());
@@ -29,6 +32,18 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
       }}
     >
       <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto">
+        {/* Language Switcher */}
+        <div className="flex justify-end w-full max-w-2xl mb-2">
+          <label className="mr-2 font-semibold">{t('language', language)}:</label>
+          <select
+            value={language}
+            onChange={e => setLanguage(e.target.value as 'en' | 'fr')}
+            className="rounded px-2 py-1 text-gray-900"
+          >
+            <option value="en">{t('english', language)}</option>
+            <option value="fr">{t('french', language)}</option>
+          </select>
+        </div>
         <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">Mi Nhon Hotel Mui Ne Test</h2>
         <p className="text-xs sm:text-lg lg:text-xl text-center max-w-full mb-4 truncate sm:whitespace-nowrap overflow-x-auto">AI-powered Voice Assistant - Supporting All Your Needs</p>
         
@@ -117,7 +132,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
         {/* Active orders status panels (up to 60 min countdown) */}
         {activeOrders && activeOrders.length > 0 && (
           <div className="flex flex-col items-center gap-y-4 mb-6 w-full px-2 sm:flex-row sm:flex-nowrap sm:gap-x-4 sm:overflow-x-auto sm:justify-start">
-            {activeOrders.map((o) => {
+            {activeOrders.map((o: ActiveOrder) => {
               const deadline = new Date(o.requestedAt.getTime() + 60 * 60 * 1000);
               const diffSec = Math.max(Math.ceil((deadline.getTime() - now.getTime()) / 1000), 0);
               if (diffSec <= 0) return null;

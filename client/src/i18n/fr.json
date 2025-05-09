@@ -1,0 +1,22 @@
+{
+  "welcome": "Bienvenue à Mi Nhon Hotel",
+  "start": "Commencer",
+  "language": "Langue",
+  "english": "Anglais",
+  "french": "Français",
+  "send": "Envoyer",
+  "cancel": "Annuler",
+  "confirm_request": "Confirmer votre demande",
+  "room": "Chambre",
+  "order_id": "ID de commande",
+  "guest_name": "Nom du client",
+  "content": "Contenu",
+  "time": "Heure",
+  "status": "Statut",
+  "action": "Action",
+  "message_guest": "Message au client",
+  "request_management": "Gestion des demandes du personnel",
+  "login": "Connexion",
+  "username": "Nom d'utilisateur",
+  "password": "Mot de passe"
+} 

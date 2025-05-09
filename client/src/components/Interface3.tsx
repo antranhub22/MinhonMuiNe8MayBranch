@@ -4,6 +4,7 @@ import { ServiceRequest } from '@/types';
 import hotelImage from '../assets/hotel-exterior.jpeg';
 import InfographicSteps from './InfographicSteps';
 import { parseSummaryToOrderDetails, extractRoomNumber } from '@/lib/summaryParser';
+import { t } from '@/i18n';
 
 interface Interface3Props {
   isActive: boolean;
@@ -23,7 +24,8 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
     emailSentForCurrentSession,
     setEmailSentForCurrentSession,
     addActiveOrder,
-    translateToVietnamese
+    translateToVietnamese,
+    language
   } = useAssistant();
   
   // Local state for grouping service requests by type
@@ -115,21 +117,21 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
   // Helper function to get readable service name from service type
   const getServiceName = (serviceType: string): string => {
     const typeMap: Record<string, string> = {
-      'room-service': 'Room Service',
-      'housekeeping': 'Housekeeping',
-      'wake-up': 'Wake-up Call',
-      'amenities': 'Additional Amenities',
-      'restaurant': 'Restaurant Reservation',
-      'spa': 'Spa Appointment',
-      'transportation': 'Transportation',
-      'attractions': 'Local Attractions',
-      'tours-activities': 'Tours & Activities',
-      'technical-support': 'Technical Support',
-      'concierge': 'Concierge Services',
-      'wellness-fitness': 'Wellness & Fitness',
-      'security': 'Security Assistance',
-      'special-occasions': 'Special Occasion',
-      'other': 'Other Service'
+      'room-service': t('room_service', language),
+      'housekeeping': t('housekeeping', language),
+      'wake-up': t('wake_up_call', language),
+      'amenities': t('additional_amenities', language),
+      'restaurant': t('restaurant_reservation', language),
+      'spa': t('spa_appointment', language),
+      'transportation': t('transportation', language),
+      'attractions': t('local_attractions', language),
+      'tours-activities': t('tours_activities', language),
+      'technical-support': t('technical_support', language),
+      'concierge': t('concierge_services', language),
+      'wellness-fitness': t('wellness_fitness', language),
+      'security': t('security_assistance', language),
+      'special-occasions': t('special_occasion', language),
+      'other': t('other_service', language)
     };
     
     return typeMap[serviceType] || serviceType.split('-')
@@ -444,7 +446,7 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
       <div className="container mx-auto flex flex-col p-2 sm:p-4 md:p-8">
         <div className="mx-auto w-full max-w-4xl bg-white/90 rounded-2xl shadow-xl p-3 sm:p-6 md:p-10 mb-4 sm:mb-6 flex-grow border border-white/40 backdrop-blur-md" style={{minHeight: 420}}>
           <div className="mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-gray-200">
-            <p className="font-poppins font-bold text-xl sm:text-2xl text-blue-900 tracking-wide">REVIEW & CONFIRM</p>
+            <p className="font-poppins font-bold text-xl sm:text-2xl text-blue-900 tracking-wide">{t('order_summary', language)}</p>
           </div>
           <div className="flex flex-col md:flex-row gap-4 sm:gap-10 md:gap-16">
             {/* Left column: summary, notes, room number */}
@@ -452,7 +454,7 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
               {/* Mobile: Cancel và Send to Reception lên trên cùng */}
               <div className="flex sm:hidden flex-row w-full gap-2 mb-2">
                 <button className="flex-1 flex items-center justify-center px-2 py-1.5 bg-white/80 hover:bg-blue-100 text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors" onClick={() => setCurrentInterface('interface1')}>
-                  <span className="material-icons text-base mr-1">cancel</span>Cancel
+                  <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
                 </button>
                 <button
                   onClick={handleConfirmOrder}
@@ -460,28 +462,28 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                   style={{letterSpacing:0.5}}
                 >
                   <span className="material-icons">send</span>
-                  <span className="whitespace-nowrap">Send To Reception</span>
+                  <span className="whitespace-nowrap">{t('send_to_reception', language)}</span>
                 </button>
               </div>
               {/* Mobile: Add Note, Room, Vietnamese, textarea lên trên summary */}
               <div className="flex flex-col gap-2 mb-2 sm:hidden">
                 <div className="flex flex-row w-full gap-2">
-                  <button className="h-10 px-3 bg-[#ffe082] hover:bg-[#ffe9b3] text-blue-900 rounded-full text-xs font-semibold shadow transition-colors flex-1" onClick={handleAddNote} disabled={!note.trim()}>Add Note</button>
+                  <button className="h-10 px-3 bg-[#ffe082] hover:bg-[#ffe9b3] text-blue-900 rounded-full text-xs font-semibold shadow transition-colors flex-1" onClick={handleAddNote} disabled={!note.trim()}>{t('add_note', language)}</button>
                   <div className="flex items-center space-x-2 w-full justify-center">
-                    <label className="text-xs text-gray-600 font-medium">Room</label>
-                    <input type="text" placeholder="Auto-filled from conversation (or type here)" className="w-16 p-2 border border-white/30 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-[#d4af37] bg-white/70 text-gray-900 font-semibold text-xs" value={orderSummary.roomNumber} onChange={(e) => handleInputChange('roomNumber', e.target.value)} />
+                    <label className="text-xs text-gray-600 font-medium">{t('room_number', language)}</label>
+                    <input type="text" placeholder={t('enter_room_number', language)} className="w-16 p-2 border border-white/30 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-[#d4af37] bg-white/70 text-gray-900 font-semibold text-xs" value={orderSummary.roomNumber} onChange={(e) => handleInputChange('roomNumber', e.target.value)} />
                   </div>
                   <button className="h-10 px-3 bg-white/70 text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow flex items-center justify-center" onClick={() => setCurrentInterface('interface3vi')}>
                     <span className="material-icons text-base">language</span>
                   </button>
                 </div>
-                <textarea placeholder="Enter any corrections or additional Information & Press Add Note to update into the Conversation Summary" className="w-full p-2 border border-white/30 rounded-xl text-xs bg-white/60 focus:bg-white/90 focus:ring-2 focus:ring-[#d4af37] transition italic font-light text-gray-500" value={note} onChange={(e) => setNote(e.target.value)} rows={3} style={{fontFamily:'inherit'}} />
+                <textarea placeholder={t('enter_notes', language)} className="w-full p-2 border border-white/30 rounded-xl text-xs bg-white/60 focus:bg-white/90 focus:ring-2 focus:ring-[#d4af37] transition italic font-light text-gray-500" value={note} onChange={(e) => setNote(e.target.value)} rows={3} style={{fontFamily:'inherit'}} />
               </div>
               {/* AI-generated Call Summary Container */}
               {callSummary && (
                 <div id="summary-container" className="mb-3 sm:mb-4">
                   <div className="p-3 sm:p-5 bg-white/80 rounded-xl shadow border border-white/30 mb-3 sm:mb-4 relative" style={{backdropFilter:'blur(2px)'}}>
-                    <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2 text-blue-800">Summary</h3>
+                    <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2 text-blue-800">{t('summary', language)}</h3>
                     <div className="text-sm sm:text-base leading-relaxed text-gray-800 whitespace-pre-line" style={{fontWeight: 400}}>
                       {/* Custom summary formatting */}
                       {(() => {
@@ -508,7 +510,7 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                     </div>
                     <div className="mt-2 sm:mt-3 flex justify-end">
                       <div className="text-xs text-gray-500">
-                        Generated at {new Date(callSummary.timestamp).toLocaleTimeString()}
+                        {t('generated_at', language)} {new Date(callSummary.timestamp).toLocaleTimeString()}
                       </div>
                     </div>
                   </div>
@@ -516,22 +518,22 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
               )}
               {/* Desktop: Additional Notes, Room Number, and Actions (giữ nguyên) */}
               <div className="hidden sm:flex flex-row items-center gap-2 h-10">
-                <button className="h-10 px-3 sm:px-4 bg-[#ffe082] hover:bg-[#ffe9b3] text-blue-900 rounded-full text-xs sm:text-sm font-semibold shadow transition-colors" onClick={handleAddNote} disabled={!note.trim()}>Add Note</button>
+                <button className="h-10 px-3 sm:px-4 bg-[#ffe082] hover:bg-[#ffe9b3] text-blue-900 rounded-full text-xs sm:text-sm font-semibold shadow transition-colors" onClick={handleAddNote} disabled={!note.trim()}>{t('add_note', language)}</button>
                 <div className="flex items-center space-x-2 w-full justify-center">
-                  <label className="text-xs sm:text-base text-gray-600 font-medium">Room</label>
-                  <input type="text" placeholder="Auto-filled from conversation (or type here)" className="w-16 sm:w-32 p-2 border border-white/30 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-[#d4af37] bg-white/70 text-gray-900 font-semibold text-xs sm:text-base" value={orderSummary.roomNumber} onChange={(e) => handleInputChange('roomNumber', e.target.value)} />
+                  <label className="text-xs sm:text-base text-gray-600 font-medium">{t('room_number', language)}</label>
+                  <input type="text" placeholder={t('enter_room_number', language)} className="w-16 sm:w-32 p-2 border border-white/30 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-[#d4af37] bg-white/70 text-gray-900 font-semibold text-xs sm:text-base" value={orderSummary.roomNumber} onChange={(e) => handleInputChange('roomNumber', e.target.value)} />
                 </div>
                 <button className="h-10 px-3 sm:px-4 bg-white/70 text-blue-900 rounded-full text-xs sm:text-sm font-semibold border border-white/30 shadow flex items-center justify-center" onClick={() => setCurrentInterface('interface3vi')}>
                   <span className="material-icons text-base">language</span>
                 </button>
               </div>
-              <textarea placeholder="Enter any corrections or additional Information & Press Add Note to update into the Conversation Summary" className="hidden sm:block w-full p-2 sm:p-3 border border-white/30 rounded-xl mb-3 sm:mb-4 text-xs sm:text-sm bg-white/60 focus:bg-white/90 focus:ring-2 focus:ring-[#d4af37] transition italic font-light text-gray-500" value={note} onChange={(e) => setNote(e.target.value)} rows={3} style={{fontFamily:'inherit'}} />
+              <textarea placeholder={t('enter_notes', language)} className="hidden sm:block w-full p-2 sm:p-3 border border-white/30 rounded-xl mb-3 sm:mb-4 text-xs sm:text-sm bg-white/60 focus:bg-white/90 focus:ring-2 focus:ring-[#d4af37] transition italic font-light text-gray-500" value={note} onChange={(e) => setNote(e.target.value)} rows={3} style={{fontFamily:'inherit'}} />
             </div>
             {/* Right column: control buttons at top-right (ẩn trên mobile) */}
             <div className="md:w-1/4 w-full hidden sm:flex md:justify-end justify-center">
               <div className="flex flex-col items-end space-y-2 sm:space-y-3 w-full md:w-auto">
                 <button className="w-full md:w-auto flex items-center justify-center px-2 sm:px-3 py-1.5 bg-white/80 hover:bg-blue-100 text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors" onClick={() => setCurrentInterface('interface1')}>
-                  <span className="material-icons text-base mr-1">cancel</span>Cancel
+                  <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
                 </button>
                 <button
                   onClick={handleConfirmOrder}
@@ -539,7 +541,7 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                   style={{letterSpacing:0.5}}
                 >
                   <span className="material-icons">send</span>
-                  <span className="whitespace-nowrap">Send To Reception</span>
+                  <span className="whitespace-nowrap">{t('send_to_reception', language)}</span>
                 </button>
               </div>
             </div>

@@ -4,6 +4,7 @@ import Reference from './Reference';
 import SiriCallButton from './SiriCallButton';
 import { referenceService, ReferenceItem } from '@/services/ReferenceService';
 import InfographicSteps from './InfographicSteps';
+import { t } from '@/i18n';
 
 interface Interface2Props {
   isActive: boolean;
@@ -36,7 +37,8 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
     toggleMute,
     setCurrentInterface,
     micLevel,
-    modelOutput
+    modelOutput,
+    language
   } = useAssistant();
   
   // State cho Paint-on effect
@@ -173,7 +175,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
   const handleNext = useCallback(() => {
     // Nếu chưa có hội thoại thì không cho xác nhận
     if (!transcripts || transcripts.length === 0) {
-      alert('Bạn cần trao đổi với trợ lý trước khi xác nhận yêu cầu!');
+      alert(t('need_conversation', language));
       return;
     }
     // Capture the current duration for the email
@@ -182,7 +184,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
     // Call the context's endCall and switch to interface3
     contextEndCall();
     setCurrentInterface('interface3');
-  }, [callDuration, localDuration, contextEndCall, setCurrentInterface, transcripts]);
+  }, [callDuration, localDuration, contextEndCall, setCurrentInterface, transcripts, language]);
   
   // Format duration for display
   const formatDuration = (seconds: number) => {
@@ -249,7 +251,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               {/* Nút Mute bên trái */}
               <button
                 className="flex items-center justify-center transition-colors"
-                title={isMuted ? 'Unmute' : 'Mute'}
+                title={isMuted ? t('unmute', language) : t('mute', language)}
                 onClick={toggleMute}
                 style={{fontSize: 22, padding: 0, background: 'none', border: 'none', color: '#d4af37', width: 28, height: 28}}
                 onMouseOver={e => (e.currentTarget.style.color = '#ffd700')}
@@ -264,7 +266,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
                 className="flex items-center justify-center px-2 py-1 bg-white/80 hover:bg-blue-100 text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors sm:hidden"
                 style={{fontFamily:'inherit', letterSpacing:0.2}}
               >
-                <span className="material-icons text-base mr-1">cancel</span>Cancel
+                <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
               </button>
               {/* Duration ở giữa, luôn căn giữa */}
               <div className="flex-1 flex justify-center">
@@ -274,13 +276,12 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               </div>
               {/* Nút Confirm (chỉ mobile) */}
               <button
-                id="endCallButton"
+                id="confirmButton"
                 onClick={handleNext}
-                className="flex items-center justify-center bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 font-bold py-1 px-2 rounded-full shadow-lg transition-colors border border-white/30 text-xs sm:hidden"
-                style={{fontFamily:'inherit', letterSpacing:0.5}}
+                className="flex items-center justify-center px-2 py-1 bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors sm:hidden"
+                style={{fontFamily:'inherit', letterSpacing:0.2}}
               >
-                <span className="material-icons">send</span>
-                <span className="whitespace-nowrap ml-1">Confirm</span>
+                <span className="material-icons text-base mr-1">send</span>{t('confirm', language)}
               </button>
               {/* Nút MicLevel bên phải */}
               <button
@@ -346,7 +347,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               <div className="w-full flex flex-col gap-1 pr-2" style={{overflowY: 'auto', maxHeight: '28vh'}}>
                 {conversationTurns.length === 0 && (
                   <div className="text-gray-400 text-base text-center select-none" style={{opacity: 0.7}}>
-                    Tap to speak or start a conversation...
+                    {t('tap_to_speak', language)}
                   </div>
                 )}
                 {[...conversationTurns].reverse().map((turn, turnIdx) => (
@@ -413,7 +414,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
         {/* Right: Control buttons */}
         <div className="w-1/4 lg:w-1/3 flex-col items-center lg:items-end p-2 space-y-4 overflow-auto hidden sm:flex" style={{ maxHeight: '100%' }}>
           <button id="cancelButton" onClick={handleCancel} className="w-full md:w-auto flex items-center justify-center px-2 sm:px-3 py-1.5 bg-white/80 hover:bg-blue-100 text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors mb-2" style={{fontFamily:'inherit', letterSpacing:0.2}}>
-            <span className="material-icons text-base mr-1">cancel</span>Cancel
+            <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
           </button>
           <button
             id="endCallButton"
@@ -422,7 +423,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
             style={{fontFamily:'inherit', letterSpacing:0.5}}
           >
             <span className="material-icons">send</span>
-            <span className="whitespace-nowrap">Confirm Your Request</span>
+            <span className="whitespace-nowrap">{t('confirm_request', language)}</span>
           </button>
         </div>
       </div>

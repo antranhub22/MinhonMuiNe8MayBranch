@@ -1,3 +1,5 @@
+export type Language = 'en' | 'fr';
+
 export interface Transcript {
   id: number;
   callId: string;
@@ -67,12 +69,10 @@ export interface CallDetails {
 export type InterfaceLayer = 'interface1' | 'interface2' | 'interface3' | 'interface3vi' | 'interface4';
 
 export interface AssistantContextType {
-  activeOrders: ActiveOrder[];
-  addActiveOrder: (order: ActiveOrder) => void;
   currentInterface: InterfaceLayer;
   setCurrentInterface: (layer: InterfaceLayer) => void;
   transcripts: Transcript[];
-  addTranscript: (transcript: Omit<Transcript, 'id' | 'timestamp' | 'callId'>) => void;
+  addTranscript: (transcript: Omit<Transcript, 'id' | 'timestamp'>) => void;
   orderSummary: OrderSummary | null;
   setOrderSummary: (summary: OrderSummary) => void;
   callDetails: CallDetails | null;
@@ -94,7 +94,14 @@ export interface AssistantContextType {
   emailSentForCurrentSession: boolean;
   setEmailSentForCurrentSession: (sent: boolean) => void;
   requestReceivedAt: Date | null;
-  setRequestReceivedAt: (date: Date) => void;
+  setRequestReceivedAt: (date: Date | null) => void;
+  activeOrders: ActiveOrder[];
+  addActiveOrder: (order: ActiveOrder) => void;
+  micLevel: number;
+  modelOutput: string[];
+  addModelOutput: (output: string) => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
 }
 
 // Represents an order item in the status panel
