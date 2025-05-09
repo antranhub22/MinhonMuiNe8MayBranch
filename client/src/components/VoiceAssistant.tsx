@@ -12,7 +12,7 @@ import { History } from 'lucide-react';
 import InfographicSteps from './InfographicSteps';
 
 const VoiceAssistant: React.FC = () => {
-  const { currentInterface } = useAssistant();
+  const { currentInterface, language } = useAssistant();
   
   // Initialize WebSocket connection
   useWebSocket();
