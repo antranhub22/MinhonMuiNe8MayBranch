@@ -4,6 +4,8 @@ import hotelImage from '../assets/hotel-exterior.jpeg';
 import { t } from '../i18n';
 import { ActiveOrder } from '@/types';
 import { initVapi, getVapiInstance } from '@/lib/vapiClient';
+import { FaGlobeAsia } from 'react-icons/fa';
+import { FiChevronDown } from 'react-icons/fi';
 
 interface Interface1Props {
   isActive: boolean;
@@ -66,20 +68,27 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
       }}
     >
       <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto">
-        {/* Language Switcher */}
-        <div className="flex justify-end w-full max-w-2xl mb-2">
-          <label className="mr-2 font-semibold">{t('language', language)}:</label>
-          <select
-            value={language}
-            onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru' | 'ko')}
-            className="rounded px-2 py-1 text-gray-900"
-          >
-            <option value="en">{t('english', language)}</option>
-            <option value="fr">{t('french', language)}</option>
-            <option value="zh">中文</option>
-            <option value="ru">Русский</option>
-            <option value="ko">한국어</option>
-          </select>
+        {/* Language Switcher cải tiến */}
+        <div className="flex items-center justify-end w-full max-w-2xl mb-2" style={{position:'absolute', top:24, right:32, zIndex:10}}>
+          <div className="flex items-center bg-gradient-to-r from-[#3F51B5] to-[#E3F2FD] rounded-xl shadow-lg px-3 py-1.5 gap-2" style={{borderRadius:8, minWidth:180}}>
+            <FaGlobeAsia className="text-[#F9BF3B] text-xl mr-1 drop-shadow" />
+            <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap">{t('language', language)}:</label>
+            <div className="relative flex-1">
+              <select
+                value={language}
+                onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru' | 'ko')}
+                className="appearance-none w-full rounded-lg pl-8 pr-6 py-1.5 font-sans text-blue-900 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#3F51B5] transition-all duration-200 shadow-sm"
+                style={{fontWeight:600, background:'transparent'}}
+              >
+                <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="zh">🇨🇳 中文</option>
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="ko">🇰🇷 한국어</option>
+              </select>
+              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-[#3F51B5] pointer-events-none text-lg" />
+            </div>
+          </div>
         </div>
         <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">{t('hotel_name', language)}</h2>
         <p className="text-xs sm:text-lg lg:text-xl text-center max-w-full mb-4 truncate sm:whitespace-nowrap overflow-x-auto">{t('hotel_subtitle', language)}</p>
