@@ -34,7 +34,7 @@ interface VapiMessage {
 }
 
 export const initVapi = async (language: 'en' | 'fr' | 'zh' | 'ru' = 'en'): Promise<Vapi> => {
-  const PUBLIC_KEY = language === 'fr'
+  const publicKey = language === 'fr'
     ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR
     : language === 'zh'
     ? import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH
@@ -55,7 +55,7 @@ export const initVapi = async (language: 'en' | 'fr' | 'zh' | 'ru' = 'en'): Prom
       return vapiInstance;
     }
 
-    vapiInstance = new Vapi(PUBLIC_KEY);
+    vapiInstance = new Vapi(publicKey);
 
     // Add event listeners
     vapiInstance.on('call-start', () => {
