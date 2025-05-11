@@ -65,12 +65,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           <label className="mr-2 font-semibold">{t('language', language)}:</label>
           <select
             value={language}
-            onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh')}
+            onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru')}
             className="rounded px-2 py-1 text-gray-900"
           >
             <option value="en">{t('english', language)}</option>
             <option value="fr">{t('french', language)}</option>
             <option value="zh">中文</option>
+            <option value="ru">Русский</option>
           </select>
         </div>
         <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">{t('hotel_name', language)}</h2>
