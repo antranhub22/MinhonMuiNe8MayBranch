@@ -11,7 +11,7 @@ interface Interface1Props {
 
 const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
   const assistant = useAssistant();
-  const { setCurrentInterface, setTranscripts, setModelOutput, setCallDetails, setCallDuration, setEmailSentForCurrentSession, activeOrders, language, setLanguage } = assistant;
+  const { setCurrentInterface, language, setLanguage, activeOrders, setCallDetails, setTranscripts, setModelOutput, setCallDuration, setEmailSentForCurrentSession } = assistant as any;
   
   // Track current time for countdown calculations
   const [now, setNow] = useState(new Date());
@@ -21,7 +21,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
   }, []);
 
   // Hàm dùng chung cho cả English và French
-  const handleCall = async (lang: 'en' | 'fr' | 'ko') => {
+  const handleCall = async (lang: 'en' | 'fr' | 'zh' | 'ru') => {
     setEmailSentForCurrentSession(false);
     setCallDetails({
       id: `call-${Date.now()}`,
@@ -32,9 +32,21 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     setTranscripts([]);
     setModelOutput([]);
     setCallDuration(0);
-    const publicKey = lang === 'fr' ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR : lang === 'ko' ? import.meta.env.VITE_VAPI_PUBLIC_KEY_KO : import.meta.env.VITE_VAPI_PUBLIC_KEY;
-    const assistantId = lang === 'fr' ? import.meta.env.VITE_VAPI_ASSISTANT_ID_FR : lang === 'ko' ? import.meta.env.VITE_VAPI_ASSISTANT_ID_KO : import.meta.env.VITE_VAPI_ASSISTANT_ID;
-    const vapi = await initVapi(lang);
+    let publicKey, assistantId;
+    if (lang === 'fr') {
+      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_FR;
+      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_FR;
+    } else if (lang === 'zh') {
+      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH;
+      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_ZH;
+    } else if (lang === 'ru') {
+      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_RU;
+      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_RU;
+    } else {
+      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
+    }
+    const vapi = await initVapi(lang as 'en' | 'fr' | 'zh' | 'ru');
     if (vapi && assistantId) {
       await vapi.start(assistantId);
       setCurrentInterface('interface2');
@@ -59,12 +71,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           <label className="mr-2 font-semibold">{t('language', language)}:</label>
           <select
             value={language}
-            onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'ko')}
+            onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru')}
             className="rounded px-2 py-1 text-gray-900"
           >
             <option value="en">{t('english', language)}</option>
             <option value="fr">{t('french', language)}</option>
-            <option value="ko">{t('korean', language)}</option>
+            <option value="zh">中文</option>
+            <option value="ru">Русский</option>
           </select>
         </div>
         <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">{t('hotel_name', language)}</h2>
@@ -86,26 +99,36 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               <span className="text-sm sm:text-base lg:text-lg font-bold whitespace-normal px-2 text-center leading-tight">{t('press_to_call', language)}</span>
               <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
             </button>
-          ) : language === 'ko' ? (
+          ) : language === 'zh' ? (
             <button 
-              id="vapiButtonKo"
+              id="vapiButtonZh"
               className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('ko')}
+              onClick={() => handleCall('zh')}
             >
               <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-sm sm:text-base lg:text-lg font-bold whitespace-normal px-2 text-center leading-tight">{t('press_to_call', language)}</span>
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
+              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
+            </button>
+          ) : language === 'ru' ? (
+            <button 
+              id="vapiButtonRu"
+              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
+              onClick={() => handleCall('ru')}
+            >
+              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
               <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
             </button>
           ) : (
-          <button 
+            <button 
               id="vapiButtonEn"
-            className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
+              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
               onClick={() => handleCall('en')}
-          >
-            <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
+            >
+              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
               <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
-            <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-          </button>
+              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
+            </button>
           )}
         </div>
         {/* Services Section */}
