@@ -33,29 +33,17 @@ interface VapiMessage {
   [key: string]: any;
 }
 
-export const initVapi = async (language: 'en' | 'fr' | 'zh' | 'ru' = 'en'): Promise<Vapi> => {
-  const publicKey = language === 'fr'
+export const initVapi = async (language: 'en' | 'fr' = 'en'): Promise<Vapi> => {
+  const PUBLIC_KEY = language === 'fr'
     ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR
-    : language === 'zh'
-    ? import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH
-    : language === 'ru'
-    ? import.meta.env.VITE_VAPI_PUBLIC_KEY_RU
     : import.meta.env.VITE_VAPI_PUBLIC_KEY;
-
-  const assistantId = language === 'fr'
-    ? import.meta.env.VITE_VAPI_ASSISTANT_ID_FR
-    : language === 'zh'
-    ? import.meta.env.VITE_VAPI_ASSISTANT_ID_ZH
-    : language === 'ru'
-    ? import.meta.env.VITE_VAPI_ASSISTANT_ID_RU
-    : import.meta.env.VITE_VAPI_ASSISTANT_ID;
 
   try {
     if (vapiInstance) {
       return vapiInstance;
     }
 
-    vapiInstance = new Vapi(publicKey);
+    vapiInstance = new Vapi(PUBLIC_KEY);
 
     // Add event listeners
     vapiInstance.on('call-start', () => {

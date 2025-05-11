@@ -1,4 +1,4 @@
-export type Language = 'en' | 'fr' | 'zh' | 'ru';
+export type Language = 'en' | 'fr' | 'zh';
 
 export interface Transcript {
   id: number;
@@ -72,6 +72,7 @@ export interface AssistantContextType {
   currentInterface: InterfaceLayer;
   setCurrentInterface: (layer: InterfaceLayer) => void;
   transcripts: Transcript[];
+  setTranscripts: (transcripts: Transcript[]) => void;
   addTranscript: (transcript: Omit<Transcript, 'id' | 'timestamp'>) => void;
   orderSummary: OrderSummary | null;
   setOrderSummary: (summary: OrderSummary) => void;
@@ -80,6 +81,7 @@ export interface AssistantContextType {
   order: Order | null;
   setOrder: (order: Order) => void;
   callDuration: number;
+  setCallDuration: (duration: number) => void;
   isMuted: boolean;
   toggleMute: () => void;
   startCall: () => Promise<void>;
@@ -99,6 +101,7 @@ export interface AssistantContextType {
   addActiveOrder: (order: ActiveOrder) => void;
   micLevel: number;
   modelOutput: string[];
+  setModelOutput: (output: string[]) => void;
   addModelOutput: (output: string) => void;
   language: Language;
   setLanguage: (lang: Language) => void;

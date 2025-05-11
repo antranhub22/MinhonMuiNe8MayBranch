@@ -5,12 +5,13 @@ import { apiRequest } from '@/lib/queryClient';
 import { parseSummaryToOrderDetails } from '@/lib/summaryParser';
 import ReactDOM from 'react-dom';
 
-export type Language = 'en' | 'fr' | 'zh' | 'ru';
+export type Language = 'en' | 'fr' | 'zh';
 
 interface AssistantContextType {
   currentInterface: InterfaceLayer;
   setCurrentInterface: (layer: InterfaceLayer) => void;
   transcripts: Transcript[];
+  setTranscripts: (transcripts: Transcript[]) => void;
   addTranscript: (transcript: Omit<Transcript, 'id' | 'timestamp'>) => void;
   orderSummary: OrderSummary | null;
   setOrderSummary: (summary: OrderSummary) => void;
@@ -19,6 +20,7 @@ interface AssistantContextType {
   order: Order | null;
   setOrder: (order: Order) => void;
   callDuration: number;
+  setCallDuration: (duration: number) => void;
   isMuted: boolean;
   toggleMute: () => void;
   startCall: () => Promise<void>;
@@ -38,12 +40,10 @@ interface AssistantContextType {
   addActiveOrder: (order: ActiveOrder) => void;
   micLevel: number;
   modelOutput: string[];
+  setModelOutput: (output: string[]) => void;
   addModelOutput: (output: string) => void;
   language: Language;
   setLanguage: (lang: Language) => void;
-  setTranscripts: (transcripts: Transcript[]) => void;
-  setModelOutput: (output: string[]) => void;
-  setCallDuration: (duration: number) => void;
 }
 
 const initialOrderSummary: OrderSummary = {
@@ -143,10 +143,8 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
         const publicKey = language === 'fr'
           ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR
           : language === 'zh'
-          ? import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH
-          : language === 'ru'
-          ? import.meta.env.VITE_VAPI_PUBLIC_KEY_RU
-          : import.meta.env.VITE_VAPI_PUBLIC_KEY;
+            ? import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH
+            : import.meta.env.VITE_VAPI_PUBLIC_KEY;
         if (!publicKey) {
           throw new Error('Vapi public key is not configured');
         }
@@ -226,7 +224,7 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
         vapi.stop();
       }
     };
-  }, [language]);
+  }, []);
 
   useEffect(() => {
     if (currentInterface === 'interface2') {
@@ -303,10 +301,8 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
       const assistantId = language === 'fr'
         ? import.meta.env.VITE_VAPI_ASSISTANT_ID_FR
         : language === 'zh'
-        ? import.meta.env.VITE_VAPI_ASSISTANT_ID_ZH
-        : language === 'ru'
-        ? import.meta.env.VITE_VAPI_ASSISTANT_ID_RU
-        : import.meta.env.VITE_VAPI_ASSISTANT_ID;
+          ? import.meta.env.VITE_VAPI_ASSISTANT_ID_ZH
+          : import.meta.env.VITE_VAPI_ASSISTANT_ID;
       if (!assistantId) {
         console.error('Assistant ID not configured');
         return;
@@ -497,8 +493,8 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
     currentInterface,
     setCurrentInterface,
     transcripts,
-    addTranscript,
     setTranscripts,
+    addTranscript,
     orderSummary,
     setOrderSummary,
     callDetails,
@@ -526,53 +522,14 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
     addActiveOrder,
     micLevel,
     modelOutput,
-    addModelOutput,
     setModelOutput,
+    addModelOutput,
     language,
-    setLanguage
+    setLanguage,
   };
 
   return (
-    <AssistantContext.Provider
-      value={{
-        currentInterface,
-        setCurrentInterface,
-        transcripts,
-        addTranscript,
-        setTranscripts,
-        orderSummary,
-        setOrderSummary,
-        callDetails,
-        setCallDetails,
-        order,
-        setOrder,
-        callDuration,
-        setCallDuration,
-        isMuted,
-        toggleMute,
-        startCall,
-        endCall,
-        callSummary,
-        setCallSummary,
-        serviceRequests,
-        setServiceRequests,
-        vietnameseSummary,
-        setVietnameseSummary,
-        translateToVietnamese,
-        emailSentForCurrentSession,
-        setEmailSentForCurrentSession,
-        requestReceivedAt,
-        setRequestReceivedAt,
-        activeOrders,
-        addActiveOrder,
-        micLevel,
-        modelOutput,
-        addModelOutput,
-        setModelOutput,
-        language,
-        setLanguage
-      }}
-    >
+    <AssistantContext.Provider value={value}>
       {children}
     </AssistantContext.Provider>
   );

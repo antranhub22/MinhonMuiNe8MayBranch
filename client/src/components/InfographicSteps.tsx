@@ -14,23 +14,23 @@ export default function InfographicSteps({ currentStep = 1, compact = false, hor
   const { language: contextLanguage } = useAssistant ? useAssistant() : { language: 'en' };
   const language: Lang = (propLanguage || contextLanguage || 'en') as Lang;
 
-  const steps = [
-    {
-      icon: 'call',
+const steps = [
+  {
+    icon: 'call',
       title: t('press_to_call', language),
       desc: t('press_to_call_desc', language),
-    },
-    {
-      icon: 'check_circle',
+  },
+  {
+    icon: 'check_circle',
       title: t('confirm_request', language),
       desc: t('confirm_request_desc', language),
-    },
-    {
-      icon: 'mail',
+  },
+  {
+    icon: 'mail',
       title: t('send_to_reception', language),
       desc: t('send_to_reception_desc', language),
-    },
-  ];
+  },
+];
 
   if (horizontal) {
     return (

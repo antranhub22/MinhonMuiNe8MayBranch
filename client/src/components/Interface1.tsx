@@ -10,8 +10,7 @@ interface Interface1Props {
 }
 
 const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
-  const assistant = useAssistant();
-  const { setCurrentInterface, setTranscripts, setModelOutput, setCallDetails, setCallDuration, setEmailSentForCurrentSession, activeOrders, language, setLanguage } = assistant;
+  const { setCurrentInterface, setTranscripts, setModelOutput, setCallDetails, setCallDuration, setEmailSentForCurrentSession, activeOrders, language, setLanguage } = useAssistant();
   
   // Track current time for countdown calculations
   const [now, setNow] = useState(new Date());
@@ -20,8 +19,8 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // Hàm dùng chung cho cả English và French
-  const handleCall = async (lang: 'en' | 'fr' | 'zh' | 'ru') => {
+  // Hàm dùng chung cho cả English, French, Chinese
+  const handleCall = async (lang: 'en' | 'fr' | 'zh') => {
     setEmailSentForCurrentSession(false);
     setCallDetails({
       id: `call-${Date.now()}`,
@@ -32,19 +31,14 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     setTranscripts([]);
     setModelOutput([]);
     setCallDuration(0);
-    let publicKey, assistantId;
+    let publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+    let assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
     if (lang === 'fr') {
       publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_FR;
       assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_FR;
     } else if (lang === 'zh') {
       publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH;
       assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_ZH;
-    } else if (lang === 'ru') {
-      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_RU;
-      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_RU;
-    } else {
-      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
-      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
     }
     const vapi = await initVapi(lang);
     if (vapi && assistantId) {
@@ -71,13 +65,12 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           <label className="mr-2 font-semibold">{t('language', language)}:</label>
           <select
             value={language}
-            onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru')}
+            onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh')}
             className="rounded px-2 py-1 text-gray-900"
           >
             <option value="en">{t('english', language)}</option>
             <option value="fr">{t('french', language)}</option>
             <option value="zh">中文</option>
-            <option value="ru">Русский</option>
           </select>
         </div>
         <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">{t('hotel_name', language)}</h2>
@@ -97,26 +90,6 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             >
               <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
               <span className="text-sm sm:text-base lg:text-lg font-bold whitespace-normal px-2 text-center leading-tight">{t('press_to_call', language)}</span>
-              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-            </button>
-          ) : language === 'zh' ? (
-            <button 
-              id="vapiButtonZh"
-              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('zh')}
-            >
-              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
-              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-            </button>
-          ) : language === 'ru' ? (
-            <button 
-              id="vapiButtonRu"
-              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('ru')}
-            >
-              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
               <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
             </button>
           ) : (
