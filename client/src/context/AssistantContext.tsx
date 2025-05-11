@@ -5,7 +5,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { parseSummaryToOrderDetails } from '@/lib/summaryParser';
 import ReactDOM from 'react-dom';
 
-export type Language = 'en' | 'fr' | 'zh';
+export type Language = 'en' | 'fr' | 'zh' | 'ru';
 
 interface AssistantContextType {
   currentInterface: InterfaceLayer;
@@ -144,6 +144,8 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
           ? import.meta.env.VITE_VAPI_PUBLIC_KEY_FR
           : language === 'zh'
           ? import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH
+          : language === 'ru'
+          ? import.meta.env.VITE_VAPI_PUBLIC_KEY_RU
           : import.meta.env.VITE_VAPI_PUBLIC_KEY;
         if (!publicKey) {
           throw new Error('Vapi public key is not configured');
@@ -302,6 +304,8 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
         ? import.meta.env.VITE_VAPI_ASSISTANT_ID_FR
         : language === 'zh'
         ? import.meta.env.VITE_VAPI_ASSISTANT_ID_ZH
+        : language === 'ru'
+        ? import.meta.env.VITE_VAPI_ASSISTANT_ID_RU
         : import.meta.env.VITE_VAPI_ASSISTANT_ID;
       if (!assistantId) {
         console.error('Assistant ID not configured');
@@ -494,6 +498,7 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
     setCurrentInterface,
     transcripts,
     addTranscript,
+    setTranscripts,
     orderSummary,
     setOrderSummary,
     callDetails,
@@ -501,6 +506,7 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
     order,
     setOrder,
     callDuration,
+    setCallDuration,
     isMuted,
     toggleMute,
     startCall,
@@ -521,15 +527,52 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
     micLevel,
     modelOutput,
     addModelOutput,
-    language,
-    setLanguage,
-    setTranscripts,
     setModelOutput,
-    setCallDuration,
+    language,
+    setLanguage
   };
 
   return (
-    <AssistantContext.Provider value={value}>
+    <AssistantContext.Provider
+      value={{
+        currentInterface,
+        setCurrentInterface,
+        transcripts,
+        addTranscript,
+        setTranscripts,
+        orderSummary,
+        setOrderSummary,
+        callDetails,
+        setCallDetails,
+        order,
+        setOrder,
+        callDuration,
+        setCallDuration,
+        isMuted,
+        toggleMute,
+        startCall,
+        endCall,
+        callSummary,
+        setCallSummary,
+        serviceRequests,
+        setServiceRequests,
+        vietnameseSummary,
+        setVietnameseSummary,
+        translateToVietnamese,
+        emailSentForCurrentSession,
+        setEmailSentForCurrentSession,
+        requestReceivedAt,
+        setRequestReceivedAt,
+        activeOrders,
+        addActiveOrder,
+        micLevel,
+        modelOutput,
+        addModelOutput,
+        setModelOutput,
+        language,
+        setLanguage
+      }}
+    >
       {children}
     </AssistantContext.Provider>
   );

@@ -485,9 +485,9 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
 
     // Create a prompt for generating the summary in user's language only
     const prompt = `
-      You are a hotel service summarization specialist for Mi Nhon Hotel.
+      You are a hotel service summarization specialist for Mi Nhon Hotel. 
       Summarize the following conversation between a Hotel Assistant and a Guest in a concise, professional manner.
-
+      
       IMPORTANT: For EACH separate request from the guest, structure your summary in the following format (repeat for as many requests as needed, do NOT limit the number of requests):
 
       Room Number: [Extract and display the room number if the guest provides it anywhere in the conversation. If not provided, write "Not specified".]
@@ -509,7 +509,7 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
       (Continue numbering REQUEST 3, REQUEST 4, etc. for all guest requests, do NOT limit the number of requests.)
 
       Next Step: Please Press Send To Reception in order to complete your request
-
+      
       IMPORTANT INSTRUCTIONS:
       1. Provide the summary only in the guest's original language (English, Russian, Korean, Chinese, or German)
       2. Be EXTREMELY comprehensive - include EVERY service request mentioned in the conversation
