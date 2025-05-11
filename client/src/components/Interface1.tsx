@@ -60,19 +60,21 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
       } z-10 overflow-y-auto`} 
       id="interface1"
       style={{
-        backgroundImage: `linear-gradient(rgba(26, 35, 126, 0.8), rgba(63, 81, 181, 0.8)), url(${hotelImage})`,
+        backgroundImage: `linear-gradient(rgba(26, 35, 126, 0.7), rgba(79, 209, 197, 0.5)), url(${hotelImage})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        filter: 'blur(0.8px)',
       }}
     >
-      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto">
+      <div className="absolute inset-0 bg-gradient-to-b from-blueDark/70 via-sea/40 to-sand/60 pointer-events-none" style={{zIndex:1}}></div>
+      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto relative" style={{zIndex:2}}>
         {/* Language Switcher */}
         <div className="flex justify-end w-full max-w-2xl mb-2">
-          <label className="mr-2 font-semibold">{t('language', language)}:</label>
+          <label className="mr-2 font-semibold font-sans">{t('language', language)}:</label>
           <select
             value={language}
             onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru' | 'ko')}
-            className="rounded px-2 py-1 text-gray-900"
+            className="rounded px-2 py-1 text-gray-900 font-sans"
           >
             <option value="en">{t('english', language)}</option>
             <option value="fr">{t('french', language)}</option>
@@ -81,8 +83,9 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             <option value="ko">한국어</option>
           </select>
         </div>
-        <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">{t('hotel_name', language)}</h2>
-        <p className="text-xs sm:text-lg lg:text-xl text-center max-w-full mb-4 truncate sm:whitespace-nowrap overflow-x-auto">{t('hotel_subtitle', language)}</p>
+        <h2 className="font-['Playfair_Display'] font-bold text-3xl sm:text-4xl lg:text-5xl text-sea mb-2 text-center drop-shadow-lg" style={{letterSpacing:'0.04em'}}>{t('hotel_name', language)}</h2>
+        <p className="text-xs sm:text-lg lg:text-xl text-center max-w-full mb-4 truncate sm:whitespace-nowrap overflow-x-auto font-['Montserrat'] text-leaf" style={{fontWeight:600}}>{t('hotel_subtitle', language)}</p>
+        <span className="block text-sand font-['Dancing_Script'] text-xl mb-2">Boutique Resort</span>
         
         {/* Main Call Button */}
         <div className="relative mb-4 sm:mb-12 flex items-center justify-center">
