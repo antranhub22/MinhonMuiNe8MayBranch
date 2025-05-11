@@ -66,7 +66,7 @@ export interface CallDetails {
   category: string;
 }
 
-export type InterfaceLayer = 'interface1' | 'interface2' | 'interface3' | 'interface3vi' | 'interface3fr' | 'interface3ko' | 'interface4';
+export type InterfaceLayer = 'interface1' | 'interface2' | 'interface3' | 'interface3vi' | 'interface3fr' | 'interface4';
 
 export interface AssistantContextType {
   currentInterface: InterfaceLayer;

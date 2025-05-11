@@ -93,7 +93,7 @@ export interface ServiceRequest {
  */
 export function generateBasicSummary(transcripts: Array<{role: string, content: string}>): string {
   if (!transcripts || transcripts.length === 0) {
-    return "No conversation to summarize.";
+    return "Nous regrettons de vous informer que votre demande ne contient pas suffisamment d'informations pour nous permettre d'y répondre de manière adéquate. Nous vous invitons à actualiser votre page et à préciser votre requête afin que nous puissions mieux vous accompagner.";
   }
   
   // Split into guest and assistant messages for easier analysis
@@ -472,7 +472,7 @@ export async function translateToVietnamese(text: string): Promise<string> {
   }
 }
 
-export async function generateCallSummary(transcripts: Array<{role: string, content: string}>, language: string = 'en'): Promise<string> {
+export async function generateCallSummary(transcripts: Array<{role: string, content: string}>): Promise<string> {
   try {
     if (!transcripts || transcripts.length === 0) {
       return "No conversation to summarize.";
@@ -551,15 +551,15 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
     };
     
     const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
-        { role: "system", content: "You are a precise hotel service data extraction specialist that outputs structured JSON only." },
+        { role: "system", content: "You are a professional hotel service summarization specialist who creates concise and useful summaries." },
         { role: "user", content: prompt }
       ],
-      max_tokens: 800,
-      temperature: 0.5,
-      presence_penalty: 0.1,
-      frequency_penalty: 0.1,
+      max_tokens: 800, // Increased tokens limit for comprehensive summaries
+      temperature: 0.5, // More deterministic for consistent summaries
+      presence_penalty: 0.1, // Slight penalty to avoid repetition
+      frequency_penalty: 0.1, // Slight penalty to avoid repetition
     }, options);
 
     // Return the generated summary
