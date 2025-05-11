@@ -19,8 +19,8 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // Hàm dùng chung cho cả English, French, Chinese
-  const handleCall = async (lang: 'en' | 'fr' | 'zh') => {
+  // Hàm dùng chung cho mọi ngôn ngữ
+  const handleCall = async (lang: 'en' | 'fr' | 'zh' | 'ru' | 'ko') => {
     setEmailSentForCurrentSession(false);
     setCallDetails({
       id: `call-${Date.now()}`,
@@ -39,8 +39,14 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     } else if (lang === 'zh') {
       publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_ZH;
       assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_ZH;
+    } else if (lang === 'ru') {
+      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_RU;
+      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_RU;
+    } else if (lang === 'ko') {
+      publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY_KO;
+      assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID_KO;
     }
-    const vapi = await initVapi(lang);
+    const vapi = await initVapi(publicKey);
     if (vapi && assistantId) {
       await vapi.start(assistantId);
       setCurrentInterface('interface2');
@@ -92,6 +98,36 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             >
               <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
               <span className="text-sm sm:text-base lg:text-lg font-bold whitespace-normal px-2 text-center leading-tight">{t('press_to_call', language)}</span>
+              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
+            </button>
+          ) : language === 'zh' ? (
+            <button 
+              id="vapiButtonZh"
+              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
+              onClick={() => handleCall('zh')}
+            >
+              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
+              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
+            </button>
+          ) : language === 'ru' ? (
+            <button 
+              id="vapiButtonRu"
+              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
+              onClick={() => handleCall('ru')}
+            >
+              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
+              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
+            </button>
+          ) : language === 'ko' ? (
+            <button 
+              id="vapiButtonKo"
+              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
+              onClick={() => handleCall('ko')}
+            >
+              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
               <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
             </button>
           ) : (
