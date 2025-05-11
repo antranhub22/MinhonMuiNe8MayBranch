@@ -69,7 +69,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     >
       <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto">
         {/* Language Switcher cải tiến */}
-        <div className="flex items-center justify-end w-full max-w-2xl mb-2" style={{position:'absolute', top:24, right:32, zIndex:10}}>
+        <div className="flex items-center justify-end w-full max-w-2xl mb-2">
           <div className="flex items-center bg-gradient-to-r from-[#3F51B5] to-[#E3F2FD] rounded-xl shadow-lg px-3 py-1.5 gap-2" style={{borderRadius:8, minWidth:180}}>
             <FaGlobeAsia className="text-[#F9BF3B] text-xl mr-1 drop-shadow" />
             <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap">{t('language', language)}:</label>
