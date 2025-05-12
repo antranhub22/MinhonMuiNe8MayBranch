@@ -205,10 +205,10 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           </button>
         </div>
         {/* Services Section - với hiệu ứng Glass Morphism và 3D */}
-        <div className="text-center w-full max-w-5xl mb-24 sm:mb-10" style={{ perspective: '1000px' }}>
-          <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-y-4 sm:gap-y-2 md:gap-3 text-left mx-auto w-full">
+        <div className="text-center w-full max-w-5xl mb-16 sm:mb-10" style={{ perspective: '1000px' }}>
+          <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-y-2 sm:gap-y-2 md:gap-3 text-left mx-auto w-full">
             {/* Room & Stay */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 py-0 sm:p-2 w-4/5 mx-auto md:w-64 mb-2 sm:mb-0 min-h-[36px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -218,13 +218,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 transform: 'translateZ(20px)'
               }}
             >
-              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+              <h4 className="font-medium text-amber-400 pb-0 mb-0.5 text-xs sm:text-sm"
                 style={{ 
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                   textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
                 }}
               >{t('room_and_stay', language)}</h4>
-              <ul className="grid grid-cols-5 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
+              <ul className="grid grid-cols-5 gap-0 sm:gap-2 py-0.5 sm:py-2">
                 <li><IconWithTooltip iconName="login" /></li>
                 <li><IconWithTooltip iconName="hourglass_empty" /></li>
                 <li><IconWithTooltip iconName="info" /></li>
@@ -233,7 +233,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Room Services - Áp dụng cùng phong cách cho các panel khác */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 py-0 sm:p-2 w-4/5 mx-auto md:w-64 mb-2 sm:mb-0 min-h-[36px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -243,13 +243,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 transform: 'translateZ(20px)'
               }}
             >
-              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+              <h4 className="font-medium text-amber-400 pb-0 mb-0.5 text-xs sm:text-sm"
                 style={{ 
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                   textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
                 }}
               >{t('room_services', language)}</h4>
-              <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
+              <ul className="grid grid-cols-7 gap-0 sm:gap-2 py-0.5 sm:py-2">
                 <li><IconWithTooltip iconName="restaurant" /></li>
                 <li><IconWithTooltip iconName="local_bar" /></li>
                 <li><IconWithTooltip iconName="cleaning_services" /></li>
@@ -260,7 +260,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Bookings & Facilities */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 py-0 sm:p-2 w-4/5 mx-auto md:w-64 mb-2 sm:mb-0 min-h-[36px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -270,13 +270,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 transform: 'translateZ(20px)'
               }}
             >
-              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+              <h4 className="font-medium text-amber-400 pb-0 mb-0.5 text-xs sm:text-sm"
                 style={{ 
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                   textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
                 }}
               >{t('bookings_and_facilities', language)}</h4>
-              <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
+              <ul className="grid grid-cols-7 gap-0 sm:gap-2 py-0.5 sm:py-2">
                 <li><IconWithTooltip iconName="event_seat" /></li>
                 <li><IconWithTooltip iconName="spa" /></li>
                 <li><IconWithTooltip iconName="fitness_center" /></li>
@@ -287,7 +287,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Tourism & Exploration */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 py-0 sm:p-2 w-4/5 mx-auto md:w-64 mb-2 sm:mb-0 min-h-[36px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -297,13 +297,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 transform: 'translateZ(20px)'
               }}
             >
-              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+              <h4 className="font-medium text-amber-400 pb-0 mb-0.5 text-xs sm:text-sm"
                 style={{ 
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                   textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
                 }}
               >{t('tourism_and_exploration', language)}</h4>
-              <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
+              <ul className="grid grid-cols-7 gap-0 sm:gap-2 py-0.5 sm:py-2">
                 <li><IconWithTooltip iconName="location_on" /></li>
                 <li><IconWithTooltip iconName="local_dining" /></li>
                 <li><IconWithTooltip iconName="directions_bus" /></li>
@@ -314,7 +314,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Support */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-5 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 py-0 sm:p-2 w-4/5 mx-auto md:w-64 mb-4 sm:mb-0 min-h-[36px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -324,13 +324,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 transform: 'translateZ(20px)'
               }}
             >
-              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+              <h4 className="font-medium text-amber-400 pb-0 mb-0.5 text-xs sm:text-sm"
                 style={{ 
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                   textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
                 }}
               >{t('support_external_services', language)}</h4>
-              <ul className="grid grid-cols-4 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
+              <ul className="grid grid-cols-4 gap-0 sm:gap-2 py-0.5 sm:py-2">
                 <li><IconWithTooltip iconName="translate" /></li>
                 <li><IconWithTooltip iconName="rate_review" /></li>
                 <li><IconWithTooltip iconName="report_problem" /></li>
