@@ -21,6 +21,7 @@ import { Message as StaffMessage } from './models/Message';
 import { db } from '../src/db';
 import { request as requestTable } from '../src/db/schema';
 import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 // Initialize OpenAI client 
 const openai = new OpenAI({
@@ -861,6 +862,24 @@ Mi Nhon Hotel Mui Ne`
         });
         
         console.log('Kết quả gửi email tóm tắt cuộc gọi từ thiết bị di động:', result);
+        
+        // Thêm mới: Lưu request vào database để hiển thị trong staff UI
+        try {
+          console.log('Lưu request từ thiết bị di động vào database...');
+          const cleanedSummary = cleanSummaryContent(callDetails.summary);
+          await db.insert(requestTable).values({
+            room_number: callDetails.roomNumber,
+            orderId: callDetails.orderReference || orderReference,
+            guestName: callDetails.guestName || 'Guest',
+            request_content: cleanedSummary,
+            created_at: new Date(),
+            status: 'Đã ghi nhận',
+            updatedAt: new Date()
+          });
+          console.log('Đã lưu request thành công vào database với ID:', orderReference);
+        } catch (dbError) {
+          console.error('Lỗi khi lưu request từ thiết bị di động vào DB:', dbError);
+        }
       } catch (sendError) {
         console.error('Lỗi khi gửi email tóm tắt từ thiết bị di động:', sendError);
         // Không cần trả về lỗi cho client vì đã trả về success trước đó
@@ -1065,7 +1084,21 @@ Mi Nhon Hotel Mui Ne`
     console.log('API /api/staff/requests called');
     console.log('Authorization header:', req.headers.authorization);
     try {
+      // Kiểm tra kết nối DB trước
+      console.log('Checking database connection before querying requests...');
+      const dbTest = await db.execute(sql`SELECT 1`);
+      console.log('Database connection test:', dbTest);
+      
+      console.log('Fetching requests from database...');
       const dbRequests = await db.select().from(requestTable);
+      console.log(`Found ${dbRequests.length} requests in database:`, dbRequests);
+      
+      // Thêm kiểm tra nếu không có requests từ DB
+      if (dbRequests.length === 0) {
+        console.log('No requests found in database, checking if we need to create test data');
+        // TODO: Có thể thêm logic tạo dữ liệu test nếu cần
+      }
+      
       res.json(dbRequests);
     } catch (err) {
       console.error('Error in /api/staff/requests:', err);
