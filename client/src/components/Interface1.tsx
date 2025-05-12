@@ -64,21 +64,38 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
       style={{
         backgroundImage: `linear-gradient(rgba(26, 35, 126, 0.8), rgba(63, 81, 181, 0.8)), url(${hotelImage})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        perspective: '1000px'
       }}
     >
-      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto">
-        {/* Language Switcher cải tiến */}
+      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto" 
+        style={{ transform: 'translateZ(20px)' }}
+      >
+        {/* Language Switcher nâng cao */}
         <div className="flex items-center justify-end w-full max-w-2xl mb-2">
-          <div className="flex items-center bg-gradient-to-r from-[#3F51B5] to-[#E3F2FD] rounded-xl shadow-lg px-3 py-1.5 gap-2" style={{borderRadius:8, minWidth:180}}>
-            <FaGlobeAsia className="text-[#F9BF3B] text-xl mr-1 drop-shadow" />
+          <div className="flex items-center px-3 py-1.5 gap-2 transition-all duration-300" 
+            style={{
+              background: 'linear-gradient(135deg, #4e5ab7 0%, #3f51b5 100%)',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)',
+              borderRadius: '8px',
+              minWidth: '180px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+            <FaGlobeAsia className="text-[#F9BF3B] text-xl mr-1" 
+              style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
+            />
             <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap">{t('language', language)}:</label>
             <div className="relative flex-1">
               <select
                 value={language}
                 onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru' | 'ko')}
-                className="appearance-none w-full rounded-lg pl-8 pr-6 py-1.5 font-sans text-blue-900 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#3F51B5] transition-all duration-200 shadow-sm"
-                style={{fontWeight:600, background:'transparent'}}
+                className="appearance-none w-full pl-8 pr-6 py-1.5 font-sans bg-transparent focus:outline-none transition-all duration-200"
+                style={{
+                  fontWeight: 600,
+                  color: '#fff',
+                  textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)',
+                  borderRadius: '8px'
+                }}
               >
                 <option value="en">🇬🇧 English</option>
                 <option value="fr">🇫🇷 Français</option>
@@ -86,139 +103,181 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 <option value="ru">🇷🇺 Русский</option>
                 <option value="ko">🇰🇷 한국어</option>
               </select>
-              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-[#3F51B5] pointer-events-none text-lg" />
+              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-[#F9BF3B] pointer-events-none text-lg" />
             </div>
           </div>
         </div>
-        <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center">{t('hotel_name', language)}</h2>
+        <h2 className="font-poppins font-bold text-2xl sm:text-3xl lg:text-4xl text-amber-400 mb-2 text-center"
+          style={{ textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)' }}>{t('hotel_name', language)}</h2>
         <p className="text-xs sm:text-lg lg:text-xl text-center max-w-full mb-4 truncate sm:whitespace-nowrap overflow-x-auto">{t('hotel_subtitle', language)}</p>
         
-        {/* Main Call Button */}
+        {/* Main Call Button với hiệu ứng nâng cao */}
         <div className="relative mb-4 sm:mb-12 flex items-center justify-center">
           {/* Ripple Animation (luôn hiển thị, mạnh hơn khi hover) */}
           <div className="absolute inset-0 rounded-full border-4 border-amber-400 animate-[ripple_1.5s_linear_infinite] pointer-events-none transition-opacity duration-300 group-hover:opacity-80 opacity-60"></div>
           <div className="absolute inset-0 rounded-full border-4 border-amber-400/70 animate-[ripple_2s_linear_infinite] pointer-events-none transition-opacity duration-300 group-hover:opacity-60 opacity-40"></div>
           {/* Main Button */}
-          {language === 'fr' ? (
-            <button 
-              id="vapiButtonFr"
-              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('fr')}
-            >
-              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-sm sm:text-base lg:text-lg font-bold whitespace-normal px-2 text-center leading-tight">{t('press_to_call', language)}</span>
-              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-            </button>
-          ) : language === 'zh' ? (
-            <button 
-              id="vapiButtonZh"
-              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('zh')}
-            >
-              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
-              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-            </button>
-          ) : language === 'ru' ? (
-            <button 
-              id="vapiButtonRu"
-              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('ru')}
-            >
-              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
-              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-            </button>
-          ) : language === 'ko' ? (
-            <button 
-              id="vapiButtonKo"
-              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('ko')}
-            >
-              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
-              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-            </button>
-          ) : (
-            <button 
-              id="vapiButtonEn"
-              className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-primary-dark font-poppins font-bold flex flex-col items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-300 overflow-hidden"
-              onClick={() => handleCall('en')}
-            >
-              <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 animate-mic-pulse group-hover:animate-mic-bounce text-shadow-lg">mic</span>
-              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">{t('press_to_call', language)}</span>
-              <span className="absolute w-full h-full rounded-full pointer-events-none group-hover:animate-wave-pulse"></span>
-            </button>
-          )}
+          <button 
+            id={`vapiButton${language === 'en' ? 'En' : language === 'fr' ? 'Fr' : language === 'zh' ? 'Zh' : language === 'ru' ? 'Ru' : 'Ko'}`}
+            className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full font-poppins font-bold flex flex-col items-center justify-center overflow-hidden hover:translate-y-[-2px] hover:shadow-[0px_12px_20px_rgba(0,0,0,0.2)]"
+            onClick={() => handleCall(language as any)}
+            style={{
+              background: 'linear-gradient(180deg, rgba(78, 90, 183, 0.9) 0%, rgba(56, 65, 152, 0.9) 100%)',
+              boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.15), 0px 4px 6px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              transition: 'all 0.3s ease',
+              transform: 'translateY(0)',
+            }}
+          >
+            <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 text-[#F9BF3B] transition-all duration-300 group-hover:scale-110" 
+              style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
+            >mic</span>
+            <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap text-white"
+              style={{ textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)' }}
+            >{t('press_to_call', language)}</span>
+            <span className="absolute w-full h-full rounded-full pointer-events-none"></span>
+          </button>
         </div>
-        {/* Services Section */}
-        <div className="text-center w-full max-w-5xl">
+        {/* Services Section - với hiệu ứng Glass Morphism và 3D */}
+        <div className="text-center w-full max-w-5xl" style={{ perspective: '1000px' }}>
           <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-y-2 md:gap-3 text-left mx-auto w-full">
             {/* Room & Stay */}
-            <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('room_and_stay', language)}</h4>
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+              style={{
+                background: 'rgba(63, 81, 181, 0.7)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '12px',
+                boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                transform: 'translateZ(20px)'
+              }}
+            >
+              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+                style={{ 
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
+                }}
+              >{t('room_and_stay', language)}</h4>
               <ul className="grid grid-cols-5 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">login</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">hourglass_empty</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">info</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">policy</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">wifi</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>login</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>hourglass_empty</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>info</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>policy</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>wifi</span></li>
               </ul>
             </div>
-            {/* Room Services */}
-            <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('room_services', language)}</h4>
+            {/* Room Services - Áp dụng cùng phong cách cho các panel khác */}
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+              style={{
+                background: 'rgba(63, 81, 181, 0.7)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '12px',
+                boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                transform: 'translateZ(20px)'
+              }}
+            >
+              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+                style={{ 
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
+                }}
+              >{t('room_services', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">restaurant</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">local_bar</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">cleaning_services</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">local_laundry_service</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">alarm</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">add_circle</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">build</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>restaurant</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>local_bar</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>cleaning_services</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>local_laundry_service</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>alarm</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>add_circle</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>build</span></li>
               </ul>
             </div>
             {/* Bookings & Facilities */}
-            <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('bookings_and_facilities', language)}</h4>
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+              style={{
+                background: 'rgba(63, 81, 181, 0.7)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '12px',
+                boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                transform: 'translateZ(20px)'
+              }}
+            >
+              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+                style={{ 
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
+                }}
+              >{t('bookings_and_facilities', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">event_seat</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">spa</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">fitness_center</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">pool</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">directions_car</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">medical_services</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">support_agent</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>event_seat</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>spa</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>fitness_center</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>pool</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>directions_car</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>medical_services</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>support_agent</span></li>
               </ul>
             </div>
             {/* Tourism & Exploration */}
-            <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('tourism_and_exploration', language)}</h4>
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+              style={{
+                background: 'rgba(63, 81, 181, 0.7)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '12px',
+                boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                transform: 'translateZ(20px)'
+              }}
+            >
+              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+                style={{ 
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
+                }}
+              >{t('tourism_and_exploration', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">location_on</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">local_dining</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">directions_bus</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">directions_car</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">event</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">shopping_bag</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">map</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>location_on</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>local_dining</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>directions_bus</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>directions_car</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>event</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>shopping_bag</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>map</span></li>
               </ul>
             </div>
             {/* Support */}
-            <div className="bg-white/10 p-0.5 sm:p-2 rounded-lg backdrop-blur-sm w-4/5 mx-auto md:w-64 mb-0 min-h-[40px]">
-              <h4 className="font-medium text-amber-400 border-b border-amber-400/30 pb-0.5 mb-1 text-xs sm:text-sm">{t('support_external_services', language)}</h4>
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+              style={{
+                background: 'rgba(63, 81, 181, 0.7)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '12px',
+                boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                transform: 'translateZ(20px)'
+              }}
+            >
+              <h4 className="font-medium text-amber-400 pb-0.5 mb-1 text-xs sm:text-sm"
+                style={{ 
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'
+                }}
+              >{t('support_external_services', language)}</h4>
               <ul className="grid grid-cols-4 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">translate</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">rate_review</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">report_problem</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-amber-400">luggage</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>translate</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>rate_review</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>report_problem</span></li>
+                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>luggage</span></li>
               </ul>
             </div>
           </div>
         </div>
-        {/* Active orders status panels (up to 60 min countdown) */}
+        {/* Active orders status panels - thêm hiệu ứng 3D và đường viền sáng */}
         {activeOrders && activeOrders.length > 0 && (
-          <div className="flex flex-col items-center gap-y-4 mb-6 w-full px-2 sm:flex-row sm:flex-nowrap sm:gap-x-4 sm:overflow-x-auto sm:justify-start">
+          <div className="flex flex-col items-center gap-y-4 mb-6 w-full px-2 sm:flex-row sm:flex-nowrap sm:gap-x-4 sm:overflow-x-auto sm:justify-start"
+            style={{ perspective: '1000px' }}
+          >
             {activeOrders.map((o: ActiveOrder) => {
               const deadline = new Date(o.requestedAt.getTime() + 60 * 60 * 1000);
               const diffSec = Math.max(Math.ceil((deadline.getTime() - now.getTime()) / 1000), 0);
@@ -226,11 +285,25 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               const mins = Math.floor(diffSec / 60).toString().padStart(2, '0');
               const secs = (diffSec % 60).toString().padStart(2, '0');
               return (
-                <div key={o.reference} className="bg-white/80 backdrop-blur-sm p-2 sm:p-3 rounded-lg text-gray-800 shadow max-w-xs w-[220px] border border-white/40 flex-shrink-0">
+                <div key={o.reference} 
+                  className="p-2 sm:p-3 text-gray-800 max-w-xs w-[220px] flex-shrink-0 transition-all duration-250 hover:rotate-1"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.85)',
+                    backdropFilter: 'blur(8px)',
+                    borderRadius: '12px',
+                    boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderLeft: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderRight: '1px solid rgba(0, 0, 0, 0.2)',
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.2)',
+                    transform: 'translateZ(20px)',
+                    transformStyle: 'preserve-3d'
+                  }}
+                >
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
-                  <p className="text-xs sm:text-sm"><strong>{t('time_remaining', language)}:</strong> {`${mins}:${secs}`}</p>
+                  <p className="text-xs sm:text-sm"><strong>{t('time_remaining', language)}:</strong> <span className="font-bold text-blue-800">{`${mins}:${secs}`}</span></p>
                 </div>
               );
             })}
