@@ -307,7 +307,8 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
     addActiveOrder({
       reference: orderReference,
       requestedAt: new Date(),
-      estimatedTime: estimatedDisplayTime
+      estimatedTime: estimatedDisplayTime,
+      status: 'Đã ghi nhận'
     });
     
     // Check if email has already been sent for this session

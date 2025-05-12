@@ -112,4 +112,5 @@ export interface ActiveOrder {
   reference: string;
   requestedAt: Date;
   estimatedTime: string;
+  status?: string; // Thêm trường status để hiển thị trạng thái từ Staff UI
 }

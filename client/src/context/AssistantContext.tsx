@@ -121,7 +121,10 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
   }, [activeOrders]);
 
   const addActiveOrder = (order: ActiveOrder) => {
-    setActiveOrders(prev => [...prev, order]);
+    setActiveOrders(prev => [...prev, {
+      ...order,
+      status: order.status || 'Đã ghi nhận'
+    }]);
   };
 
   // Add transcript to the list

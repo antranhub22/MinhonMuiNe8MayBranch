@@ -92,6 +92,20 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     </div>
   );
 
+  // Hàm để xác định màu sắc dựa trên trạng thái
+  const getStatusColor = (status: string | undefined) => {
+    if (!status) return 'bg-gray-300 text-gray-800';
+    
+    switch (status) {
+      case 'Đã ghi nhận': return 'bg-gray-300 text-gray-800';
+      case 'Đang thực hiện': return 'bg-yellow-200 text-yellow-800';
+      case 'Đã thực hiện và đang bàn giao cho khách': return 'bg-blue-200 text-blue-800';
+      case 'Hoàn thiện': return 'bg-green-200 text-green-800';
+      case 'Lưu ý khác': return 'bg-red-200 text-red-800';
+      default: return 'bg-gray-300 text-gray-800';
+    }
+  };
+
   return (
     <div 
       className={`absolute w-full min-h-screen h-full transition-opacity duration-500 ${
@@ -378,6 +392,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                   <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
                   <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
                   <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
+                  
+                  {/* Thêm trạng thái */}
+                  <div className="mt-2 flex justify-center">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(o.status)} w-full text-center`}>
+                      {o.status || 'Đã ghi nhận'}
+                    </span>
+                  </div>
                 </div>
               );
             })}
