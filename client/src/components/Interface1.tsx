@@ -55,6 +55,36 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     }
   };
 
+  // State lưu status cho từng order
+  const [orderStatuses, setOrderStatuses] = useState<{ [ref: string]: string | undefined }>({});
+
+  useEffect(() => {
+    if (!activeOrders) return;
+    activeOrders.forEach((o) => {
+      if (!o.reference) return;
+      if (o.reference.startsWith('#ORD-')) {
+        const ref = o.reference.replace('#', '');
+        fetch(`/api/orders/by-reference/${ref}`)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && data.status) {
+              setOrderStatuses(prev => ({ ...prev, [o.reference]: data.status }));
+            }
+          })
+          .catch(() => {});
+      } else {
+        fetch(`/api/orders/${o.reference}`)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && data.status) {
+              setOrderStatuses(prev => ({ ...prev, [o.reference]: data.status }));
+            }
+          })
+          .catch(() => {});
+      }
+    });
+  }, [activeOrders]);
+
   return (
     <div 
       className={`absolute w-full min-h-screen h-full transition-opacity duration-500 ${
@@ -225,29 +255,6 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               if (diffSec <= 0) return null;
               const mins = Math.floor(diffSec / 60).toString().padStart(2, '0');
               const secs = (diffSec % 60).toString().padStart(2, '0');
-              // State để lưu status mới nhất từ backend
-              const [orderStatus, setOrderStatus] = useState<string | undefined>(o.status);
-              useEffect(() => {
-                let ignore = false;
-                // Lấy orderId từ o.reference (giả sử là dạng #ORD-xxxxx)
-                if (o.reference && o.reference.startsWith('#ORD-')) {
-                  const ref = o.reference.replace('#', '');
-                  fetch(`/api/orders/by-reference/${ref}`)
-                    .then(res => res.ok ? res.json() : null)
-                    .then(data => {
-                      if (!ignore && data && data.status) setOrderStatus(data.status);
-                    })
-                    .catch(() => {});
-                } else if (o.reference) {
-                  fetch(`/api/orders/${o.reference}`)
-                    .then(res => res.ok ? res.json() : null)
-                    .then(data => {
-                      if (!ignore && data && data.status) setOrderStatus(data.status);
-                    })
-                    .catch(() => {});
-                }
-                return () => { ignore = true; };
-              }, [o.reference]);
               return (
                 <div key={o.reference} className="bg-white/80 backdrop-blur-sm p-2 sm:p-3 rounded-lg text-gray-800 shadow max-w-xs w-[220px] border border-white/40 flex-shrink-0">
                   {/* Countdown timer lên đầu */}
@@ -260,7 +267,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
                   {/* Thêm trường Status đồng bộ backend */}
-                  <p className="text-xs sm:text-sm mb-0.5"><strong>Status:</strong> {orderStatus || 'unknown'}</p>
+                  <p className="text-xs sm:text-sm mb-0.5"><strong>Status:</strong> {orderStatuses[o.reference] || 'unknown'}</p>
                 </div>
               );
             })}
