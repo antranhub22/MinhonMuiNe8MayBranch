@@ -87,7 +87,13 @@ const StaffDashboard: React.FC = () => {
         credentials: 'include',
         body: JSON.stringify({ status })
       });
-      setRequests(reqs => reqs.map(r => r.id === selectedRequest.id ? { ...r, status } : r));
+      // Refetch lại danh sách request từ API để cập nhật trạng thái mới nhất
+      const res = await fetch('/api/staff/requests', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+      const data = await res.json();
+      setRequests(data);
       setSelectedRequest({ ...selectedRequest, status });
     } catch (err) {
       console.error('Failed to update status:', err);
@@ -161,7 +167,7 @@ const StaffDashboard: React.FC = () => {
                   <td className="py-2 px-3">{req.orderId || req.id}</td>
                   <td className="py-2 px-3">{req.guestName}</td>
                   <td className="py-2 px-3">{req.request_content}</td>
-                  <td className="py-2 px-3">{req.time}</td>
+                  <td className="py-2 px-3">{req.created_at ? new Date(req.created_at).toLocaleString() : ''}</td>
                   <td className="py-2 px-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)}`}>{req.status}</span>
                   </td>
