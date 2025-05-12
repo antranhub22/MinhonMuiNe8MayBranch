@@ -230,9 +230,16 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               useEffect(() => {
                 let ignore = false;
                 // Lấy orderId từ o.reference (giả sử là dạng #ORD-xxxxx)
-                const orderId = o.reference?.replace('#ORD-', '');
-                if (orderId) {
-                  fetch(`/api/orders/${orderId}`)
+                if (o.reference && o.reference.startsWith('#ORD-')) {
+                  const ref = o.reference.replace('#', '');
+                  fetch(`/api/orders/by-reference/${ref}`)
+                    .then(res => res.ok ? res.json() : null)
+                    .then(data => {
+                      if (!ignore && data && data.status) setOrderStatus(data.status);
+                    })
+                    .catch(() => {});
+                } else if (o.reference) {
+                  fetch(`/api/orders/${o.reference}`)
                     .then(res => res.ok ? res.json() : null)
                     .then(data => {
                       if (!ignore && data && data.status) setOrderStatus(data.status);
