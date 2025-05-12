@@ -160,7 +160,7 @@ const StaffDashboard: React.FC = () => {
                   <td className="py-2 px-3 font-semibold">{req.room_number}</td>
                   <td className="py-2 px-3">{req.orderId || req.id}</td>
                   <td className="py-2 px-3">{req.guestName}</td>
-                  <td className="py-2 px-3">{req.content}</td>
+                  <td className="py-2 px-3">{req.request_content}</td>
                   <td className="py-2 px-3">{req.time}</td>
                   <td className="py-2 px-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)}`}>{req.status}</span>
