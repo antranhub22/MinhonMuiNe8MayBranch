@@ -13,7 +13,7 @@ export const request = pgTable('request', {
   room_number: varchar('room_number', { length: 255 }).notNull(),
   orderId: varchar('order_id', { length: 255 }).notNull(),
   guestName: varchar('guest_name', { length: 255 }).notNull(),
-  content: text('content').notNull(),
+  request_content: text('request_content').notNull(),
   time: timestamp('time').defaultNow().notNull(),
   status: varchar('status', { length: 50 }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
