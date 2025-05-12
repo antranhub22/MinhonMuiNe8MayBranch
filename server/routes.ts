@@ -20,22 +20,12 @@ import { Request as StaffRequest } from './models/Request';
 import { Message as StaffMessage } from './models/Message';
 import { db } from '../src/db';
 import { request as requestTable } from '../src/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
-// Initialize OpenAI client only if API key is available
-const apiKey = process.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
-let openai: OpenAI | null = null;
-
-try {
-  if (apiKey) {
-    openai = new OpenAI({ apiKey });
-    console.log('OpenAI API initialized successfully');
-  } else {
-    console.log('No OpenAI API key found, AI features will be disabled');
-  }
-} catch (error) {
-  console.error('Failed to initialize OpenAI client:', error);
-}
+// Initialize OpenAI client 
+const openai = new OpenAI({
+  apiKey: process.env.VITE_OPENAI_API_KEY
+});
 
 // Define WebSocket client interface
 interface WebSocketClient extends WebSocket {
@@ -199,14 +189,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Test OpenAI API endpoint
   app.post('/api/test-openai', async (req, res) => {
     try {
-      if (!openai) {
-        return res.status(503).json({ 
-          success: false, 
-          error: 'OpenAI API is not configured. Please set OPENAI_API_KEY environment variable.',
-          missingApiKey: true
-        });
-      }
-      
       const { message } = req.body;
       const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -1078,87 +1060,12 @@ Mi Nhon Hotel Mui Ne`
     res.json({ token });
   });
 
-  // Mobile staff login route - tương tự nhưng kèm theo thông tin thiết bị
-  app.post('/api/mobile/staff/login', (req, res) => {
-    console.log('Mobile staff login request received:', req.body);
-    console.log('User-Agent:', req.headers['user-agent']);
-    
-    const { username, password } = req.body;
-    const found = STAFF_ACCOUNTS.find(acc => acc.username === username && acc.password === password);
-    
-    if (!found) {
-      console.log('Login failed: Invalid credentials');
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    
-    // Tạo token với thêm thông tin về thiết bị
-    const isMobile = /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(req.headers['user-agent'] || '');
-    const token = jwt.sign({ 
-      username, 
-      isMobile,
-      deviceType: isMobile ? 'mobile' : 'desktop',
-      loginTime: new Date().toISOString()
-    }, JWT_SECRET, { 
-      expiresIn: '7d' // Token tồn tại lâu hơn cho thiết bị di động
-    });
-    
-    console.log('Login successful for:', username, 'on', isMobile ? 'mobile' : 'desktop');
-    
-    // Trả về token và thêm vào cookie
-    res.cookie('token', token, { 
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production'
-    });
-    
-    res.json({ 
-      token,
-      username,
-      deviceType: isMobile ? 'mobile' : 'desktop',
-      expiresIn: '7d'
-    });
-  });
-
   // Lấy danh sách request
   app.get('/api/staff/requests', verifyJWT, async (req, res) => {
     console.log('API /api/staff/requests called');
     console.log('Authorization header:', req.headers.authorization);
-    console.log('User-Agent:', req.headers['user-agent']);
-    console.log('Query params:', req.query);
-    
-    const isMobile = /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(req.headers['user-agent'] || '');
-    console.log('Device type:', isMobile ? 'mobile' : 'desktop');
-    
     try {
-      // Tạo timestamp trước khi query
-      const startTime = new Date();
-      // Thực hiện query, sắp xếp theo thời gian tạo giảm dần (mới nhất trước)
-      const dbRequests = await db.select()
-        .from(requestTable)
-        .orderBy(desc(requestTable.created_at));
-      
-      // Thêm thông tin về thời gian query
-      const endTime = new Date();
-      const queryTime = endTime.getTime() - startTime.getTime();
-      
-      console.log(`Fetched ${dbRequests.length} requests in ${queryTime}ms`);
-      
-      // Trả về meta data cùng với kết quả
-      const responseData = {
-        timestamp: new Date().toISOString(),
-        count: dbRequests.length,
-        device: isMobile ? 'mobile' : 'desktop',
-        queryTimeMs: queryTime,
-        data: dbRequests
-      };
-      
-      // Thêm headers no-cache để đảm bảo client luôn nhận dữ liệu mới
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
-      
-      // Trả về kết quả dạng array với data wrapper
+      const dbRequests = await db.select().from(requestTable);
       res.json(dbRequests);
     } catch (err) {
       console.error('Error in /api/staff/requests:', err);
@@ -1176,8 +1083,6 @@ Mi Nhon Hotel Mui Ne`
         return res.status(400).json({ error: 'Status is required' });
       }
       
-      console.log('Updating status for request:', id, 'to:', status);
-      
       // Cập nhật trong cơ sở dữ liệu thay vì mảng trong bộ nhớ
       const result = await db.update(requestTable)
         .set({ 
@@ -1189,24 +1094,6 @@ Mi Nhon Hotel Mui Ne`
       
       if (result.length === 0) {
         return res.status(404).json({ error: 'Request not found' });
-      }
-      
-      console.log('Status updated successfully:', result[0]);
-      
-      // Broadcast change thông qua Socket.IO
-      try {
-        const io = req.app.get('io');
-        if (io && typeof io.broadcastStaffDataChange === 'function') {
-          io.broadcastStaffDataChange('status_update', {
-            id,
-            status,
-            request: result[0]
-          });
-          console.log('Broadcasted status update via socket');
-        }
-      } catch (socketError) {
-        console.error('Error broadcasting via socket:', socketError);
-        // Không làm gián đoạn response API nếu có lỗi socket
       }
       
       res.json(result[0]);
