@@ -20,6 +20,7 @@ import { Request as StaffRequest } from './models/Request';
 import { Message as StaffMessage } from './models/Message';
 import { db } from '../src/db';
 import { request as requestTable } from '../src/db/schema';
+import { eq } from 'drizzle-orm';
 
 // Initialize OpenAI client 
 const openai = new OpenAI({
@@ -1073,13 +1074,33 @@ Mi Nhon Hotel Mui Ne`
   });
 
   // Cập nhật trạng thái request
-  app.patch('/api/staff/requests/:id/status', verifyJWT, (req, res) => {
-    const id = parseInt(req.params.id);
-    const { status } = req.body;
-    const reqIdx = requestList.findIndex(r => r.id === id);
-    if (reqIdx === -1) return res.status(404).json({ error: 'Request not found' });
-    requestList[reqIdx].status = status;
-    res.json(requestList[reqIdx]);
+  app.patch('/api/staff/requests/:id/status', verifyJWT, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status) {
+        return res.status(400).json({ error: 'Status is required' });
+      }
+      
+      // Cập nhật trong cơ sở dữ liệu thay vì mảng trong bộ nhớ
+      const result = await db.update(requestTable)
+        .set({ 
+          status,
+          updatedAt: new Date() 
+        })
+        .where(eq(requestTable.id, id))
+        .returning();
+      
+      if (result.length === 0) {
+        return res.status(404).json({ error: 'Request not found' });
+      }
+      
+      res.json(result[0]);
+    } catch (error) {
+      console.error('Error updating request status:', error);
+      res.status(500).json({ error: 'Failed to update request status' });
+    }
   });
 
   // Lấy lịch sử tin nhắn của request

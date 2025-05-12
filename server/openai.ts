@@ -1,9 +1,10 @@
 import OpenAI from "openai";
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.VITE_OPENAI_API_KEY
-});
+// Initialize OpenAI client only if API key is available
+const apiKey = process.env.VITE_OPENAI_API_KEY;
+const openai = apiKey 
+  ? new OpenAI({ apiKey }) 
+  : null;
 const projectId = process.env.VITE_OPENAI_PROJECT_ID || "";
 
 // Service category definitions for better classification
@@ -325,6 +326,12 @@ export function generateBasicSummary(transcripts: Array<{role: string, content: 
  * @returns Array of service requests with detailed information
  */
 export async function extractServiceRequests(summary: string): Promise<ServiceRequest[]> {
+  // If OpenAI client is not available, return empty array
+  if (!openai) {
+    console.log('OpenAI client not available, skipping service request extraction');
+    return [];
+  }
+  
   try {
     if (!summary) {
       return [];
@@ -434,6 +441,12 @@ export async function extractServiceRequests(summary: string): Promise<ServiceRe
  * @returns Vietnamese translation
  */
 export async function translateToVietnamese(text: string): Promise<string> {
+  // If OpenAI client is not available, return original text
+  if (!openai) {
+    console.log('OpenAI client not available, skipping translation');
+    return text;
+  }
+  
   try {
     if (!text) {
       return "Không có nội dung để dịch.";
@@ -749,11 +762,18 @@ ${conversationText}
 };
 
 export async function generateCallSummary(transcripts: Array<{role: string, content: string}>, language: string = 'en'): Promise<string> {
+  // If OpenAI client is not available, use the basic summary generator
+  if (!openai) {
+    console.log('OpenAI client not available, using basic summary generator');
+    return generateBasicSummary(transcripts);
+  }
+  
+  // Ensure we have transcripts to summarize
+  if (!transcripts || transcripts.length === 0) {
+    return "There are no transcripts available to summarize.";
+  }
+  
   try {
-    if (!transcripts || transcripts.length === 0) {
-      return "No conversation to summarize.";
-    }
-
     // Format conversation for the prompt
     const conversationText = transcripts
       .map(t => `${t.role === 'assistant' ? 'Hotel Assistant' : 'Guest'}: ${t.content}`)
