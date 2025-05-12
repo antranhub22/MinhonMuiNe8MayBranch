@@ -1,6 +1,6 @@
 export interface Request {
   id: number;
-  room: string;
+  room_number: string;
   guestName: string;
   content: string;
   time: Date;

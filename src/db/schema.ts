@@ -10,7 +10,7 @@ export const staff = pgTable('staff', {
 
 export const request = pgTable('request', {
   id: serial('id').primaryKey(),
-  room: varchar('room', { length: 255 }).notNull(),
+  room_number: varchar('room_number', { length: 255 }).notNull(),
   orderId: varchar('order_id', { length: 255 }).notNull(),
   guestName: varchar('guest_name', { length: 255 }).notNull(),
   content: text('content').notNull(),

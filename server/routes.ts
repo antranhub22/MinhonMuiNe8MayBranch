@@ -63,8 +63,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 // Dummy request data
 let requestList: StaffRequest[] = [
-  { id: 1, room: '101', guestName: 'Tony', content: 'Beef burger x 2', time: new Date(), status: 'Đã ghi nhận', notes: '' },
-  { id: 2, room: '202', guestName: 'Anna', content: 'Spa booking at 10:00', time: new Date(), status: 'Đang thực hiện', notes: '' },
+  { id: 1, room_number: '101', guestName: 'Tony', content: 'Beef burger x 2', time: new Date(), status: 'Đã ghi nhận', notes: '' },
+  { id: 2, room_number: '202', guestName: 'Anna', content: 'Spa booking at 10:00', time: new Date(), status: 'Đang thực hiện', notes: '' },
 ];
 
 // Dummy message data
@@ -648,7 +648,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Lưu request vào DB cho staff UI
         try {
           await db.insert(requestTable).values({
-            room: callDetails.roomNumber,
+            room_number: callDetails.roomNumber,
             orderId: callDetails.orderReference || orderReference,
             guestName: callDetails.guestName || 'Guest',
             content: vietnameseSummary,

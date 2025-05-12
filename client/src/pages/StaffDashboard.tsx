@@ -157,7 +157,7 @@ const StaffDashboard: React.FC = () => {
             <tbody>
               {(Array.isArray(requests) ? requests : []).map(req => (
                 <tr key={req.id} className="border-b hover:bg-blue-50">
-                  <td className="py-2 px-3 font-semibold">{req.room}</td>
+                  <td className="py-2 px-3 font-semibold">{req.room_number}</td>
                   <td className="py-2 px-3">{req.orderId || req.id}</td>
                   <td className="py-2 px-3">{req.guestName}</td>
                   <td className="py-2 px-3">{req.content}</td>
