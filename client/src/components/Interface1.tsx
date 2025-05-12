@@ -105,7 +105,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
         perspective: '1000px'
       }}
     >
-      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-visible pb-24 sm:pb-16" 
+      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-visible pb-32 sm:pb-24" 
         style={{ transform: 'translateZ(20px)', minHeight: 'fit-content' }}
       >
         {/* Language Switcher nâng cao */}
@@ -207,7 +207,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           </button>
         </div>
         {/* Services Section - với hiệu ứng Glass Morphism và 3D */}
-        <div className="text-center w-full max-w-5xl mb-16 sm:mb-10" style={{ perspective: '1000px' }}>
+        <div className="text-center w-full max-w-5xl mb-10 sm:mb-8" style={{ perspective: '1000px' }}>
           <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-y-2 sm:gap-y-2 md:gap-3 text-left mx-auto w-full">
             {/* Room & Stay */}
             <div className="p-0.5 py-0 sm:p-2 w-4/5 mx-auto md:w-64 mb-2 sm:mb-0 min-h-[36px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
@@ -343,8 +343,8 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
         </div>
         {/* Active orders status panels - thêm hiệu ứng 3D và đường viền sáng */}
         {activeOrders && activeOrders.length > 0 && (
-          <div className="flex flex-col items-center gap-y-4 mb-16 pb-10 w-full px-2 sm:mb-6 sm:pb-0 sm:flex-row sm:flex-nowrap sm:gap-x-4 sm:overflow-x-auto sm:justify-start"
-            style={{ perspective: '1000px' }}
+          <div className="flex flex-col items-center gap-y-4 mb-20 pb-16 w-full px-2 sm:mb-12 sm:pb-8 sm:flex-row sm:flex-nowrap sm:gap-x-4 sm:overflow-x-auto sm:justify-start"
+            style={{ perspective: '1000px', zIndex: 30 }}
           >
             {[...activeOrders].sort((a, b) => b.requestedAt.getTime() - a.requestedAt.getTime()).map((o: ActiveOrder) => {
               const deadline = new Date(o.requestedAt.getTime() + 60 * 60 * 1000);
@@ -365,7 +365,9 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                     borderRight: '1px solid rgba(0, 0, 0, 0.2)',
                     borderBottom: '1px solid rgba(0, 0, 0, 0.2)',
                     transform: 'translateZ(20px)',
-                    transformStyle: 'preserve-3d'
+                    transformStyle: 'preserve-3d',
+                    zIndex: 20,
+                    marginBottom: '8px'
                   }}
                 >
                   {/* Đồng hồ đếm ngược ở trên đầu */}
