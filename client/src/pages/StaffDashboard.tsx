@@ -168,9 +168,9 @@ const StaffDashboard: React.FC = () => {
               <tr className="bg-blue-100 text-blue-900">
                 <th className="py-2 px-3 text-left">Room</th>
                 <th className="py-2 px-3 text-left">Order ID</th>
-                <th className="py-2 px-6 text-left w-2/5">Content</th>
+                <th className="py-2 px-6 text-left w-3/5">Content</th>
                 <th className="py-2 px-3 text-left">Time</th>
-                <th className="py-2 px-3 text-left">Status</th>
+                <th className="py-2 px-2 text-left w-1/12">Status</th>
                 <th className="py-2 px-3 text-left">Action</th>
               </tr>
             </thead>
@@ -179,7 +179,7 @@ const StaffDashboard: React.FC = () => {
                 <tr key={req.id} className="border-b hover:bg-blue-50">
                   <td className="py-2 px-3 font-semibold">{req.room_number}</td>
                   <td className="py-2 px-3">{req.orderId || req.id}</td>
-                  <td className="py-2 px-6 whitespace-pre-line break-words max-w-2xl">{req.request_content}</td>
+                  <td className="py-2 px-6 whitespace-pre-line break-words max-w-4xl">{req.request_content}</td>
                   <td className="py-2 px-3">
                     {req.created_at && (
                       <span className="block whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</span>
@@ -188,8 +188,8 @@ const StaffDashboard: React.FC = () => {
                       <span className="block whitespace-nowrap text-xs text-gray-500">{new Date(req.created_at).toLocaleTimeString()}</span>
                     )}
                   </td>
-                  <td className="py-2 px-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)} whitespace-nowrap`}>{req.status}</span>
+                  <td className="py-2 px-2">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)} break-words whitespace-normal block text-center`}>{req.status}</span>
                   </td>
                   <td className="py-2 px-3 space-x-2">
                     <select
