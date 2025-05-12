@@ -22,10 +22,20 @@ import { db } from '../src/db';
 import { request as requestTable } from '../src/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
-// Initialize OpenAI client 
-const openai = new OpenAI({
-  apiKey: process.env.VITE_OPENAI_API_KEY
-});
+// Initialize OpenAI client only if API key is available
+const apiKey = process.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+let openai: OpenAI | null = null;
+
+try {
+  if (apiKey) {
+    openai = new OpenAI({ apiKey });
+    console.log('OpenAI API initialized successfully');
+  } else {
+    console.log('No OpenAI API key found, AI features will be disabled');
+  }
+} catch (error) {
+  console.error('Failed to initialize OpenAI client:', error);
+}
 
 // Define WebSocket client interface
 interface WebSocketClient extends WebSocket {
@@ -189,6 +199,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Test OpenAI API endpoint
   app.post('/api/test-openai', async (req, res) => {
     try {
+      if (!openai) {
+        return res.status(503).json({ 
+          success: false, 
+          error: 'OpenAI API is not configured. Please set OPENAI_API_KEY environment variable.',
+          missingApiKey: true
+        });
+      }
+      
       const { message } = req.body;
       const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
