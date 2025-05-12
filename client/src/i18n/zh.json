@@ -53,6 +53,12 @@
   "confirm_request_desc": "请检查并确认您的请求以确保准确。",
   "send_to_reception_desc": "您的请求将被发送到前台进行处理。",
 
+  "status_acknowledged": "已确认",
+  "status_in_progress": "处理中",
+  "status_delivering": "配送中",
+  "status_completed": "已完成",
+  "status_note": "特别说明",
+
   "icon_login": "入住/退房",
   "icon_hourglass_empty": "延长住宿请求",
   "icon_info": "房间信息",

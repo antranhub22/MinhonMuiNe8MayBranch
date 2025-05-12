@@ -55,6 +55,12 @@
   "confirm_request_desc": "정확성을 위해 요청을 확인하세요.",
   "send_to_reception_desc": "귀하의 요청이 프런트로 전송되어 처리됩니다.",
 
+  "status_acknowledged": "접수됨",
+  "status_in_progress": "처리 중",
+  "status_delivering": "배달 중",
+  "status_completed": "완료됨",
+  "status_note": "특별 안내",
+
   "icon_login": "체크인/체크아웃",
   "icon_hourglass_empty": "숙박 연장 요청",
   "icon_info": "객실 정보",

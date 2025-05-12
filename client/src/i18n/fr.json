@@ -53,6 +53,12 @@
   "confirm_request_desc": "Vérifiez et confirmez votre demande pour plus de précision.",
   "send_to_reception_desc": "Votre demande sera envoyée à la réception pour traitement.",
 
+  "status_acknowledged": "Reçue",
+  "status_in_progress": "En cours",
+  "status_delivering": "En livraison",
+  "status_completed": "Terminée",
+  "status_note": "Note spéciale",
+
   "icon_login": "Arrivée/Départ",
   "icon_hourglass_empty": "Prolongation de séjour",
   "icon_info": "Informations sur la chambre",

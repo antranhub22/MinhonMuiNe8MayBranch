@@ -54,6 +54,12 @@
   "confirm_request_desc": "Проверьте и подтвердите ваш запрос для точности.",
   "send_to_reception_desc": "Ваш запрос будет отправлен на ресепшен для обработки.",
 
+  "status_acknowledged": "Подтверждено",
+  "status_in_progress": "В процессе",
+  "status_delivering": "Доставляется",
+  "status_completed": "Завершено",
+  "status_note": "Особая заметка",
+
   "icon_login": "Регистрация/Выселение",
   "icon_hourglass_empty": "Запрос на продление проживания",
   "icon_info": "Информация о номере",

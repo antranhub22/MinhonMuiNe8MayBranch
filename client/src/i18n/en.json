@@ -51,6 +51,12 @@
   "confirm_request_desc": "Review and confirm your request for accuracy.",
   "send_to_reception_desc": "Your request will be sent to the reception for processing.",
 
+  "status_acknowledged": "Acknowledged",
+  "status_in_progress": "In Progress",
+  "status_delivering": "Delivering to You",
+  "status_completed": "Completed",
+  "status_note": "Special Note",
+
   "icon_login": "Check-in/Check-out",
   "icon_hourglass_empty": "Extended Stay Request",
   "icon_info": "Room Information",

@@ -106,6 +106,20 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
     }
   };
 
+  // Hàm chuyển đổi trạng thái từ Staff UI sang key cho dịch thuật
+  const getStatusTranslationKey = (status: string | undefined): string => {
+    if (!status) return 'status_acknowledged';
+    
+    switch (status) {
+      case 'Đã ghi nhận': return 'status_acknowledged';
+      case 'Đang thực hiện': return 'status_in_progress'; 
+      case 'Đã thực hiện và đang bàn giao cho khách': return 'status_delivering';
+      case 'Hoàn thiện': return 'status_completed';
+      case 'Lưu ý khác': return 'status_note';
+      default: return 'status_acknowledged';
+    }
+  };
+
   return (
     <div 
       className={`absolute w-full min-h-screen h-full transition-opacity duration-500 ${
@@ -372,7 +386,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                   style={{
                     background: 'rgba(255, 255, 255, 0.85)',
                     backdropFilter: 'blur(8px)',
-                    borderRadius: '18px',
+                    borderRadius: '24px',
                     boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
                     borderTop: '1px solid rgba(255, 255, 255, 0.3)',
                     borderLeft: '1px solid rgba(255, 255, 255, 0.3)',
@@ -393,10 +407,10 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                   <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
                   <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
                   
-                  {/* Thêm trạng thái */}
+                  {/* Thêm trạng thái - hiển thị theo ngôn ngữ đã chọn */}
                   <div className="mt-2 flex justify-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(o.status)} w-full text-center`}>
-                      {o.status || 'Đã ghi nhận'}
+                      {t(getStatusTranslationKey(o.status), language)}
                     </span>
                   </div>
                 </div>
