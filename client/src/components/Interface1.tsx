@@ -1,4 +1,4 @@
-// Interface1 component - latest version v1.0.2 - CACHE_BUSTER_2024_07_05 
+// Interface1 component - latest version v1.0.3 - CACHE_BUSTER_2024_07_13 
 import React, { useState, useEffect } from 'react';
 import { useAssistant } from '@/context/AssistantContext';
 import hotelImage from '../assets/hotel-exterior.jpeg';
@@ -8,8 +8,30 @@ import { initVapi, getVapiInstance } from '@/lib/vapiClient';
 import { FaGlobeAsia } from 'react-icons/fa';
 import { FiChevronDown } from 'react-icons/fi';
 
-// Force cache refresh with random number
-const cacheVersion = Math.floor(Date.now() / 1000);
+// Force cache refresh with random number and version
+const VERSION = '1.0.3-07132024';
+const cacheVersion = `${VERSION}-${Math.floor(Date.now() / 1000)}`;
+
+// Thêm một phương thức kiểm tra phiên bản
+const checkVersion = () => {
+  try {
+    // Lấy phiên bản từ localStorage
+    const storedVersion = localStorage.getItem('interface1_version');
+    
+    // Nếu phiên bản khác nhau, cập nhật và làm mới
+    if (storedVersion !== VERSION) {
+      localStorage.setItem('interface1_version', VERSION);
+      
+      // Chỉ làm mới nếu đã có phiên bản trước đó
+      if (storedVersion) {
+        console.log(`Interface1 version changed from ${storedVersion} to ${VERSION}, reloading...`);
+        window.location.reload();
+      }
+    }
+  } catch (err) {
+    console.error('Error checking Interface1 version:', err);
+  }
+};
 
 interface Interface1Props {
   isActive: boolean;
@@ -17,6 +39,11 @@ interface Interface1Props {
 
 const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
   const { setCurrentInterface, setTranscripts, setModelOutput, setCallDetails, setCallDuration, setEmailSentForCurrentSession, activeOrders, language, setLanguage } = useAssistant();
+  
+  // Kiểm tra phiên bản ngay khi component được mount
+  useEffect(() => {
+    checkVersion();
+  }, []);
   
   // State để lưu trữ tooltip đang hiển thị
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
