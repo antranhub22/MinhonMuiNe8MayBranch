@@ -488,22 +488,22 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                       {/* Custom summary formatting */}
                       {(() => {
                         const lines = (callSummary.content || '').split('\n');
-                        return lines.map((line, idx) => {
-                          // Bôi đậm các hạng mục chính
+                        // Lọc bỏ dòng Next Step và xử lý Guest's Name
+                        return lines.filter(line => !/^Next Step:/i.test(line) && !/Please Press Send To Reception/i.test(line)).map((line, idx) => {
+                          // Loại bỏ phần (used for Guest with a confirmed reservation)
+                          if (/^Guest's Name/i.test(line)) {
+                            const cleaned = line.replace(/\s*\(used for Guest with a confirmed reservation\)/i, '');
+                            return <div key={idx}><b>{cleaned}</b></div>;
+                          }
                           if (/^Room Number:/i.test(line)) return <div key={idx}><b>{line}</b></div>;
-                          if (/^Guest's Name/i.test(line)) return <div key={idx}><b>{line}</b></div>;
                           if (/^REQUEST \d+:/i.test(line)) return <div key={idx} className="mt-3 mb-1"><b>{line}</b></div>;
                           if (/^• Service Timing:/i.test(line)) return <div key={idx} style={{marginLeft:16}}><b>{line}</b></div>;
                           if (/^• Order Details:/i.test(line)) return <div key={idx} style={{marginLeft:16}}><b>{line}</b></div>;
                           if (/^• Special Requirements:/i.test(line)) return <div key={idx} style={{marginLeft:16}}><b>{line}</b></div>;
-                          if (/^Next Step:/i.test(line)) return <div key={idx} className="mt-4"><b>{line}</b></div>;
                           // Lùi dòng cho nội dung con của Order Details
                           if (/^• [^-].+/.test(line)) return <div key={idx} style={{marginLeft:32}}>{line}</div>;
-                          // Lùi dòng cho các dòng bắt đầu bằng dấu chấm hoặc gạch ngang
                           if (/^\s*[-•]/.test(line)) return <div key={idx} style={{marginLeft:32}}>{line}</div>;
-                          // Dòng trống hoặc phân cách
                           if (/^\s*$/.test(line)) return <div key={idx} style={{height:8}}></div>;
-                          // Mặc định
                           return <div key={idx}>{line}</div>;
                         });
                       })()}
@@ -513,6 +513,10 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                         {t('generated_at', language)} {new Date(callSummary.timestamp).toLocaleTimeString()}
                       </div>
                     </div>
+                  </div>
+                  {/* Ghi chú in nghiêng dưới cùng */}
+                  <div className="text-center mt-2 mb-1">
+                    <span className="italic text-sm text-gray-600">Please Press Send To Reception</span>
                   </div>
                 </div>
               )}
