@@ -167,7 +167,7 @@ const Interface3Fr: React.FC<Interface3FrProps> = ({ isActive }) => {
       data-interface="interface3fr"
       data-active={isActive.toString()}
       style={{
-        backgroundImage: 'linear-gradient(rgba(26, 35, 126, 0.8), rgba(63, 81, 181, 0.8))',
+        backgroundImage: 'linear-gradient(rgba(26, 35, 126, 0.7), rgba(63, 81, 181, 0.7))',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         fontFamily: 'SF Pro Text, Roboto, Open Sans, Arial, sans-serif',

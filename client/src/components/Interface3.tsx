@@ -437,7 +437,7 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
       } z-30 overflow-y-auto`}
       id="interface3"
       style={{
-        backgroundImage: `linear-gradient(rgba(26, 35, 126, 0.8), rgba(63, 81, 181, 0.8)), url(${hotelImage})`,
+        backgroundImage: `linear-gradient(rgba(26, 35, 126, 0.7), rgba(63, 81, 181, 0.7)), url(${hotelImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         fontFamily: 'SF Pro Text, Roboto, Open Sans, Arial, sans-serif'

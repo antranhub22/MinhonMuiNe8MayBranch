@@ -294,7 +294,7 @@ const Interface3Vi: React.FC<Interface3ViProps> = ({ isActive }) => {
     <div className={`absolute w-full min-h-screen h-full transition-opacity duration-500 ${
       isActive ? 'opacity-100 active' : 'opacity-0 pointer-events-none'
     } z-30 overflow-y-auto`} id="interface3vi" data-interface="interface3vi" data-active={isActive.toString()} style={{
-      backgroundImage: 'linear-gradient(rgba(26, 35, 126, 0.8), rgba(63, 81, 181, 0.8))',
+      backgroundImage: 'linear-gradient(rgba(26, 35, 126, 0.7), rgba(63, 81, 181, 0.7))',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       fontFamily: 'SF Pro Text, Roboto, Open Sans, Arial, sans-serif'

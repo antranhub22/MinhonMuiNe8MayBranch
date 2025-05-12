@@ -98,7 +98,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
       } z-10 overflow-y-auto`} 
       id="interface1"
       style={{
-        backgroundImage: `linear-gradient(rgba(26, 35, 126, 0.8), rgba(63, 81, 181, 0.8)), url(${hotelImage})`,
+        backgroundImage: `linear-gradient(rgba(26, 35, 126, 0.7), rgba(63, 81, 181, 0.7)), url(${hotelImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         perspective: '1000px'
