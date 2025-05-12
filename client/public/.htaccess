@@ -1,0 +1,43 @@
+# Cấu hình CORS cho tài nguyên tĩnh
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+    
+    # Cache busting cho hình ảnh và tài nguyên tĩnh
+    <FilesMatch "\.(jpg|jpeg|png|gif|ico)$">
+        Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+    </FilesMatch>
+</IfModule>
+
+# Chuyển hướng 404 và 403
+ErrorDocument 404 /index.html
+ErrorDocument 403 /index.html
+
+# Đảm bảo các request một số file có extension đúng MIME type
+<IfModule mod_mime.c>
+    AddType image/jpeg jpg jpeg
+    AddType image/png png
+    AddType image/gif gif
+</IfModule>
+
+# Đảm bảo các file trong thư mục images có thể truy cập được
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Cho phép truy cập trực tiếp vào các file hình ảnh
+    RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif)$ [NC]
+    RewriteRule .* - [L]
+    
+    # Chuyển hướng tất cả các request không phải là file thật tới index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /index.html [L,QSA]
+</IfModule>
+
+# Nén tài nguyên để giảm kích thước truyền tải
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule> 
