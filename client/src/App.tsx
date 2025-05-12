@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Switch, Route, Link } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
@@ -59,6 +59,34 @@ function Router() {
 function App() {
   // Initialize WebSocket globally to keep connection across routes
   useWebSocket();
+
+  // Version check and cache busting
+  useEffect(() => {
+    try {
+      // Lấy version từ meta tag
+      const metaVersion = document.querySelector('meta[name="version"]')?.getAttribute('content');
+      const currentVersion = metaVersion || '1.0.2-07052024';
+      
+      // Lấy phiên bản đã lưu
+      const lastVersion = localStorage.getItem('app_version');
+      
+      console.log('App version check:', { currentVersion, lastVersion });
+      
+      // Nếu phiên bản khác với phiên bản đã lưu, cập nhật localStorage và làm mới trang
+      if (lastVersion !== currentVersion) {
+        localStorage.setItem('app_version', currentVersion);
+        
+        // Chỉ làm mới khi đã có phiên bản trước đó (không phải lần đầu truy cập)
+        if (lastVersion) {
+          console.log('New version detected, refreshing page...');
+          window.location.reload();
+        }
+      }
+    } catch (err) {
+      console.error('Error checking app version:', err);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <AssistantProvider>
