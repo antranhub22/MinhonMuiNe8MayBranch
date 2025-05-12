@@ -104,8 +104,8 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
         perspective: '1000px'
       }}
     >
-      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-auto" 
-        style={{ transform: 'translateZ(20px)' }}
+      <div className="container mx-auto flex flex-col items-center justify-start text-white p-3 pt-6 sm:p-5 sm:pt-10 lg:pt-16 overflow-y-visible pb-24 sm:pb-16" 
+        style={{ transform: 'translateZ(20px)', minHeight: 'fit-content' }}
       >
         {/* Language Switcher nâng cao */}
         <div className="flex items-center justify-end w-full max-w-2xl mb-2">
@@ -204,10 +204,10 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           </button>
         </div>
         {/* Services Section - với hiệu ứng Glass Morphism và 3D */}
-        <div className="text-center w-full max-w-5xl" style={{ perspective: '1000px' }}>
-          <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-y-2 md:gap-3 text-left mx-auto w-full">
+        <div className="text-center w-full max-w-5xl mb-24 sm:mb-10" style={{ perspective: '1000px' }}>
+          <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-y-4 sm:gap-y-2 md:gap-3 text-left mx-auto w-full">
             {/* Room & Stay */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -232,7 +232,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Room Services - Áp dụng cùng phong cách cho các panel khác */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -259,7 +259,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Bookings & Facilities */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -286,7 +286,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Tourism & Exploration */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-3 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
@@ -313,13 +313,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               </ul>
             </div>
             {/* Support */}
-            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
+            <div className="p-0.5 sm:p-2 w-4/5 mx-auto md:w-64 mb-5 sm:mb-0 min-h-[40px] transition-all duration-250 hover:scale-103 hover:-translate-y-1"
               style={{
                 background: 'rgba(63, 81, 181, 0.7)',
                 backdropFilter: 'blur(8px)',
                 borderRadius: '12px',
-                boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
-                border: '1px solid rgba(255, 255, 255, 0.18)',
+                boxShadow: '0px 10px 25px rgba(0,0,0,0.15)',
+                border: '1px solid rgba(255,255,255,0.18)',
                 transform: 'translateZ(20px)'
               }}
             >
