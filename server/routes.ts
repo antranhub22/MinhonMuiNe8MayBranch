@@ -20,7 +20,7 @@ import { Request as StaffRequest } from './models/Request';
 import { Message as StaffMessage } from './models/Message';
 import { db } from '../src/db';
 import { request as requestTable } from '../src/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 
 // Initialize OpenAI client 
 const openai = new OpenAI({
@@ -1106,8 +1106,41 @@ Mi Nhon Hotel Mui Ne`
   app.get('/api/staff/requests', verifyJWT, async (req, res) => {
     console.log('API /api/staff/requests called');
     console.log('Authorization header:', req.headers.authorization);
+    console.log('User-Agent:', req.headers['user-agent']);
+    console.log('Query params:', req.query);
+    
+    const isMobile = /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(req.headers['user-agent'] || '');
+    console.log('Device type:', isMobile ? 'mobile' : 'desktop');
+    
     try {
-      const dbRequests = await db.select().from(requestTable);
+      // Tạo timestamp trước khi query
+      const startTime = new Date();
+      // Thực hiện query, sắp xếp theo thời gian tạo giảm dần (mới nhất trước)
+      const dbRequests = await db.select()
+        .from(requestTable)
+        .orderBy(desc(requestTable.created_at));
+      
+      // Thêm thông tin về thời gian query
+      const endTime = new Date();
+      const queryTime = endTime.getTime() - startTime.getTime();
+      
+      console.log(`Fetched ${dbRequests.length} requests in ${queryTime}ms`);
+      
+      // Trả về meta data cùng với kết quả
+      const responseData = {
+        timestamp: new Date().toISOString(),
+        count: dbRequests.length,
+        device: isMobile ? 'mobile' : 'desktop',
+        queryTimeMs: queryTime,
+        data: dbRequests
+      };
+      
+      // Thêm headers no-cache để đảm bảo client luôn nhận dữ liệu mới
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
+      // Trả về kết quả dạng array với data wrapper
       res.json(dbRequests);
     } catch (err) {
       console.error('Error in /api/staff/requests:', err);

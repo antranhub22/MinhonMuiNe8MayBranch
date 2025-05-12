@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import StaffRequestDetailModal from '../components/StaffRequestDetailModal';
 import StaffMessagePopup from '../components/StaffMessagePopup';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +31,10 @@ const StaffDashboard: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMsg, setLoadingMsg] = useState(false);
   const [statusFilter, setStatusFilter] = useState('Tất cả');
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasNewData, setHasNewData] = useState(false);
+  const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
+  const previousRequestsRef = useRef<any[]>([]);
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
@@ -43,29 +47,84 @@ const StaffDashboard: React.FC = () => {
       navigate('/staff');
       return;
     }
+    
+    setIsLoading(true);
+    
     try {
-      const res = await fetch('/api/staff/requests', {
-        headers: { 'Authorization': `Bearer ${token}` },
+      // Thêm timestamp ngẫu nhiên để tránh cache
+      const timestamp = new Date().getTime();
+      const res = await fetch(`/api/staff/requests?_=${timestamp}`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache', 
+          'Expires': '0'
+        },
         credentials: 'include'
       });
+      
       if (res.status === 401) {
         localStorage.removeItem('staff_token');
         navigate('/staff');
         return;
       }
+      
       const data = await res.json();
+      
+      // Kiểm tra nếu có dữ liệu mới hoặc thay đổi
+      const prevIds = new Set(previousRequestsRef.current.map(r => r.id));
+      const newReqs = data.filter((r: any) => !prevIds.has(r.id));
+      
+      // Kiểm tra các trạng thái cập nhật
+      const hasStatusChanges = data.some((newReq: any) => {
+        const oldReq = previousRequestsRef.current.find(r => r.id === newReq.id);
+        return oldReq && oldReq.status !== newReq.status;
+      });
+      
+      if (newReqs.length > 0 || hasStatusChanges) {
+        setHasNewData(true);
+        setLastUpdateTime(new Date());
+        
+        // Thông báo âm thanh nếu có request mới
+        if (newReqs.length > 0) {
+          playNotificationSound();
+        }
+      }
+      
       setRequests(data);
+      previousRequestsRef.current = data;
     } catch (err) {
       console.error('Failed to fetch requests:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Phát âm thanh thông báo khi có yêu cầu mới
+  const playNotificationSound = () => {
+    try {
+      const audio = new Audio('/notification.mp3');
+      audio.play().catch(e => console.log('Notification sound could not be played', e));
+    } catch (err) {
+      console.error('Could not play notification sound:', err);
     }
   };
 
   useEffect(() => {
+    // Fetch ngay khi component được mount
     fetchRequests();
-    // Thêm polling mỗi 30 giây
-    const intervalId = setInterval(fetchRequests, 30000);
+    
+    // Thêm polling mỗi 5 giây thay vì 30 giây
+    const intervalId = setInterval(fetchRequests, 5000);
+    
     return () => clearInterval(intervalId);
   }, []);
+  
+  // Reset thông báo mới khi người dùng tương tác hoặc click Refresh
+  const handleManualRefresh = () => {
+    setHasNewData(false);
+    fetchRequests();
+  };
 
   // Mở modal chi tiết
   const handleOpenDetail = (req: any) => {
@@ -151,13 +210,34 @@ const StaffDashboard: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-blue-900">Staff Request Management</h2>
-          <button
-            onClick={fetchRequests}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold"
-          >
-            Refresh
-          </button>
+          <h2 className="text-2xl font-bold text-blue-900">
+            Staff Request Management
+            {hasNewData && (
+              <span className="ml-3 px-2 py-1 bg-red-500 text-white text-xs rounded-full animate-pulse">
+                Mới!
+              </span>
+            )}
+          </h2>
+          <div className="flex items-center space-x-3">
+            {lastUpdateTime && (
+              <span className="text-xs text-gray-500">
+                Cập nhật lúc: {lastUpdateTime.toLocaleTimeString()}
+              </span>
+            )}
+            <button
+              onClick={handleManualRefresh}
+              className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold flex items-center ${isLoading ? 'opacity-75' : ''}`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : null}
+              {isLoading ? 'Đang tải...' : 'Refresh'}
+            </button>
+          </div>
         </div>
         {/* Filter status */}
         <div className="mb-4 flex flex-wrap items-center gap-3">
