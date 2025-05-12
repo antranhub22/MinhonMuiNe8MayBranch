@@ -227,10 +227,17 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               const secs = (diffSec % 60).toString().padStart(2, '0');
               return (
                 <div key={o.reference} className="bg-white/80 backdrop-blur-sm p-2 sm:p-3 rounded-lg text-gray-800 shadow max-w-xs w-[220px] border border-white/40 flex-shrink-0">
+                  {/* Countdown timer lên đầu */}
+                  <p className="text-xs sm:text-sm font-bold text-blue-900 mb-0.5 flex items-center gap-1">
+                    <span className="material-icons text-base sm:text-lg text-amber-500">schedule</span>
+                    {`${mins}:${secs}`}
+                  </p>
+                  {/* Order Ref */}
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
-                  <p className="text-xs sm:text-sm"><strong>{t('time_remaining', language)}:</strong> {`${mins}:${secs}`}</p>
+                  {/* Thêm trường Status */}
+                  <p className="text-xs sm:text-sm mb-0.5"><strong>Status:</strong> {o.status || 'unknown'}</p>
                 </div>
               );
             })}
