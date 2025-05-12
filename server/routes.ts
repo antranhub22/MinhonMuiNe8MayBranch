@@ -1117,5 +1117,19 @@ Mi Nhon Hotel Mui Ne`
     res.status(201).json(msg);
   });
 
+  // Get order by reference
+  app.get('/api/orders/by-reference/:reference', async (req, res) => {
+    try {
+      const reference = req.params.reference;
+      const result = await storage.getOrderByReference(reference);
+      if (!result) {
+        return res.status(404).json({ error: 'Order not found' });
+      }
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to retrieve order by reference' });
+    }
+  });
+
   return httpServer;
 }

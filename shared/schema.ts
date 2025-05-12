@@ -40,6 +40,7 @@ export const orders = pgTable("orders", {
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   requestId: integer("request_id"),
+  reference: text("reference"),
 });
 
 export const callSummaries = pgTable("call_summaries", {
@@ -68,6 +69,7 @@ export const insertOrderSchema = createInsertSchema(orders).pick({
   items: true,
   totalAmount: true,
   requestId: true,
+  reference: true,
 });
 
 // Define relations between tables

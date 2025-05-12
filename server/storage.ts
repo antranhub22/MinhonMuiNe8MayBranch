@@ -20,6 +20,7 @@ export interface IStorage {
   getOrdersByRoomNumber(roomNumber: string): Promise<Order[]>;
   updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
   getAllOrders(filter: { status?: string; roomNumber?: string }): Promise<Order[]>;
+  getOrderByReference(reference: string): Promise<Order | undefined>;
   
   // Call Summary methods
   addCallSummary(summary: InsertCallSummary): Promise<CallSummary>;
@@ -55,7 +56,8 @@ export class DatabaseStorage implements IStorage {
   async createOrder(insertOrder: InsertOrder): Promise<Order> {
     const result = await db.insert(orders).values({
       ...insertOrder,
-      status: "pending"
+      status: "pending",
+      reference: insertOrder.reference
     }).returning();
     return result[0];
   }
@@ -87,6 +89,11 @@ export class DatabaseStorage implements IStorage {
       query.where(eq(orders.roomNumber, filter.roomNumber));
     }
     return await query;
+  }
+  
+  async getOrderByReference(reference: string): Promise<Order | undefined> {
+    const result = await db.select().from(orders).where(eq(orders.reference, reference));
+    return result.length > 0 ? result[0] : undefined;
   }
   
   async addCallSummary(insertCallSummary: InsertCallSummary): Promise<CallSummary> {
