@@ -65,8 +65,17 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
 
   const getAssetUrl = (url: string) => {
     if (/^https?:\/\//.test(url)) return url;
+    
+    // Lấy timestamp để làm cache buster
+    const timestamp = new Date().getTime();
+    
+    // Nếu URL đã có tham số query, thêm tham số cache
+    // Nếu không có, thêm dấu ? và tham số cache
     const path = url.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${path}`;
+    const hasQuery = path.includes('?');
+    const cacheBuster = hasQuery ? `&_t=${timestamp}` : `?_t=${timestamp}`;
+    
+    return `${import.meta.env.BASE_URL}${path}${cacheBuster}`;
   };
 
   const handleDownload = async (url: string, filename: string) => {
@@ -214,7 +223,22 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
           {[...Array(3)].map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : filteredReferences.length === 0 ? (
-        <div className="flex items-center justify-center h-[120px] text-white/80 text-base font-medium">No references available</div>
+        <div className="flex flex-col items-center justify-center h-[120px] space-y-3">
+          <div className="text-white/80 text-base font-medium">No references available</div>
+          <button 
+            onClick={() => {
+              setLoading(true);
+              // Add a small delay to simulate loading
+              setTimeout(() => {
+                setLoading(false);
+              }, 1000);
+            }}
+            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md flex items-center"
+          >
+            <span className="material-icons text-base mr-1">refresh</span>
+            Refresh
+          </button>
+        </div>
       ) : (
         <Swiper
           modules={[Navigation, Pagination, A11y]}
