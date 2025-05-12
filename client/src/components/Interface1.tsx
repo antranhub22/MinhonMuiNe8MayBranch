@@ -122,7 +122,15 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full font-poppins font-bold flex flex-col items-center justify-center overflow-hidden hover:translate-y-[-2px] hover:shadow-[0px_12px_20px_rgba(0,0,0,0.2)]"
             onClick={() => handleCall(language as any)}
             style={{
-              background: 'linear-gradient(180deg, rgba(78, 90, 183, 0.9) 0%, rgba(56, 65, 152, 0.9) 100%)',
+              background: language === 'en' 
+                ? 'linear-gradient(180deg, rgba(78, 90, 183, 0.9) 0%, rgba(56, 65, 152, 0.9) 100%)' // Tiếng Anh - Xanh dương đậm
+                : language === 'fr' 
+                ? 'linear-gradient(180deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%)' // Tiếng Pháp - Xanh da trời
+                : language === 'zh' 
+                ? 'linear-gradient(180deg, rgba(220, 38, 38, 0.9) 0%, rgba(185, 28, 28, 0.9) 100%)' // Tiếng Trung - Đỏ
+                : language === 'ru' 
+                ? 'linear-gradient(180deg, rgba(79, 70, 229, 0.9) 0%, rgba(67, 56, 202, 0.9) 100%)' // Tiếng Nga - Tím
+                : 'linear-gradient(180deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%)', // Tiếng Hàn - Xanh lá
               boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.25), 0px 6px 12px rgba(0, 0, 0, 0.15), inset 0px 1px 0px rgba(255, 255, 255, 0.3)',
               border: '1px solid rgba(255, 255, 255, 0.5)',
               transition: 'all 0.3s ease',
@@ -130,7 +138,18 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             }}
           >
             <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 text-[#F9BF3B] transition-all duration-300 group-hover:scale-110" 
-              style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
+              style={{ 
+                filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))',
+                color: language === 'en' 
+                  ? '#F9BF3B' // Vàng cho tiếng Anh
+                  : language === 'fr' 
+                  ? '#FFFFFF' // Trắng cho tiếng Pháp
+                  : language === 'zh' 
+                  ? '#FFEB3B' // Vàng sáng cho tiếng Trung
+                  : language === 'ru' 
+                  ? '#F48FB1' // Hồng nhạt cho tiếng Nga
+                  : '#4ADE80' // Xanh lá sáng cho tiếng Hàn
+              }}
             >mic</span>
             {language === 'fr' ? (
               <span className="text-sm sm:text-lg lg:text-2xl font-bold text-white px-2 text-center"
