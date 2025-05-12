@@ -388,19 +388,22 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                     backdropFilter: 'blur(8px)',
                     borderRadius: '24px',
                     boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.3)',
-                    borderLeft: '1px solid rgba(255, 255, 255, 0.3)',
-                    borderRight: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.4)',
                     transform: 'translateZ(20px)',
                     transformStyle: 'preserve-3d',
                     zIndex: 20,
-                    marginBottom: '8px'
+                    marginBottom: '8px',
+                    transition: 'all 0.3s ease-in-out'
                   }}
                 >
                   {/* Đồng hồ đếm ngược ở trên đầu */}
                   <div className="flex justify-center items-center mb-1.5">
-                    <span className="font-bold text-lg text-blue-800 bg-blue-50 px-4 py-1.5 rounded-full shadow-sm">{`${mins}:${secs}`}</span>
+                    <span className="font-bold text-lg text-blue-800 bg-blue-50 px-4 py-1.5 rounded-full shadow-sm" 
+                      style={{
+                        borderRadius: '16px',
+                        boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)'
+                      }}
+                    >{`${mins}:${secs}`}</span>
                   </div>
                   
                   <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
@@ -409,7 +412,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                   
                   {/* Thêm trạng thái - hiển thị theo ngôn ngữ đã chọn */}
                   <div className="mt-2 flex justify-center">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(o.status)} w-full text-center`}>
+                    <span className={`px-2 py-1 text-xs font-semibold ${getStatusColor(o.status)} w-full text-center`}
+                      style={{
+                        borderRadius: '16px',
+                        boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
                       {t(getStatusTranslationKey(o.status), language)}
                     </span>
                   </div>
