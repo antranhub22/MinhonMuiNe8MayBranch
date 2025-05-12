@@ -1060,6 +1060,48 @@ Mi Nhon Hotel Mui Ne`
     res.json({ token });
   });
 
+  // Mobile staff login route - tương tự nhưng kèm theo thông tin thiết bị
+  app.post('/api/mobile/staff/login', (req, res) => {
+    console.log('Mobile staff login request received:', req.body);
+    console.log('User-Agent:', req.headers['user-agent']);
+    
+    const { username, password } = req.body;
+    const found = STAFF_ACCOUNTS.find(acc => acc.username === username && acc.password === password);
+    
+    if (!found) {
+      console.log('Login failed: Invalid credentials');
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    // Tạo token với thêm thông tin về thiết bị
+    const isMobile = /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(req.headers['user-agent'] || '');
+    const token = jwt.sign({ 
+      username, 
+      isMobile,
+      deviceType: isMobile ? 'mobile' : 'desktop',
+      loginTime: new Date().toISOString()
+    }, JWT_SECRET, { 
+      expiresIn: '7d' // Token tồn tại lâu hơn cho thiết bị di động
+    });
+    
+    console.log('Login successful for:', username, 'on', isMobile ? 'mobile' : 'desktop');
+    
+    // Trả về token và thêm vào cookie
+    res.cookie('token', token, { 
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production'
+    });
+    
+    res.json({ 
+      token,
+      username,
+      deviceType: isMobile ? 'mobile' : 'desktop',
+      expiresIn: '7d'
+    });
+  });
+
   // Lấy danh sách request
   app.get('/api/staff/requests', verifyJWT, async (req, res) => {
     console.log('API /api/staff/requests called');
@@ -1083,6 +1125,8 @@ Mi Nhon Hotel Mui Ne`
         return res.status(400).json({ error: 'Status is required' });
       }
       
+      console.log('Updating status for request:', id, 'to:', status);
+      
       // Cập nhật trong cơ sở dữ liệu thay vì mảng trong bộ nhớ
       const result = await db.update(requestTable)
         .set({ 
@@ -1096,6 +1140,7 @@ Mi Nhon Hotel Mui Ne`
         return res.status(404).json({ error: 'Request not found' });
       }
       
+      console.log('Status updated successfully:', result[0]);
       res.json(result[0]);
     } catch (error) {
       console.error('Error updating request status:', error);
