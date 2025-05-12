@@ -52,5 +52,39 @@
   "return_to_home": "Вернуться на главную",
   "press_to_call_desc": "Нажмите кнопку вызова, чтобы начать ваш запрос.",
   "confirm_request_desc": "Проверьте и подтвердите ваш запрос для точности.",
-  "send_to_reception_desc": "Ваш запрос будет отправлен на ресепшен для обработки."
+  "send_to_reception_desc": "Ваш запрос будет отправлен на ресепшен для обработки.",
+
+  "icon_login": "Регистрация/Выселение",
+  "icon_hourglass_empty": "Запрос на продление проживания",
+  "icon_info": "Информация о номере",
+  "icon_policy": "Правила отеля",
+  "icon_wifi": "Wi-Fi услуги",
+
+  "icon_restaurant": "Ресторанное обслуживание номеров",
+  "icon_local_bar": "Напитки и бар",
+  "icon_cleaning_services": "Уборка номера",
+  "icon_local_laundry_service": "Услуги прачечной",
+  "icon_alarm": "Услуга будильника",
+  "icon_add_circle": "Дополнительные удобства",
+  "icon_build": "Запрос на техническое обслуживание",
+
+  "icon_event_seat": "Бронирование ресторана",
+  "icon_spa": "СПА услуги",
+  "icon_fitness_center": "Фитнес-центр",
+  "icon_pool": "Бассейн",
+  "icon_directions_car": "Аренда автомобиля",
+  "icon_medical_services": "Медицинская помощь",
+  "icon_support_agent": "Поддержка клиентов",
+
+  "icon_location_on": "Местные достопримечательности",
+  "icon_local_dining": "Местные рестораны",
+  "icon_directions_bus": "Общественный транспорт",
+  "icon_event": "Местные мероприятия",
+  "icon_shopping_bag": "Торговые зоны",
+  "icon_map": "Карты местности",
+
+  "icon_translate": "Услуги перевода",
+  "icon_rate_review": "Оставить отзыв",
+  "icon_report_problem": "Сообщить о проблеме",
+  "icon_luggage": "Услуги багажа"
 } 

@@ -51,5 +51,39 @@
   "return_to_home": "返回首页",
   "press_to_call_desc": "点击呼叫按钮开始您的请求。",
   "confirm_request_desc": "请检查并确认您的请求以确保准确。",
-  "send_to_reception_desc": "您的请求将被发送到前台进行处理。"
+  "send_to_reception_desc": "您的请求将被发送到前台进行处理。",
+
+  "icon_login": "入住/退房",
+  "icon_hourglass_empty": "延长住宿请求",
+  "icon_info": "房间信息",
+  "icon_policy": "酒店政策",
+  "icon_wifi": "无线网络服务",
+
+  "icon_restaurant": "客房餐饮服务",
+  "icon_local_bar": "饮品与酒吧服务",
+  "icon_cleaning_services": "房间清洁",
+  "icon_local_laundry_service": "洗衣服务",
+  "icon_alarm": "唤醒服务",
+  "icon_add_circle": "额外设施",
+  "icon_build": "维修请求",
+
+  "icon_event_seat": "餐厅预订",
+  "icon_spa": "水疗服务",
+  "icon_fitness_center": "健身中心",
+  "icon_pool": "游泳池",
+  "icon_directions_car": "租车服务",
+  "icon_medical_services": "医疗援助",
+  "icon_support_agent": "客户支持",
+
+  "icon_location_on": "当地景点",
+  "icon_local_dining": "当地餐厅",
+  "icon_directions_bus": "公共交通",
+  "icon_event": "当地活动",
+  "icon_shopping_bag": "购物区域",
+  "icon_map": "区域地图",
+
+  "icon_translate": "翻译服务",
+  "icon_rate_review": "留下评论",
+  "icon_report_problem": "报告问题",
+  "icon_luggage": "行李服务"
 } 

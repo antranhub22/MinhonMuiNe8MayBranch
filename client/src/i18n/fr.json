@@ -51,5 +51,39 @@
   "return_to_home": "Retour à l'accueil",
   "press_to_call_desc": "Appuyez sur le bouton d'appel pour démarrer votre demande.",
   "confirm_request_desc": "Vérifiez et confirmez votre demande pour plus de précision.",
-  "send_to_reception_desc": "Votre demande sera envoyée à la réception pour traitement."
+  "send_to_reception_desc": "Votre demande sera envoyée à la réception pour traitement.",
+
+  "icon_login": "Arrivée/Départ",
+  "icon_hourglass_empty": "Prolongation de séjour",
+  "icon_info": "Informations sur la chambre",
+  "icon_policy": "Politiques de l'hôtel",
+  "icon_wifi": "Services Wi-Fi",
+
+  "icon_restaurant": "Service de restauration",
+  "icon_local_bar": "Service de bar",
+  "icon_cleaning_services": "Nettoyage de chambre",
+  "icon_local_laundry_service": "Service de blanchisserie",
+  "icon_alarm": "Service de réveil",
+  "icon_add_circle": "Aménités supplémentaires",
+  "icon_build": "Demande de maintenance",
+
+  "icon_event_seat": "Réservation au restaurant",
+  "icon_spa": "Services de spa",
+  "icon_fitness_center": "Centre de fitness",
+  "icon_pool": "Piscine",
+  "icon_directions_car": "Location de voiture",
+  "icon_medical_services": "Assistance médicale",
+  "icon_support_agent": "Service client",
+
+  "icon_location_on": "Attractions locales",
+  "icon_local_dining": "Restaurants locaux",
+  "icon_directions_bus": "Transports publics",
+  "icon_event": "Événements locaux",
+  "icon_shopping_bag": "Zones commerciales",
+  "icon_map": "Cartes de la région",
+
+  "icon_translate": "Services de traduction",
+  "icon_rate_review": "Laisser un avis",
+  "icon_report_problem": "Signaler un problème",
+  "icon_luggage": "Services de bagagerie"
 } 

@@ -53,5 +53,39 @@
   "return_to_home": "홈으로 돌아가기",
   "press_to_call_desc": "요청을 시작하려면 호출 버튼을 누르세요.",
   "confirm_request_desc": "정확성을 위해 요청을 확인하세요.",
-  "send_to_reception_desc": "귀하의 요청이 프런트로 전송되어 처리됩니다."
+  "send_to_reception_desc": "귀하의 요청이 프런트로 전송되어 처리됩니다.",
+
+  "icon_login": "체크인/체크아웃",
+  "icon_hourglass_empty": "숙박 연장 요청",
+  "icon_info": "객실 정보",
+  "icon_policy": "호텔 정책",
+  "icon_wifi": "와이파이 서비스",
+
+  "icon_restaurant": "룸서비스 음식",
+  "icon_local_bar": "음료 및 바 서비스",
+  "icon_cleaning_services": "객실 청소",
+  "icon_local_laundry_service": "세탁 서비스",
+  "icon_alarm": "모닝콜 서비스",
+  "icon_add_circle": "추가 편의 시설",
+  "icon_build": "유지보수 요청",
+
+  "icon_event_seat": "레스토랑 예약",
+  "icon_spa": "스파 서비스",
+  "icon_fitness_center": "피트니스 센터",
+  "icon_pool": "수영장",
+  "icon_directions_car": "렌터카",
+  "icon_medical_services": "의료 지원",
+  "icon_support_agent": "고객 지원",
+
+  "icon_location_on": "지역 명소",
+  "icon_local_dining": "지역 레스토랑",
+  "icon_directions_bus": "대중교통",
+  "icon_event": "지역 이벤트",
+  "icon_shopping_bag": "쇼핑 지역",
+  "icon_map": "지역 지도",
+
+  "icon_translate": "번역 서비스",
+  "icon_rate_review": "리뷰 남기기",
+  "icon_report_problem": "문제 신고",
+  "icon_luggage": "수화물 서비스"
 } 
