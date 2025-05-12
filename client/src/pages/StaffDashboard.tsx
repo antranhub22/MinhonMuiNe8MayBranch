@@ -62,8 +62,7 @@ const StaffDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchRequests();
-    // Thêm polling mỗi 30 giây
-    const intervalId = setInterval(fetchRequests, 30000);
+    const intervalId = setInterval(fetchRequests, 30000); // Polling mỗi 30 giây
     return () => clearInterval(intervalId);
   }, []);
 
