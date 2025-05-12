@@ -429,11 +429,6 @@ export async function extractServiceRequests(summary: string): Promise<ServiceRe
 }
 
 /**
- * Generate a summary from the provided transcript 
- * @param transcripts Array of conversation parts
- * @returns The AI-generated summary
- */
-/**
  * Translate text to Vietnamese
  * @param text Text to translate
  * @returns Vietnamese translation
@@ -472,7 +467,288 @@ export async function translateToVietnamese(text: string): Promise<string> {
   }
 }
 
-export async function generateCallSummary(transcripts: Array<{role: string, content: string}>): Promise<string> {
+// Prompt templates cho từng ngôn ngữ
+const PROMPT_TEMPLATES: Record<string, (conversationText: string) => string> = {
+  en: (conversationText) => `You are a hotel service summarization specialist for Mi Nhon Hotel. 
+Summarize the following conversation between a Hotel Assistant and a Guest in a concise, professional manner.
+
+IMPORTANT: For EACH separate request from the guest, structure your summary in the following format (repeat for as many requests as needed, do NOT limit the number of requests):
+
+Room Number: [Extract and display the room number if the guest provides it anywhere in the conversation. If not provided, write "Not specified".]
+Guest's Name (used for Guest with a confirmed reservation): [Extract and display the guest's name if provided in the conversation. If not provided, write "Not specified".]
+
+REQUEST 1: [Service Type]
+• Service Timing: [Requested completion time]
+• Order Details:
+    • [Item/Service] x [Quantity] - [Special notes]
+    • [Item/Service] x [Quantity] - [Special notes]
+• Special Requirements: [Guest special request details]
+
+REQUEST 2: [Other Service Type] (if applicable)
+• Service Timing: [Requested completion time]
+• Details:
+    • [Service details]
+• Special Requirements: [Guest special request details]
+
+(Continue numbering REQUEST 3, REQUEST 4, etc. for all guest requests, do NOT limit the number of requests.)
+
+Next Step: Please Press Send To Reception in order to complete your request
+
+IMPORTANT INSTRUCTIONS:
+1. Provide the summary only in the guest's original language (English, Russian, Korean, Chinese, or German)
+2. Be EXTREMELY comprehensive - include EVERY service request mentioned in the conversation
+3. Format with bullet points and indentation as shown above
+4. ALWAYS ASK FOR AND INCLUDE ROOM NUMBER - This is the most critical information for every request. If the guest provides a room number anywhere in the conversation, extract and display it in the summary.
+5. For Guest's Name, if the guest provides their name anywhere in the conversation, extract and display it in the summary.
+6. If room number or guest name is not mentioned in the conversation, make a clear note that "Not specified".
+7. For ALL service details, include times, locations, quantities, and any specific requirements
+8. For Order Details, ALWAYS extract and list each specific item/service, quantity, and any special notes as mentioned by the guest. DO NOT use generic phrases like 'to order' or 'food items'. For example, if the guest requests '2 beef burgers and 1 orange juice', the summary must show:
+    • Beef burger x 2
+    • Orange juice x 1
+9. End with any required follow-up actions or confirmation needed from staff
+
+Example conversation:
+Guest: Hi. My name is Tony. My room is 200. I would like to order 2 beef burgers and 1 orange juice.
+Assistant: Sure, Tony. 2 beef burgers and 1 orange juice for room 200. Anything else?
+Guest: No, that's all. Please deliver within 30 minutes.
+
+Example summary:
+Room Number: 200
+Guest's Name (used for Guest with a confirmed reservation): Tony
+REQUEST 1: Food & Beverage
+• Service Timing: within 30 minutes
+• Order Details:
+    • Beef burger x 2
+    • Orange juice x 1
+• Special Requirements: Not specified
+
+Conversation transcript:
+${conversationText}
+
+Summary:`,
+  fr: (conversationText) => `Vous êtes un spécialiste de la synthèse des services hôteliers pour l'hôtel Mi Nhon. 
+Résumez la conversation suivante entre un assistant hôtelier et un client de manière concise et professionnelle.
+
+IMPORTANT : Pour CHAQUE demande distincte du client, structurez votre résumé selon le format suivant (répétez pour autant de demandes que nécessaire, ne limitez PAS le nombre de demandes) :
+
+Numéro de chambre : [Extraire et afficher le numéro de chambre si le client le fournit dans la conversation. Sinon, indiquez "Non spécifié".]
+Nom du client (utilisé pour les clients avec réservation confirmée) : [Extraire et afficher le nom du client si fourni. Sinon, indiquez "Non spécifié".]
+
+DEMANDE 1 : [Type de service]
+• Heure de service : [Heure demandée]
+• Détails de la commande :
+    • [Article/Service] x [Quantité] - [Notes spéciales]
+    • [Article/Service] x [Quantité] - [Notes spéciales]
+• Exigences particulières : [Détails des demandes spéciales]
+
+DEMANDE 2 : [Autre type de service] (le cas échéant)
+• Heure de service : [Heure demandée]
+• Détails :
+    • [Détails du service]
+• Exigences particulières : [Détails des demandes spéciales]
+
+(Continuez à numéroter DEMANDE 3, DEMANDE 4, etc. pour toutes les demandes du client, ne limitez PAS le nombre de demandes.)
+
+Étape suivante : Veuillez appuyer sur "Envoyer à la Réception" pour finaliser votre demande
+
+INSTRUCTIONS IMPORTANTES :
+1. Fournissez le résumé uniquement dans la langue d'origine du client (français, russe, coréen, chinois, etc.)
+2. Soyez EXTRÊMEMENT complet - incluez TOUTES les demandes mentionnées
+3. Formatez avec des puces et des indentations comme ci-dessus
+4. DEMANDEZ TOUJOURS ET INCLUEZ LE NUMÉRO DE CHAMBRE
+5. Pour le nom du client, si le client le fournit, affichez-le
+6. Si le numéro de chambre ou le nom du client n'est pas mentionné, indiquez clairement "Non spécifié".
+7. Pour tous les détails, incluez heures, lieux, quantités, exigences spécifiques
+8. Pour les détails de la commande, listez chaque article/service, quantité, notes spéciales. N'utilisez PAS de phrases génériques comme 'à commander' ou 'articles alimentaires'.
+9. Terminez par toute action de suivi ou confirmation nécessaire du personnel
+
+Exemple de conversation :
+Client : Bonjour. Je m'appelle Tony. Ma chambre est la 200. Je voudrais commander 2 burgers de boeuf et 1 jus d'orange.
+Assistant : Bien sûr, Tony. 2 burgers de boeuf et 1 jus d'orange pour la chambre 200. Autre chose ?
+Client : Non, c'est tout. Merci de livrer dans les 30 minutes.
+
+Exemple de résumé :
+Numéro de chambre : 200
+Nom du client (utilisé pour les clients avec réservation confirmée) : Tony
+DEMANDE 1 : Restauration
+• Heure de service : dans les 30 minutes
+• Détails de la commande :
+    • Burger de boeuf x 2
+    • Jus d'orange x 1
+• Exigences particulières : Non spécifié
+
+Transcription de la conversation :
+${conversationText}
+
+Résumé :`,
+  ru: (conversationText) => `Вы — специалист по составлению сводок для отеля Mi Nhon. 
+Сделайте краткое и профессиональное резюме следующего разговора между гостиничным ассистентом и гостем.
+
+ВАЖНО: Для КАЖДОГО отдельного запроса гостя структурируйте резюме по следующему формату (повторяйте для всех запросов, не ограничивайте их количество):
+
+Номер комнаты: [Укажите номер комнаты, если гость его сообщил. Если нет — "Не указано".]
+Имя гостя (для гостей с подтвержденным бронированием): [Укажите имя гостя, если оно было сообщено. Если нет — "Не указано".]
+
+ЗАПРОС 1: [Тип услуги]
+• Время выполнения: [Запрошенное время]
+• Детали заказа:
+    • [Товар/услуга] x [Количество] - [Особые пожелания]
+    • [Товар/услуга] x [Количество] - [Особые пожелания]
+• Особые требования: [Детали особых пожеланий]
+
+ЗАПРОС 2: [Другой тип услуги] (если применимо)
+• Время выполнения: [Запрошенное время]
+• Детали:
+    • [Детали услуги]
+• Особые требования: [Детали особых пожеланий]
+
+(Продолжайте нумерацию ЗАПРОС 3, ЗАПРОС 4 и т.д. для всех запросов гостя, не ограничивайте их количество.)
+
+Следующий шаг: Пожалуйста, нажмите "Отправить на ресепшн", чтобы завершить ваш запрос
+
+ВАЖНЫЕ ИНСТРУКЦИИ:
+1. Предоставьте резюме только на языке гостя (русский, французский, корейский, китайский и т.д.)
+2. Будьте максимально подробны — включайте ВСЕ запросы
+3. Используйте маркированные списки и отступы, как показано выше
+4. ВСЕГДА СПРАШИВАЙТЕ И УКАЗЫВАЙТЕ НОМЕР КОМНАТЫ
+5. Для имени гостя — если оно указано, обязательно включите
+6. Если номер комнаты или имя гостя не указаны, явно напишите "Не указано".
+7. Для всех деталей — время, место, количество, особые требования
+8. Для деталей заказа — перечисляйте каждый товар/услугу, количество, особые пожелания. Не используйте общие фразы.
+9. Завершите необходимыми действиями или подтверждением от персонала
+
+Пример разговора:
+Гость: Здравствуйте. Меня зовут Тони. Моя комната 200. Я бы хотел заказать 2 бургера из говядины и 1 апельсиновый сок.
+Ассистент: Конечно, Тони. 2 бургера и 1 апельсиновый сок для комнаты 200. Что-нибудь еще?
+Гость: Нет, это все. Пожалуйста, доставьте в течение 30 минут.
+
+Пример резюме:
+Номер комнаты: 200
+Имя гостя (для гостей с подтвержденным бронированием): Тони
+ЗАПРОС 1: Еда и напитки
+• Время выполнения: в течение 30 минут
+• Детали заказа:
+    • Бургер из говядины x 2
+    • Апельсиновый сок x 1
+• Особые требования: Не указано
+
+Транскрипция разговора:
+${conversationText}
+
+Резюме:`,
+  ko: (conversationText) => `당신은 미년 호텔의 서비스 요약 전문가입니다. 
+호텔 어시스턴트와 고객 간의 다음 대화를 간결하고 전문적으로 요약하세요.
+
+중요: 고객의 각 요청마다 아래 형식으로 요약을 작성하세요 (요청 수에 제한 없이 반복).
+
+객실 번호: [고객이 대화 중에 제공했다면 객실 번호를 추출하여 표시. 제공하지 않았다면 "미지정"으로 작성.]
+고객 이름 (예약이 확인된 고객의 경우): [고객이 이름을 제공했다면 표시. 제공하지 않았다면 "미지정"으로 작성.]
+
+요청 1: [서비스 유형]
+• 요청 시간: [요청된 완료 시간]
+• 주문 내역:
+    • [항목/서비스] x [수량] - [특이사항]
+    • [항목/서비스] x [수량] - [특이사항]
+• 특별 요청: [고객의 특별 요청 사항]
+
+요청 2: [다른 서비스 유형] (해당되는 경우)
+• 요청 시간: [요청된 완료 시간]
+• 세부 정보:
+    • [서비스 세부 정보]
+• 특별 요청: [고객의 특별 요청 사항]
+
+(요청 3, 요청 4 등 모든 요청에 대해 번호를 계속 매기세요. 제한 없음.)
+
+다음 단계: 요청을 완료하려면 "프론트로 보내기" 버튼을 눌러주세요
+
+중요 안내:
+1. 요약은 반드시 고객의 언어(한국어, 프랑스어, 러시아어, 중국어 등)로만 작성하세요
+2. 매우 포괄적으로 작성하세요 — 대화에서 언급된 모든 요청을 포함하세요
+3. 위와 같이 글머리표와 들여쓰기를 사용하세요
+4. 객실 번호는 반드시 요청하세요
+5. 고객 이름도 제공된 경우 반드시 포함하세요
+6. 객실 번호나 이름이 언급되지 않았다면 "미지정"으로 명확히 표시하세요
+7. 모든 서비스 세부 정보(시간, 장소, 수량, 특이사항 등)를 포함하세요
+8. 주문 내역은 각 항목/서비스, 수량, 특이사항을 구체적으로 나열하세요. 일반적인 문구는 사용하지 마세요.
+9. 필요한 후속 조치나 직원의 확인 요청으로 마무리하세요
+
+예시 대화:
+고객: 안녕하세요. 제 이름은 토니입니다. 제 방은 200호입니다. 소고기 버거 2개와 오렌지 주스 1개를 주문하고 싶어요.
+어시스턴트: 네, 토니님. 200호에 소고기 버거 2개와 오렌지 주스 1개 준비하겠습니다. 더 필요하신 건 없으신가요?
+고객: 아니요, 이게 다예요. 30분 이내에 배달해 주세요.
+
+예시 요약:
+객실 번호: 200
+고객 이름 (예약이 확인된 고객의 경우): 토니
+요청 1: 식음료
+• 요청 시간: 30분 이내
+• 주문 내역:
+    • 소고기 버거 x 2
+    • 오렌지 주스 x 1
+• 특별 요청: 미지정
+
+대화 내용:
+${conversationText}
+
+요약:`,
+  zh: (conversationText) => `您是美年酒店的服务总结专家。
+请将以下酒店助理与客人的对话进行简明、专业的总结。
+
+重要：对于客人的每一项请求，请按照以下格式进行总结（根据需要重复，不要限制请求数量）：
+
+房间号：[如果客人在对话中提供了房间号，请提取并显示。如果未提供，请写"未指定"。]
+客人姓名（用于已确认预订的客人）：[如果客人提供了姓名，请提取并显示。如果未提供，请写"未指定"。]
+
+请求1：[服务类型]
+• 服务时间：[要求完成的时间]
+• 订单详情：
+    • [项目/服务] x [数量] - [特殊说明]
+    • [项目/服务] x [数量] - [特殊说明]
+• 特殊要求：[客人的特殊要求]
+
+请求2：[其他服务类型]（如适用）
+• 服务时间：[要求完成的时间]
+• 详情：
+    • [服务详情]
+• 特殊要求：[客人的特殊要求]
+
+（继续编号请求3、请求4等，涵盖所有请求，不要限制数量。）
+
+下一步：请点击"发送到前台"以完成您的请求
+
+重要说明：
+1. 仅用客人的原始语言（中文、法语、俄语、韩语等）提供总结
+2. 内容必须非常全面——包括对话中提到的所有请求
+3. 按上述格式使用项目符号和缩进
+4. 始终询问并包含房间号
+5. 客人姓名如有提供必须包含
+6. 如果未提及房间号或姓名，请明确写"未指定"
+7. 所有服务细节（时间、地点、数量、特殊要求等）都要包含
+8. 订单详情要具体列出每项、数量、特殊说明。不要用泛泛的描述
+9. 以任何需要的后续操作或员工确认结尾
+
+示例对话：
+客人：你好。我叫Tony。我的房间是200。我想点2个牛肉汉堡和1杯橙汁。
+助理：好的，Tony。2个牛肉汉堡和1杯橙汁送到200房。还需要别的吗？
+客人：不用了，谢谢。请在30分钟内送达。
+
+示例总结：
+房间号：200
+客人姓名（用于已确认预订的客人）：Tony
+请求1：餐饮
+• 服务时间：30分钟内
+• 订单详情：
+    • 牛肉汉堡 x 2
+    • 橙汁 x 1
+• 特殊要求：未指定
+
+对话内容：
+${conversationText}
+
+总结：`,
+};
+
+export async function generateCallSummary(transcripts: Array<{role: string, content: string}>, language: string = 'en'): Promise<string> {
   try {
     if (!transcripts || transcripts.length === 0) {
       return "No conversation to summarize.";
@@ -483,66 +759,9 @@ export async function generateCallSummary(transcripts: Array<{role: string, cont
       .map(t => `${t.role === 'assistant' ? 'Hotel Assistant' : 'Guest'}: ${t.content}`)
       .join('\n');
 
-    // Create a prompt for generating the summary in user's language only
-    const prompt = `
-      You are a hotel service summarization specialist for Mi Nhon Hotel. 
-      Summarize the following conversation between a Hotel Assistant and a Guest in a concise, professional manner.
-      
-      IMPORTANT: For EACH separate request from the guest, structure your summary in the following format (repeat for as many requests as needed, do NOT limit the number of requests):
-
-      Room Number: [Extract and display the room number if the guest provides it anywhere in the conversation. If not provided, write "Not specified".]
-      Guest's Name (used for Guest with a confirmed reservation): [Extract and display the guest's name if provided in the conversation. If not provided, write "Not specified".]
-
-      REQUEST 1: [Service Type]
-      • Service Timing: [Requested completion time]
-      • Order Details:
-          • [Item/Service] x [Quantity] - [Special notes]
-          • [Item/Service] x [Quantity] - [Special notes]
-      • Special Requirements: [Guest special request details]
-
-      REQUEST 2: [Other Service Type] (if applicable)
-      • Service Timing: [Requested completion time]
-      • Details:
-          • [Service details]
-      • Special Requirements: [Guest special request details]
-
-      (Continue numbering REQUEST 3, REQUEST 4, etc. for all guest requests, do NOT limit the number of requests.)
-
-      Next Step: Please Press Send To Reception in order to complete your request
-      
-      IMPORTANT INSTRUCTIONS:
-      1. Provide the summary only in the guest's original language (English, Russian, Korean, Chinese, or German)
-      2. Be EXTREMELY comprehensive - include EVERY service request mentioned in the conversation
-      3. Format with bullet points and indentation as shown above
-      4. ALWAYS ASK FOR AND INCLUDE ROOM NUMBER - This is the most critical information for every request. If the guest provides a room number anywhere in the conversation, extract and display it in the summary.
-      5. For Guest's Name, if the guest provides their name anywhere in the conversation, extract and display it in the summary.
-      6. If room number or guest name is not mentioned in the conversation, make a clear note that "Not specified".
-      7. For ALL service details, include times, locations, quantities, and any specific requirements
-      8. For Order Details, ALWAYS extract and list each specific item/service, quantity, and any special notes as mentioned by the guest. DO NOT use generic phrases like 'to order' or 'food items'. For example, if the guest requests '2 beef burgers and 1 orange juice', the summary must show:
-          • Beef burger x 2
-          • Orange juice x 1
-      9. End with any required follow-up actions or confirmation needed from staff
-
-      Example conversation:
-      Guest: Hi. My name is Tony. My room is 200. I would like to order 2 beef burgers and 1 orange juice.
-      Assistant: Sure, Tony. 2 beef burgers and 1 orange juice for room 200. Anything else?
-      Guest: No, that's all. Please deliver within 30 minutes.
-
-      Example summary:
-      Room Number: 200
-      Guest's Name (used for Guest with a confirmed reservation): Tony
-      REQUEST 1: Food & Beverage
-      • Service Timing: within 30 minutes
-      • Order Details:
-          • Beef burger x 2
-          • Orange juice x 1
-      • Special Requirements: Not specified
-
-      Conversation transcript:
-      ${conversationText}
-
-      Summary:
-    `;
+    // Chọn template prompt đúng ngôn ngữ, fallback về tiếng Anh nếu không có
+    const promptTemplate = PROMPT_TEMPLATES[language] || PROMPT_TEMPLATES['en'];
+    const prompt = promptTemplate(conversationText);
 
     // Call the OpenAI API with GPT-4o
     const options = {

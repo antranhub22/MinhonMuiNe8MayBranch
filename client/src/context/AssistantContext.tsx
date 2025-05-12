@@ -408,7 +408,8 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
         timestamp: new Date().toISOString(),
         callId: callDetails?.id || `call-${Date.now()}`,
         callDuration: formattedDuration,
-        forceBasicSummary: FORCE_BASIC_SUMMARY
+        forceBasicSummary: FORCE_BASIC_SUMMARY,
+        language
       }),
     })
     .then(response => {
@@ -460,7 +461,7 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
       console.error('Error in endCall:', error);
       setCurrentInterface('interface1');
     }
-  }, [callTimer, callDuration, transcripts, callDetails, setCallSummary, setCurrentInterface, setServiceRequests]);
+  }, [callTimer, callDuration, transcripts, callDetails, setCallSummary, setCurrentInterface, setServiceRequests, language]);
 
   // Function to translate text to Vietnamese
   const translateToVietnamese = async (text: string): Promise<string> => {

@@ -307,7 +307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Store call summary from Vapi or generate with OpenAI
   app.post('/api/store-summary', async (req, res) => {
     try {
-      const { summary: summaryText, transcripts, timestamp, callId, callDuration: reqCallDuration, forceBasicSummary, orderReference } = req.body;
+      const { summary: summaryText, transcripts, timestamp, callId, callDuration: reqCallDuration, forceBasicSummary, orderReference, language } = req.body;
       
       // Determine if we need to generate a summary with OpenAI or use fallback
       let finalSummary = summaryText;
@@ -322,7 +322,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (useOpenAi) {
           console.log('Generating summary with OpenAI from provided transcripts');
           try {
-            finalSummary = await generateCallSummary(transcripts);
+            finalSummary = await generateCallSummary(transcripts, language);
             isAiGenerated = true;
           } catch (aiError) {
             console.error('Error generating summary with OpenAI:', aiError);
@@ -352,7 +352,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Generate summary using OpenAI
             try {
-              finalSummary = await generateCallSummary(formattedTranscripts);
+              finalSummary = await generateCallSummary(formattedTranscripts, language);
               isAiGenerated = true; 
             } catch (openaiError) {
               console.error('Error using OpenAI for stored transcripts:', openaiError);
