@@ -195,50 +195,55 @@ const Interface3Vi: React.FC<Interface3ViProps> = ({ isActive }) => {
       .join(' ');
   };
 
+  // Hàm làm sạch nội dung summary
+  function cleanSummaryContent(content: string): string {
+    return content
+      .split('\n')
+      .filter(line => !/^Bước tiếp theo:/i.test(line) && !/^Next Step:/i.test(line) && !/Vui lòng nhấn/i.test(line) && !/Please Press Send To Reception/i.test(line))
+      .map(line => line.replace(/\(dùng cho khách có đặt chỗ xác nhận\)/i, '').replace(/\(used for Guest with a confirmed reservation\)/i, '').replace(/\(không được chỉ định\)/i, '').replace(/\(not specified\)/i, ''))
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n');
+  }
+
   // Handle confirm order
   const handleConfirmOrder = async () => {
     if (!orderSummary) return;
-    
+    // Làm sạch nội dung summary trước khi gửi
+    const summaryContent = vietnameseSummary || (callSummary ? callSummary.content : 'Không có tóm tắt');
+    const cleanedSummary = cleanSummaryContent(summaryContent);
     // Generate a random order reference
     const orderReference = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
-    
     // Set order data
     setOrder({
       reference: orderReference,
       estimatedTime: '15-20 phút',
-      summary: orderSummary
+      summary: orderSummary // Không thêm trường lạ vào OrderSummary
     });
-    
     // Check if email has already been sent for this session
     if (emailSentForCurrentSession) {
       console.log('Email đã được gửi cho phiên này. Bỏ qua việc gửi email trùng lặp.');
       setCurrentInterface('interface4');
       return;
     }
-    
     // Send email with the order summary - OK to always send from Vietnamese interface
     try {
       console.log('Gửi email với tóm tắt cuộc gọi và yêu cầu dịch vụ từ giao diện tiếng Việt...');
-      
       // Format call duration if available - more defensive code for mobile
       const formattedDuration = callDuration ? 
         `${Math.floor(callDuration / 60)}:${(callDuration % 60).toString().padStart(2, '0')}` : 
         '0:00';
-      
       // Ensure we have a valid callId for both desktop and mobile
       const generatedCallId = `call-${Date.now()}`;
       const currentCallId = callDetails?.id || generatedCallId;
-      
       console.log('Sử dụng callId cho email:', currentCallId);
-      console.log('Nội dung tóm tắt cuộc gọi:', vietnameseSummary || (callSummary ? callSummary.content : 'Không có tóm tắt'));
-      
+      console.log('Nội dung tóm tắt cuộc gọi:', cleanedSummary);
       console.log('Chuẩn bị payload email...');
       const emailPayload = {
         toEmail: 'tuans2@gmail.com', // Default email recipient
         callDetails: {
           callId: currentCallId,
           roomNumber: orderSummary.roomNumber || 'Cần xác nhận',
-          summary: vietnameseSummary || (callSummary ? callSummary.content : 'Không có tóm tắt'),
+          summary: cleanedSummary,
           timestamp: callSummary ? callSummary.timestamp : new Date(),
           duration: formattedDuration,
           serviceRequests: orderSummary.items.map(item => item.name), 
