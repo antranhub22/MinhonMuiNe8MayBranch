@@ -23,11 +23,6 @@ const statusColor = (status: string) => {
   }
 };
 
-// Format date to YYYY-MM-DD for input[type=date]
-const formatDateForInput = (date: Date): string => {
-  return date.toISOString().split('T')[0];
-};
-
 const StaffDashboard: React.FC = () => {
   const [requests, setRequests] = useState<any[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
@@ -36,12 +31,6 @@ const StaffDashboard: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMsg, setLoadingMsg] = useState(false);
   const [statusFilter, setStatusFilter] = useState('Tất cả');
-  
-  // Date filter states
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
-  const [useDateFilter, setUseDateFilter] = useState(false);
-  
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
@@ -76,16 +65,6 @@ const StaffDashboard: React.FC = () => {
     // Thêm polling mỗi 30 giây
     const intervalId = setInterval(fetchRequests, 30000);
     return () => clearInterval(intervalId);
-  }, []);
-
-  // Thiết lập ngày hôm nay cho bộ lọc
-  useEffect(() => {
-    const today = new Date();
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(today.getDate() - 7);
-    
-    setStartDate(formatDateForInput(oneWeekAgo));
-    setEndDate(formatDateForInput(today));
   }, []);
 
   // Mở modal chi tiết
@@ -163,34 +142,10 @@ const StaffDashboard: React.FC = () => {
     setLoadingMsg(false);
   };
 
-  // Reset date filters
-  const handleResetDateFilter = () => {
-    setUseDateFilter(false);
-  };
-
-  // Filter requests dựa trên status và ngày
-  const filteredRequests = requests.filter(req => {
-    // Lọc theo trạng thái
-    if (statusFilter !== 'Tất cả' && req.status !== statusFilter) {
-      return false;
-    }
-    
-    // Lọc theo ngày nếu được kích hoạt
-    if (useDateFilter && startDate && endDate) {
-      const requestDate = new Date(req.created_at);
-      const filterStartDate = new Date(startDate);
-      const filterEndDate = new Date(endDate);
-      
-      // Đặt thời gian của end date về cuối ngày để bao gồm cả ngày kết thúc
-      filterEndDate.setHours(23, 59, 59, 999);
-      
-      if (requestDate < filterStartDate || requestDate > filterEndDate) {
-        return false;
-      }
-    }
-    
-    return true;
-  });
+  // Filter requests theo status
+  const filteredRequests = statusFilter === 'Tất cả'
+    ? requests
+    : requests.filter(r => r.status === statusFilter);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-6">
@@ -204,78 +159,19 @@ const StaffDashboard: React.FC = () => {
             Refresh
           </button>
         </div>
-        
-        {/* Filters Section */}
-        <div className="mb-6 bg-blue-50 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-blue-800 mb-3">Bộ lọc tìm kiếm</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Status Filter */}
-            <div className="flex flex-col">
-              <label className="font-semibold text-blue-900 mb-1">Lọc theo trạng thái:</label>
-              <select
-                className="border rounded px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                value={statusFilter}
-                onChange={e => setStatusFilter(e.target.value)}
-              >
-                {statusOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
-            </div>
-            
-            {/* Date Filter */}
-            <div className="flex flex-col">
-              <div className="flex items-center mb-1">
-                <label className="font-semibold text-blue-900">Lọc theo ngày:</label>
-                <div className="ml-2 flex items-center">
-                  <input 
-                    type="checkbox" 
-                    checked={useDateFilter} 
-                    onChange={e => setUseDateFilter(e.target.checked)}
-                    className="mr-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-blue-800">Kích hoạt</span>
-                </div>
-              </div>
-              
-              <div className="flex space-x-2">
-                <div className="flex-1">
-                  <label className="text-xs text-gray-600 block">Từ ngày:</label>
-                  <input 
-                    type="date" 
-                    value={startDate} 
-                    onChange={e => setStartDate(e.target.value)}
-                    disabled={!useDateFilter}
-                    className={`border rounded px-2 py-1.5 text-sm w-full ${!useDateFilter ? 'bg-gray-100 text-gray-500' : 'focus:border-blue-500 focus:ring-1 focus:ring-blue-500'}`}
-                  />
-                </div>
-                
-                <div className="flex-1">
-                  <label className="text-xs text-gray-600 block">Đến ngày:</label>
-                  <input 
-                    type="date" 
-                    value={endDate} 
-                    onChange={e => setEndDate(e.target.value)}
-                    disabled={!useDateFilter}
-                    min={startDate}
-                    className={`border rounded px-2 py-1.5 text-sm w-full ${!useDateFilter ? 'bg-gray-100 text-gray-500' : 'focus:border-blue-500 focus:ring-1 focus:ring-blue-500'}`}
-                  />
-                </div>
-                
-                {useDateFilter && (
-                  <button 
-                    onClick={handleResetDateFilter}
-                    className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded text-gray-700 self-end"
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
+        {/* Filter status */}
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <label className="font-semibold text-blue-900">Lọc theo trạng thái:</label>
+          <select
+            className="border rounded px-3 py-1 text-sm"
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+          >
+            {statusOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
         </div>
-        
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
@@ -322,13 +218,6 @@ const StaffDashboard: React.FC = () => {
               ))}
             </tbody>
           </table>
-          
-          {/* No results message */}
-          {filteredRequests.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              Không tìm thấy yêu cầu nào phù hợp với bộ lọc.
-            </div>
-          )}
         </div>
       </div>
       {/* Modal chi tiết request */}
