@@ -168,7 +168,6 @@ const StaffDashboard: React.FC = () => {
               <tr className="bg-blue-100 text-blue-900">
                 <th className="py-2 px-3 text-left">Room</th>
                 <th className="py-2 px-3 text-left">Order ID</th>
-                <th className="py-2 px-3 text-left">Guest Name</th>
                 <th className="py-2 px-6 text-left w-2/5">Content</th>
                 <th className="py-2 px-3 text-left">Time</th>
                 <th className="py-2 px-3 text-left">Status</th>
@@ -180,7 +179,6 @@ const StaffDashboard: React.FC = () => {
                 <tr key={req.id} className="border-b hover:bg-blue-50">
                   <td className="py-2 px-3 font-semibold">{req.room_number}</td>
                   <td className="py-2 px-3">{req.orderId || req.id}</td>
-                  <td className="py-2 px-3">{req.guestName}</td>
                   <td className="py-2 px-6 whitespace-pre-line break-words max-w-2xl">{req.request_content}</td>
                   <td className="py-2 px-3">
                     {req.created_at && (
