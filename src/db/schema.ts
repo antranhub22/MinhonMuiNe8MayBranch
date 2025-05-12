@@ -14,9 +14,8 @@ export const request = pgTable('request', {
   orderId: varchar('order_id', { length: 255 }).notNull(),
   guestName: varchar('guest_name', { length: 255 }).notNull(),
   request_content: text('request_content').notNull(),
-  time: timestamp('time').defaultNow().notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
   status: varchar('status', { length: 50 }).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 

@@ -3,7 +3,7 @@ export interface Request {
   room_number: string;
   guestName: string;
   request_content: string;
-  time: Date;
+  created_at: Date;
   status: string; // Đã ghi nhận, Đang thực hiện, ...
   notes?: string;
 } 

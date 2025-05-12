@@ -63,8 +63,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 // Dummy request data
 let requestList: StaffRequest[] = [
-  { id: 1, room_number: '101', guestName: 'Tony', request_content: 'Beef burger x 2', time: new Date(), status: 'Đã ghi nhận', notes: '' },
-  { id: 2, room_number: '202', guestName: 'Anna', request_content: 'Spa booking at 10:00', time: new Date(), status: 'Đang thực hiện', notes: '' },
+  { id: 1, room_number: '101', guestName: 'Tony', request_content: 'Beef burger x 2', created_at: new Date(), status: 'Đã ghi nhận', notes: '' },
+  { id: 2, room_number: '202', guestName: 'Anna', request_content: 'Spa booking at 10:00', created_at: new Date(), status: 'Đang thực hiện', notes: '' },
 ];
 
 // Dummy message data
@@ -652,9 +652,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             orderId: callDetails.orderReference || orderReference,
             guestName: callDetails.guestName || 'Guest',
             request_content: vietnameseSummary,
-            time: new Date(callDetails.timestamp || Date.now()),
+            created_at: new Date(),
             status: 'Đã ghi nhận',
-            createdAt: new Date(),
             updatedAt: new Date()
           });
         } catch (dbError) {
