@@ -62,7 +62,9 @@ const StaffDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchRequests();
-    // eslint-disable-next-line
+    // Thêm polling mỗi 30 giây
+    const intervalId = setInterval(fetchRequests, 30000);
+    return () => clearInterval(intervalId);
   }, []);
 
   // Mở modal chi tiết
@@ -148,7 +150,15 @@ const StaffDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold text-blue-900 mb-6">Staff Request Management</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-blue-900">Staff Request Management</h2>
+          <button
+            onClick={fetchRequests}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold"
+          >
+            Refresh
+          </button>
+        </div>
         {/* Filter status */}
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <label className="font-semibold text-blue-900">Lọc theo trạng thái:</label>
