@@ -20,6 +20,8 @@ import { Request as StaffRequest } from './models/Request';
 import { Message as StaffMessage } from './models/Message';
 import { db } from '../src/db';
 import { request as requestTable } from '../src/db/schema';
+import { eq, desc } from 'drizzle-orm';
+import { orders } from '@shared/schema';
 
 // Initialize OpenAI client 
 const openai = new OpenAI({
@@ -667,6 +669,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             status: 'Đã ghi nhận',
             updatedAt: new Date()
           });
+          // Nếu có orderReference, cập nhật orders.request_id
+          if (callDetails.orderReference || orderReference) {
+            const orderId = parseInt((callDetails.orderReference || orderReference).replace('#ORD-', ''));
+            // Lấy request vừa tạo
+            const [latestRequest] = await db.select().from(requestTable).orderBy(desc(requestTable.id)).limit(1);
+            if (latestRequest && orderId) {
+              await db.update(orders).set({ requestId: latestRequest.id }).where(eq(orders.id, orderId));
+            }
+          }
         } catch (dbError) {
           console.error('Lỗi khi lưu request vào DB:', dbError);
         }

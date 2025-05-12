@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, varchar, integer } from 'drizzle-orm/pg-core';
 
 export const staff = pgTable('staff', {
   id: serial('id').primaryKey(),
@@ -11,7 +11,7 @@ export const staff = pgTable('staff', {
 export const request = pgTable('request', {
   id: serial('id').primaryKey(),
   room_number: varchar('room_number', { length: 255 }).notNull(),
-  orderId: varchar('order_id', { length: 255 }).notNull(),
+  orderId: integer('order_id').notNull(),
   guestName: varchar('guest_name', { length: 255 }).notNull(),
   request_content: text('request_content').notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
