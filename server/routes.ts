@@ -73,6 +73,17 @@ let messageList: StaffMessage[] = [
   { id: 2, requestId: 1, sender: 'staff', content: 'We are preparing your order.', created_at: new Date(), updatedAt: new Date() },
 ];
 
+// Hàm làm sạch nội dung summary trước khi lưu vào DB
+function cleanSummaryContent(content: string): string {
+  if (!content) return '';
+  return content
+    .split('\n')
+    .filter((line: string) => !/^Bước tiếp theo:/i.test(line) && !/^Next Step:/i.test(line) && !/Vui lòng nhấn/i.test(line) && !/Please Press Send To Reception/i.test(line))
+    .map((line: string) => line.replace(/\(dùng cho khách[^\)]*\)/i, '').replace(/\(used for Guest[^\)]*\)/i, ''))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n');
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server for express app
   const httpServer = createServer(app);
@@ -651,7 +662,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             room_number: callDetails.roomNumber,
             orderId: callDetails.orderReference || orderReference,
             guestName: callDetails.guestName || 'Guest',
-            request_content: vietnameseSummary,
+            request_content: cleanSummaryContent(vietnameseSummary),
             created_at: new Date(),
             status: 'Đã ghi nhận',
             updatedAt: new Date()
