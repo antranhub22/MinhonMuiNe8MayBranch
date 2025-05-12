@@ -354,11 +354,11 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               const secs = (diffSec % 60).toString().padStart(2, '0');
               return (
                 <div key={o.reference} 
-                  className="p-2 sm:p-3 text-gray-800 max-w-xs w-[220px] flex-shrink-0 transition-all duration-250 hover:rotate-1"
+                  className="p-2 sm:p-3 text-gray-800 max-w-xs w-[220px] flex-shrink-0 transition-all duration-250 hover:rotate-1 hover:scale-105"
                   style={{
                     background: 'rgba(255, 255, 255, 0.85)',
                     backdropFilter: 'blur(8px)',
-                    borderRadius: '12px',
+                    borderRadius: '18px',
                     boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)',
                     borderTop: '1px solid rgba(255, 255, 255, 0.3)',
                     borderLeft: '1px solid rgba(255, 255, 255, 0.3)',
@@ -372,12 +372,12 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 >
                   {/* Đồng hồ đếm ngược ở trên đầu */}
                   <div className="flex justify-center items-center mb-1.5">
-                    <span className="font-bold text-lg text-blue-800 bg-blue-50 px-3 py-1 rounded-lg shadow-sm">{`${mins}:${secs}`}</span>
+                    <span className="font-bold text-lg text-blue-800 bg-blue-50 px-4 py-1.5 rounded-full shadow-sm">{`${mins}:${secs}`}</span>
                   </div>
                   
-                  <p className="text-xs sm:text-sm mb-0.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
-                  <p className="text-xs sm:text-sm mb-0.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
-                  <p className="text-xs sm:text-sm mb-0.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
+                  <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
+                  <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
+                  <p className="text-xs sm:text-sm mb-0.5 px-1.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
                 </div>
               );
             })}
