@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import StaffRequestDetailModal from '../components/StaffRequestDetailModal';
 import StaffMessagePopup from '../components/StaffMessagePopup';
 import { useNavigate } from 'react-router-dom';
+import { io, Socket } from 'socket.io-client';
 
 const statusOptions = [
   'Tất cả',
@@ -34,11 +35,78 @@ const StaffDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasNewData, setHasNewData] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
+  const [connectedClients, setConnectedClients] = useState(0);
   const previousRequestsRef = useRef<any[]>([]);
+  const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
   const getToken = () => localStorage.getItem('staff_token');
+
+  // Kết nối socket và thiết lập các event listeners
+  useEffect(() => {
+    // Khởi tạo Socket.IO client
+    if (!socketRef.current) {
+      const SOCKET_URL = window.location.origin; // Cùng domain với web app
+      
+      console.log('Connecting to socket at:', SOCKET_URL);
+      
+      const socket = io(SOCKET_URL, {
+        transports: ['websocket', 'polling'],
+        autoConnect: true,
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000
+      });
+      
+      socket.on('connect', () => {
+        console.log('Socket connected:', socket.id);
+        playPingSound();
+      });
+      
+      socket.on('disconnect', () => {
+        console.log('Socket disconnected');
+      });
+      
+      socket.on('error', (error) => {
+        console.error('Socket error:', error);
+      });
+      
+      socket.on('clients_count', (count) => {
+        console.log('Connected clients:', count);
+        setConnectedClients(count);
+      });
+      
+      // Listen for data change events
+      socket.on('data_changed', (data) => {
+        console.log('Received data change event:', data);
+        
+        if (data.type === 'status_update' || data.type === 'new_request') {
+          setHasNewData(true);
+          setLastUpdateTime(new Date());
+          playNotificationSound();
+          fetchRequests(); // Refresh data
+        }
+      });
+      
+      // Setup ping to keep connection alive
+      const pingInterval = setInterval(() => {
+        if (socket.connected) {
+          socket.emit('ping', (response: any) => {
+            console.log('Ping response:', response);
+          });
+        }
+      }, 25000);
+      
+      socketRef.current = socket;
+      
+      return () => {
+        clearInterval(pingInterval);
+        socket.disconnect();
+        socketRef.current = null;
+      };
+    }
+  }, []);
 
   // Fetch requests from API
   const fetchRequests = async () => {
@@ -205,6 +273,17 @@ const StaffDashboard: React.FC = () => {
   const filteredRequests = statusFilter === 'Tất cả'
     ? requests
     : requests.filter(r => r.status === statusFilter);
+
+  // Phát âm thanh ping nhẹ khi kết nối socket
+  const playPingSound = () => {
+    try {
+      const audio = new Audio('/ping.mp3');
+      audio.volume = 0.2; // Nhỏ hơn so với notification
+      audio.play().catch(e => console.log('Ping sound could not be played', e));
+    } catch (err) {
+      console.error('Could not play ping sound:', err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-6">

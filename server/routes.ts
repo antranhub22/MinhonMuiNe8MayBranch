@@ -1192,6 +1192,23 @@ Mi Nhon Hotel Mui Ne`
       }
       
       console.log('Status updated successfully:', result[0]);
+      
+      // Broadcast change thông qua Socket.IO
+      try {
+        const io = req.app.get('io');
+        if (io && typeof io.broadcastStaffDataChange === 'function') {
+          io.broadcastStaffDataChange('status_update', {
+            id,
+            status,
+            request: result[0]
+          });
+          console.log('Broadcasted status update via socket');
+        }
+      } catch (socketError) {
+        console.error('Error broadcasting via socket:', socketError);
+        // Không làm gián đoạn response API nếu có lỗi socket
+      }
+      
       res.json(result[0]);
     } catch (error) {
       console.error('Error updating request status:', error);
