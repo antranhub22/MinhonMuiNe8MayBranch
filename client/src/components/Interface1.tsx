@@ -109,24 +109,26 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
         style={{ transform: 'translateZ(20px)', minHeight: 'fit-content' }}
       >
         {/* Language Switcher nâng cao */}
-        <div className="flex items-center justify-end w-full max-w-2xl mb-2">
-          <div className="flex items-center px-3 py-1.5 gap-2 transition-all duration-300" 
+        <div className="flex items-center justify-center sm:justify-end w-full max-w-2xl mb-4 sm:mb-2">
+          <div className="flex items-center px-3 py-2 sm:py-1.5 gap-2 transition-all duration-300 mx-auto sm:mx-0" 
             style={{
               background: 'linear-gradient(135deg, #4e5ab7 0%, #3f51b5 100%)',
-              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)', 
               borderRadius: '8px',
-              minWidth: '180px',
+              minWidth: '150px',
+              maxWidth: '95%',
+              width: 'auto',
               border: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
-            <FaGlobeAsia className="text-[#F9BF3B] text-xl mr-1" 
+            <FaGlobeAsia className="text-[#F9BF3B] text-xl mr-1.5" 
               style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
             />
-            <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap">{t('language', language)}:</label>
+            <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap text-sm sm:text-base">{t('language', language)}:</label>
             <div className="relative flex-1">
               <select
                 value={language}
                 onChange={e => setLanguage(e.target.value as 'en' | 'fr' | 'zh' | 'ru' | 'ko')}
-                className="appearance-none w-full pl-8 pr-6 py-1.5 font-sans bg-transparent focus:outline-none transition-all duration-200"
+                className="appearance-none w-full pl-6 sm:pl-8 pr-6 py-1 sm:py-1.5 font-sans bg-transparent focus:outline-none transition-all duration-200"
                 style={{
                   fontWeight: 600,
                   color: '#fff',
