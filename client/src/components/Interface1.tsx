@@ -1,3 +1,4 @@
+// Interface1 component - latest version v1.0.1 
 import React, { useState, useEffect } from 'react';
 import { useAssistant } from '@/context/AssistantContext';
 import hotelImage from '../assets/hotel-exterior.jpeg';
