@@ -276,6 +276,14 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
   const handleConfirmOrder = async () => {
     if (!orderSummary) return;
     
+    // Dừng voice assistant khi nhấn nút xác nhận
+    try {
+      const { stopCall } = await import('@/lib/vapiClient');
+      stopCall();
+    } catch (error) {
+      console.error('Failed to stop voice assistant:', error);
+    }
+    
     // Generate a random order reference
     const orderReference = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
     

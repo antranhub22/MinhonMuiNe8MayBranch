@@ -101,6 +101,15 @@ const Interface3Fr: React.FC<Interface3FrProps> = ({ isActive }) => {
   // Handle confirm order
   const handleConfirmOrder = async () => {
     if (!orderSummary) return;
+    
+    // Dừng voice assistant khi nhấn nút xác nhận
+    try {
+      const { stopCall } = await import('@/lib/vapiClient');
+      stopCall();
+    } catch (error) {
+      console.error('Failed to stop voice assistant:', error);
+    }
+    
     const orderReference = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
     setOrder({
       reference: orderReference,
