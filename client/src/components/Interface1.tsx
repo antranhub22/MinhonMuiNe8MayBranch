@@ -187,7 +187,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
           <div className="absolute inset-0 rounded-full border-4 border-amber-400 animate-[ripple_1.5s_linear_infinite] pointer-events-none transition-opacity duration-300 group-hover:opacity-80 opacity-60"></div>
           <div className="absolute inset-0 rounded-full border-4 border-amber-400/70 animate-[ripple_2s_linear_infinite] pointer-events-none transition-opacity duration-300 group-hover:opacity-60 opacity-40"></div>
           {/* Main Button - Luôn màu xanh dương */}
-          <button 
+            <button 
             id={`vapiButton${language === 'en' ? 'En' : language === 'fr' ? 'Fr' : language === 'zh' ? 'Zh' : language === 'ru' ? 'Ru' : 'Ko'}-v${cacheVersion}`}
             className="group relative w-36 h-36 sm:w-40 sm:h-40 lg:w-56 lg:h-56 rounded-full font-poppins font-bold flex flex-col items-center justify-center overflow-hidden hover:translate-y-[-2px] hover:shadow-[0px_12px_20px_rgba(0,0,0,0.2)]"
             onClick={() => handleCall(language as any)}
@@ -209,7 +209,7 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
               style={{ textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)' }}
             >{t('press_to_call', language)}</span>
             <span className="absolute w-full h-full rounded-full pointer-events-none"></span>
-          </button>
+            </button>
         </div>
         {/* Services Section - với hiệu ứng Glass Morphism và 3D */}
         <div className="text-center w-full max-w-5xl mb-10 sm:mb-8" style={{ perspective: '1000px' }}>

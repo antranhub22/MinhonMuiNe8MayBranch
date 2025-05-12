@@ -13,7 +13,10 @@ const CATEGORIES = [
   'Hotel Amenities',
   'Local Cuisine',
   'Area Map',
-  'Activity and Experiences'
+  'Activity and Experiences',
+  'Bus Tickets',
+  'Menu at Minhon Hotel',
+  'Tours at Muine'
 ];
 
 interface ReferenceProps {
