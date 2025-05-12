@@ -49,5 +49,39 @@
   "password": "Password",
   "press_to_call_desc": "Tap the call button to start your request.",
   "confirm_request_desc": "Review and confirm your request for accuracy.",
-  "send_to_reception_desc": "Your request will be sent to the reception for processing."
+  "send_to_reception_desc": "Your request will be sent to the reception for processing.",
+
+  "icon_login": "Check-in/Check-out",
+  "icon_hourglass_empty": "Extended Stay Request",
+  "icon_info": "Room Information",
+  "icon_policy": "Hotel Policies",
+  "icon_wifi": "Wi-Fi Services",
+
+  "icon_restaurant": "Room Service Food",
+  "icon_local_bar": "Drinks & Bar Service",
+  "icon_cleaning_services": "Room Cleaning",
+  "icon_local_laundry_service": "Laundry Service",
+  "icon_alarm": "Wake-up Call",
+  "icon_add_circle": "Additional Amenities",
+  "icon_build": "Maintenance Request",
+
+  "icon_event_seat": "Restaurant Reservation",
+  "icon_spa": "Spa Services",
+  "icon_fitness_center": "Fitness Center",
+  "icon_pool": "Swimming Pool",
+  "icon_directions_car": "Car Rental",
+  "icon_medical_services": "Medical Assistance",
+  "icon_support_agent": "Customer Support",
+
+  "icon_location_on": "Local Attractions",
+  "icon_local_dining": "Local Restaurants",
+  "icon_directions_bus": "Public Transportation",
+  "icon_event": "Local Events",
+  "icon_shopping_bag": "Shopping Areas",
+  "icon_map": "Area Maps",
+
+  "icon_translate": "Translation Services",
+  "icon_rate_review": "Leave a Review",
+  "icon_report_problem": "Report an Issue",
+  "icon_luggage": "Luggage Services"
 } 

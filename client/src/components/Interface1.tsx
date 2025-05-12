@@ -14,6 +14,9 @@ interface Interface1Props {
 const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
   const { setCurrentInterface, setTranscripts, setModelOutput, setCallDetails, setCallDuration, setEmailSentForCurrentSession, activeOrders, language, setLanguage } = useAssistant();
   
+  // State để lưu trữ tooltip đang hiển thị
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+  
   // Track current time for countdown calculations
   const [now, setNow] = useState(new Date());
   useEffect(() => {
@@ -54,6 +57,39 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
       setCurrentInterface('interface2');
     }
   };
+
+  // Hàm xử lý khi click vào icon
+  const handleIconClick = (iconName: string) => {
+    // Nếu đang hiển thị tooltip cho icon này rồi thì ẩn đi, ngược lại thì hiển thị
+    setActiveTooltip(activeTooltip === iconName ? null : iconName);
+    
+    // Tự động ẩn tooltip sau 3 giây
+    if (activeTooltip !== iconName) {
+      setTimeout(() => {
+        setActiveTooltip(currentTooltip => currentTooltip === iconName ? null : currentTooltip);
+      }, 3000);
+    }
+  };
+
+  // Component hiển thị icon với tooltip
+  const IconWithTooltip = ({ iconName, className }: { iconName: string, className?: string }) => (
+    <div className="relative flex flex-col items-center justify-center cursor-pointer">
+      <span 
+        className={`material-icons text-xl sm:text-4xl text-[#F9BF3B] ${className || ''}`} 
+        style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
+        onClick={() => handleIconClick(iconName)}
+      >
+        {iconName}
+      </span>
+      
+      {activeTooltip === iconName && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max max-w-[120px] sm:max-w-[180px] bg-white/90 text-gray-800 text-xs sm:text-sm font-medium py-1 px-2 rounded shadow-lg z-50 pointer-events-none text-center">
+          {t(`icon_${iconName}`, language)}
+          <div className="absolute w-2 h-2 bg-white/90 transform rotate-45 left-1/2 -translate-x-1/2 top-full -mt-1"></div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div 
@@ -188,11 +224,11 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 }}
               >{t('room_and_stay', language)}</h4>
               <ul className="grid grid-cols-5 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>login</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>hourglass_empty</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>info</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>policy</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>wifi</span></li>
+                <li><IconWithTooltip iconName="login" /></li>
+                <li><IconWithTooltip iconName="hourglass_empty" /></li>
+                <li><IconWithTooltip iconName="info" /></li>
+                <li><IconWithTooltip iconName="policy" /></li>
+                <li><IconWithTooltip iconName="wifi" /></li>
               </ul>
             </div>
             {/* Room Services - Áp dụng cùng phong cách cho các panel khác */}
@@ -213,13 +249,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 }}
               >{t('room_services', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>restaurant</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>local_bar</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>cleaning_services</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>local_laundry_service</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>alarm</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>add_circle</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>build</span></li>
+                <li><IconWithTooltip iconName="restaurant" /></li>
+                <li><IconWithTooltip iconName="local_bar" /></li>
+                <li><IconWithTooltip iconName="cleaning_services" /></li>
+                <li><IconWithTooltip iconName="local_laundry_service" /></li>
+                <li><IconWithTooltip iconName="alarm" /></li>
+                <li><IconWithTooltip iconName="add_circle" /></li>
+                <li><IconWithTooltip iconName="build" /></li>
               </ul>
             </div>
             {/* Bookings & Facilities */}
@@ -240,13 +276,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 }}
               >{t('bookings_and_facilities', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>event_seat</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>spa</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>fitness_center</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>pool</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>directions_car</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>medical_services</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>support_agent</span></li>
+                <li><IconWithTooltip iconName="event_seat" /></li>
+                <li><IconWithTooltip iconName="spa" /></li>
+                <li><IconWithTooltip iconName="fitness_center" /></li>
+                <li><IconWithTooltip iconName="pool" /></li>
+                <li><IconWithTooltip iconName="directions_car" /></li>
+                <li><IconWithTooltip iconName="medical_services" /></li>
+                <li><IconWithTooltip iconName="support_agent" /></li>
               </ul>
             </div>
             {/* Tourism & Exploration */}
@@ -267,13 +303,13 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 }}
               >{t('tourism_and_exploration', language)}</h4>
               <ul className="grid grid-cols-7 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>location_on</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>local_dining</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>directions_bus</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>directions_car</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>event</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>shopping_bag</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>map</span></li>
+                <li><IconWithTooltip iconName="location_on" /></li>
+                <li><IconWithTooltip iconName="local_dining" /></li>
+                <li><IconWithTooltip iconName="directions_bus" /></li>
+                <li><IconWithTooltip iconName="directions_car" /></li>
+                <li><IconWithTooltip iconName="event" /></li>
+                <li><IconWithTooltip iconName="shopping_bag" /></li>
+                <li><IconWithTooltip iconName="map" /></li>
               </ul>
             </div>
             {/* Support */}
@@ -294,10 +330,10 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                 }}
               >{t('support_external_services', language)}</h4>
               <ul className="grid grid-cols-4 gap-0.5 sm:gap-2 py-0.5 sm:py-2">
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>translate</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>rate_review</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>report_problem</span></li>
-                <li className="flex flex-col items-center justify-center"><span className="material-icons text-xl sm:text-4xl text-[#F9BF3B]" style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}>luggage</span></li>
+                <li><IconWithTooltip iconName="translate" /></li>
+                <li><IconWithTooltip iconName="rate_review" /></li>
+                <li><IconWithTooltip iconName="report_problem" /></li>
+                <li><IconWithTooltip iconName="luggage" /></li>
               </ul>
             </div>
           </div>
