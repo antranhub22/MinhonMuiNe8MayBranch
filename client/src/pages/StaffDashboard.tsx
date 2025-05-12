@@ -4,6 +4,7 @@ import StaffMessagePopup from '../components/StaffMessagePopup';
 import { useNavigate } from 'react-router-dom';
 
 const statusOptions = [
+  'Tất cả',
   'Đã ghi nhận',
   'Đang thực hiện',
   'Đã thực hiện và đang bàn giao cho khách',
@@ -29,35 +30,37 @@ const StaffDashboard: React.FC = () => {
   const [showMessagePopup, setShowMessagePopup] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMsg, setLoadingMsg] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('Tất cả');
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
   const getToken = () => localStorage.getItem('staff_token');
 
   // Fetch requests from API
-  useEffect(() => {
-    const fetchRequests = async () => {
-      const token = getToken();
-      if (!token) {
-        navigate('/staff'); // Chuyển về login nếu chưa có token
+  const fetchRequests = async () => {
+    const token = getToken();
+    if (!token) {
+      navigate('/staff');
+      return;
+    }
+    try {
+      const res = await fetch('/api/staff/requests', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+      if (res.status === 401) {
+        localStorage.removeItem('staff_token');
+        navigate('/staff');
         return;
       }
-      try {
-        const res = await fetch('/api/staff/requests', {
-          headers: { 'Authorization': `Bearer ${token}` },
-          credentials: 'include'
-        });
-        if (res.status === 401) {
-          localStorage.removeItem('staff_token');
-          navigate('/staff');
-          return;
-        }
-        const data = await res.json();
-        setRequests(data);
-      } catch (err) {
-        console.error('Failed to fetch requests:', err);
-      }
-    };
+      const data = await res.json();
+      setRequests(data);
+    } catch (err) {
+      console.error('Failed to fetch requests:', err);
+    }
+  };
+
+  useEffect(() => {
     fetchRequests();
     // eslint-disable-next-line
   }, []);
@@ -73,12 +76,11 @@ const StaffDashboard: React.FC = () => {
     setSelectedRequest(null);
   };
   // Cập nhật trạng thái request
-  const handleStatusChange = async (status: string) => {
-    if (!selectedRequest) return;
+  const handleStatusChange = async (status: string, reqId: number) => {
     const token = getToken();
     if (!token) return navigate('/staff');
     try {
-      await fetch(`/api/staff/requests/${selectedRequest.id}/status`, {
+      await fetch(`/api/staff/requests/${reqId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -87,14 +89,9 @@ const StaffDashboard: React.FC = () => {
         credentials: 'include',
         body: JSON.stringify({ status })
       });
-      // Refetch lại danh sách request từ API để cập nhật trạng thái mới nhất
-      const res = await fetch('/api/staff/requests', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include'
-      });
-      const data = await res.json();
-      setRequests(data);
-      setSelectedRequest({ ...selectedRequest, status });
+      // Cập nhật local state ngay
+      setRequests(reqs => reqs.map(r => r.id === reqId ? { ...r, status } : r));
+      if (selectedRequest && selectedRequest.id === reqId) setSelectedRequest({ ...selectedRequest, status });
     } catch (err) {
       console.error('Failed to update status:', err);
     }
@@ -143,10 +140,28 @@ const StaffDashboard: React.FC = () => {
     setLoadingMsg(false);
   };
 
+  // Filter requests theo status
+  const filteredRequests = statusFilter === 'Tất cả'
+    ? requests
+    : requests.filter(r => r.status === statusFilter);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-6">
-      <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <h2 className="text-2xl font-bold text-blue-900 mb-6">Staff Request Management</h2>
+        {/* Filter status */}
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <label className="font-semibold text-blue-900">Lọc theo trạng thái:</label>
+          <select
+            className="border rounded px-3 py-1 text-sm"
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+          >
+            {statusOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
@@ -154,30 +169,37 @@ const StaffDashboard: React.FC = () => {
                 <th className="py-2 px-3 text-left">Room</th>
                 <th className="py-2 px-3 text-left">Order ID</th>
                 <th className="py-2 px-3 text-left">Guest Name</th>
-                <th className="py-2 px-3 text-left">Content</th>
+                <th className="py-2 px-6 text-left w-2/5">Content</th>
                 <th className="py-2 px-3 text-left">Time</th>
                 <th className="py-2 px-3 text-left">Status</th>
                 <th className="py-2 px-3 text-left">Action</th>
               </tr>
             </thead>
             <tbody>
-              {(Array.isArray(requests) ? [...requests].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) : []).map(req => (
+              {(Array.isArray(filteredRequests) ? [...filteredRequests].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) : []).map(req => (
                 <tr key={req.id} className="border-b hover:bg-blue-50">
                   <td className="py-2 px-3 font-semibold">{req.room_number}</td>
                   <td className="py-2 px-3">{req.orderId || req.id}</td>
                   <td className="py-2 px-3">{req.guestName}</td>
-                  <td className="py-2 px-3">{req.request_content}</td>
-                  <td className="py-2 px-3">{req.created_at ? new Date(req.created_at).toLocaleString() : ''}</td>
+                  <td className="py-2 px-6 whitespace-pre-line break-words max-w-2xl">{req.request_content}</td>
                   <td className="py-2 px-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)}`}>{req.status}</span>
+                    {req.created_at && (
+                      <span className="block whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</span>
+                    )}
+                    {req.created_at && (
+                      <span className="block whitespace-nowrap text-xs text-gray-500">{new Date(req.created_at).toLocaleTimeString()}</span>
+                    )}
+                  </td>
+                  <td className="py-2 px-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)} whitespace-nowrap`}>{req.status}</span>
                   </td>
                   <td className="py-2 px-3 space-x-2">
                     <select
                       className="border rounded px-2 py-1 text-xs"
                       value={req.status}
-                      onChange={e => handleStatusChange(e.target.value)}
+                      onChange={e => handleStatusChange(e.target.value, req.id)}
                     >
-                      {statusOptions.map(opt => (
+                      {statusOptions.filter(opt => opt !== 'Tất cả').map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -195,7 +217,7 @@ const StaffDashboard: React.FC = () => {
         <StaffRequestDetailModal
           request={selectedRequest}
           onClose={handleCloseDetail}
-          onStatusChange={handleStatusChange}
+          onStatusChange={status => handleStatusChange(status, selectedRequest.id)}
           onOpenMessage={handleOpenMessage}
         />
       )}
