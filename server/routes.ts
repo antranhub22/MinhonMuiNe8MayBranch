@@ -69,8 +69,8 @@ let requestList: StaffRequest[] = [
 
 // Dummy message data
 let messageList: StaffMessage[] = [
-  { id: 1, requestId: 1, sender: 'guest', content: 'Can I get my order soon?', time: new Date() },
-  { id: 2, requestId: 1, sender: 'staff', content: 'We are preparing your order.', time: new Date() },
+  { id: 1, requestId: 1, sender: 'guest', content: 'Can I get my order soon?', created_at: new Date(), updatedAt: new Date() },
+  { id: 2, requestId: 1, sender: 'staff', content: 'We are preparing your order.', created_at: new Date(), updatedAt: new Date() },
 ];
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -1088,7 +1088,8 @@ Mi Nhon Hotel Mui Ne`
       requestId: id,
       sender: 'staff',
       content,
-      time: new Date(),
+      created_at: new Date(),
+      updatedAt: new Date()
     };
     messageList.push(msg);
     res.status(201).json(msg);

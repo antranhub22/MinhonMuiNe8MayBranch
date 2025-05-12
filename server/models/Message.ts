@@ -3,5 +3,6 @@ export interface Message {
   requestId: number;
   sender: 'staff' | 'guest';
   content: string;
-  time: Date;
+  created_at: Date;
+  updatedAt: Date;
 } 
