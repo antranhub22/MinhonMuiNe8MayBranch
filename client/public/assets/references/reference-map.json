@@ -986,7 +986,7 @@
     "type": "image",
     "category": "Bus Tickets",
     "title": "Bus Tickets Information",
-    "url": "/assets/references/images/bus-tickets/MiNhon - Bus Tickets_page-0001.jpg",
+    "url": "/assets/references/images/bus-tickets-fixed/bus-tickets-info.jpg",
     "description": "Complete information about bus services from Mui Ne to major destinations",
     "keywords": [
       "bus tickets",
@@ -1002,7 +1002,7 @@
     "type": "image",
     "category": "Menu at Minhon Hotel",
     "title": "Menu Mi Nhon Em - Summary",
-    "url": "/assets/references/images/menu-at-Minhonhotel/Menu MiNhon Em - Summary.jpg",
+    "url": "/assets/references/images/menu-at-minhonhotel-fixed/menu-summary.jpg",
     "description": "Summary of dining options at Mi Nhon Em Restaurant",
     "keywords": [
       "menu",
@@ -1017,7 +1017,7 @@
     "type": "image",
     "category": "Menu at Minhon Hotel",
     "title": "Menu YoYo Vegetarian",
-    "url": "/assets/references/images/menu-at-Minhonhotel/Menu YoYo Vegetarian - Quick view.jpg",
+    "url": "/assets/references/images/menu-at-minhonhotel-fixed/yoyo-menu.jpg",
     "description": "YoYo Vegetarian menu options available at the hotel",
     "keywords": [
       "vegetarian",
@@ -1028,67 +1028,11 @@
       "restaurant"
     ]
   },
-  "minhon-menu-page1": {
-    "type": "image",
-    "category": "Menu at Minhon Hotel",
-    "title": "Mi Nhon Menu - Page 1",
-    "url": "/assets/references/images/menu-at-Minhonhotel/MiNhon - MENU-images-0.jpg",
-    "description": "First page of the Mi Nhon Hotel restaurant menu",
-    "keywords": [
-      "menu",
-      "food",
-      "restaurant menu",
-      "dining options",
-      "hotel restaurant"
-    ]
-  },
-  "minhon-menu-page2": {
-    "type": "image",
-    "category": "Menu at Minhon Hotel",
-    "title": "Mi Nhon Menu - Page 2",
-    "url": "/assets/references/images/menu-at-Minhonhotel/MiNhon - MENU-images-1.jpg",
-    "description": "Second page of the Mi Nhon Hotel restaurant menu",
-    "keywords": [
-      "menu",
-      "food",
-      "restaurant menu",
-      "dining options",
-      "hotel restaurant"
-    ]
-  },
-  "minhon-em-menu1": {
-    "type": "image",
-    "category": "Menu at Minhon Hotel",
-    "title": "Mi Nhon Em Menu - Page 1",
-    "url": "/assets/references/images/menu-at-Minhonhotel/MiNhonEm - MENU_page-0001.jpg",
-    "description": "First page of the Mi Nhon Em restaurant menu",
-    "keywords": [
-      "mi nhon em",
-      "restaurant menu",
-      "dining",
-      "food options",
-      "appetizers"
-    ]
-  },
-  "minhon-em-menu2": {
-    "type": "image",
-    "category": "Menu at Minhon Hotel",
-    "title": "Mi Nhon Em Menu - Page 2",
-    "url": "/assets/references/images/menu-at-Minhonhotel/MiNhonEm - MENU_page-0002.jpg",
-    "description": "Second page of the Mi Nhon Em restaurant menu",
-    "keywords": [
-      "mi nhon em",
-      "restaurant menu",
-      "dining",
-      "food options",
-      "main dishes"
-    ]
-  },
   "muine-tour-east-west1": {
     "type": "image",
     "category": "Tours at Muine",
     "title": "Mui Ne East & West Tours - Page 1",
-    "url": "/assets/references/images/tours-at-Muine/MN Tour west east & address thinks to do & eat_page-0001.jpg",
+    "url": "/assets/references/images/tours-at-muine-fixed/east-west-tour1.jpg",
     "description": "Information about East and West tours in Mui Ne with things to do and eat",
     "keywords": [
       "mui ne tour",
@@ -1099,26 +1043,11 @@
       "travel guide"
     ]
   },
-  "muine-tour-east-west2": {
-    "type": "image",
-    "category": "Tours at Muine",
-    "title": "Mui Ne East & West Tours - Page 2",
-    "url": "/assets/references/images/tours-at-Muine/MN Tour west east & address thinks to do & eat_page-0002.jpg",
-    "description": "Additional information about tours, attractions and dining options in Mui Ne",
-    "keywords": [
-      "mui ne tour",
-      "attractions",
-      "dining guide",
-      "local experiences",
-      "sightseeing",
-      "travel tips"
-    ]
-  },
   "phan-thiet-tour": {
     "type": "image",
     "category": "Tours at Muine",
     "title": "Phan Thiet Tour Guide",
-    "url": "/assets/references/images/tours-at-Muine/PHAN THIET TOUR _page-0001.jpg",
+    "url": "/assets/references/images/tours-at-muine-fixed/phan-thiet-tour.jpg",
     "description": "Guide to tours and attractions in Phan Thiet city",
     "keywords": [
       "phan thiet",
