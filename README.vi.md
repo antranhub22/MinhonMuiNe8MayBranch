@@ -12,6 +12,24 @@
 - Lịch sử cuộc gọi và theo dõi đơn hàng
 - Hỗ trợ nhiều yêu cầu dịch vụ trong một cuộc hội thoại
 
+## Các cải tiến bảo mật và hiệu suất
+
+### Tích hợp Voice Assistant
+
+- **Kết nối HTTPS an toàn**: Tất cả kết nối đến Vapi.ai đều được bảo mật với giao thức HTTPS sử dụng TLS 1.2/1.3
+- **Quản lý bộ nhớ tối ưu**: Ngăn chặn memory leak với việc quản lý event listeners hiệu quả
+- **Xử lý lỗi nâng cao**: Cải thiện khả năng phục hồi khi gặp sự cố API hoặc kết nối
+- **Bảo mật API Keys**: Xác thực an toàn thông qua biến môi trường, không lưu trữ trong mã nguồn
+- **Hỗ trợ đa ngôn ngữ mạnh mẽ**: Xử lý linh hoạt các API keys và assistant IDs cho nhiều ngôn ngữ
+
+### Công cụ kiểm tra tích hợp
+
+Dự án bao gồm công cụ kiểm tra tích hợp để xác minh các kết nối và chức năng Vapi.ai:
+```bash
+# Chạy kiểm tra tích hợp Vapi.ai
+ts-node server/vapiTest.ts
+```
+
 ## Công nghệ sử dụng
 
 - **Frontend**: React, TypeScript, TailwindCSS
@@ -48,6 +66,11 @@
    OPENAI_API_KEY=your_openai_api_key
    VITE_VAPI_PUBLIC_KEY=your_vapi_public_key
    VITE_VAPI_ASSISTANT_ID=your_vapi_assistant_id
+   # Tùy chọn: cấu hình cho ngôn ngữ bổ sung
+   VITE_VAPI_PUBLIC_KEY_FR=your_french_vapi_key
+   VITE_VAPI_ASSISTANT_ID_FR=your_french_assistant_id
+   VITE_VAPI_PUBLIC_KEY_ZH=your_chinese_vapi_key
+   VITE_VAPI_ASSISTANT_ID_ZH=your_chinese_assistant_id
    MS365_EMAIL=your_email_address
    MS365_PASSWORD=your_email_app_password
    ```

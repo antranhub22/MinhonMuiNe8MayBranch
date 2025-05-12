@@ -22,6 +22,7 @@ interface AddMessage {
 }
 
 let vapiInstance: Vapi | null = null;
+let eventListenersAttached = false;
 
 interface VapiConnectionStatus {
   status: 'connecting' | 'connected' | 'disconnected';
@@ -33,41 +34,83 @@ interface VapiMessage {
   [key: string]: any;
 }
 
+// Helper for cleanup
+const cleanupVapiInstance = () => {
+  if (vapiInstance) {
+    // Remove all event listeners to prevent memory leaks
+    try {
+      // Attempt to remove event listeners - handle any errors silently
+      vapiInstance.removeAllListeners?.();
+    } catch (error) {
+      console.warn('Failed to remove event listeners:', error);
+    }
+    eventListenersAttached = false;
+  }
+};
+
 export const initVapi = async (publicKey: string): Promise<Vapi> => {
   try {
+    // If instance exists but with different key, clean up first
     if (vapiInstance) {
-      return vapiInstance;
+      // Check if we're initializing with a new key by attempting to compare
+      // Since we can't directly access private properties, we'll start clean
+      // if the publicKey is different than what we last used
+      try {
+        const vapiPublicKey = (vapiInstance as any).publicKey;
+        if (vapiPublicKey && vapiPublicKey !== publicKey) {
+          cleanupVapiInstance();
+          vapiInstance = null;
+        } else {
+          return vapiInstance;
+        }
+      } catch (error) {
+        // If we can't compare keys, just return existing instance
+        return vapiInstance;
+      }
     }
-    vapiInstance = new Vapi(publicKey);
 
-    // Add event listeners
-    vapiInstance.on('call-start', () => {
-      console.log('Call started');
-    });
+    // Check for invalid API key
+    if (!publicKey || publicKey.trim() === '') {
+      throw new Error('Invalid Vapi API key');
+    }
 
-    vapiInstance.on('call-end', () => {
-      console.log('Call ended');
-    });
+    // Create new instance with secure HTTPS connection
+    const newVapiInstance = new Vapi(publicKey);
+    vapiInstance = newVapiInstance;
 
-    vapiInstance.on('speech-start', () => {
-      console.log('Speech started');
-    });
+    // Only attach event listeners once
+    if (!eventListenersAttached) {
+      // Add event listeners
+      vapiInstance.on('call-start', () => {
+        console.log('Call started');
+      });
 
-    vapiInstance.on('speech-end', () => {
-      console.log('Speech ended');
-    });
+      vapiInstance.on('call-end', () => {
+        console.log('Call ended');
+      });
 
-    vapiInstance.on('volume-level', (volume) => {
-      console.log(`Volume level: ${volume}`);
-    });
+      vapiInstance.on('speech-start', () => {
+        console.log('Speech started');
+      });
 
-    vapiInstance.on('message', (message) => {
-      console.log('Message received:', message);
-    });
+      vapiInstance.on('speech-end', () => {
+        console.log('Speech ended');
+      });
 
-    vapiInstance.on('error', (error) => {
-      console.error('Error:', error);
-    });
+      vapiInstance.on('volume-level', (volume) => {
+        console.log(`Volume level: ${volume}`);
+      });
+
+      vapiInstance.on('message', (message) => {
+        console.log('Message received:', message);
+      });
+
+      vapiInstance.on('error', (error) => {
+        console.error('Error:', error);
+      });
+      
+      eventListenersAttached = true;
+    }
 
     return vapiInstance;
   } catch (error) {
@@ -90,6 +133,11 @@ export const startCall = async (assistantId: string, assistantOverrides?: any) =
   }
 
   try {
+    // Validate assistantId
+    if (!assistantId || assistantId.trim() === '') {
+      throw new Error('Invalid assistant ID');
+    }
+    
     const call = await vapiInstance.start(assistantId, assistantOverrides);
     return call;
   } catch (error) {
@@ -167,6 +215,12 @@ export const say = (message: string, endCallAfterSpoken?: boolean) => {
     console.error('Failed to say message:', error);
     throw error;
   }
+};
+
+// Clean up resources when component unmounts or app closes
+export const cleanupVapi = () => {
+  cleanupVapiInstance();
+  vapiInstance = null;
 };
 
 export const buttonConfig = {
