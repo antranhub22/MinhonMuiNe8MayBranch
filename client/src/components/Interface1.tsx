@@ -123,18 +123,28 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
             onClick={() => handleCall(language as any)}
             style={{
               background: 'linear-gradient(180deg, rgba(78, 90, 183, 0.9) 0%, rgba(56, 65, 152, 0.9) 100%)',
-              boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.15), 0px 4px 6px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.2)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.25), 0px 6px 12px rgba(0, 0, 0, 0.15), inset 0px 1px 0px rgba(255, 255, 255, 0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.5)',
               transition: 'all 0.3s ease',
-              transform: 'translateY(0)',
+              transform: 'translateY(0) translateZ(30px)',
             }}
           >
             <span className="material-icons text-4xl sm:text-6xl lg:text-7xl mb-2 text-[#F9BF3B] transition-all duration-300 group-hover:scale-110" 
               style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
             >mic</span>
-            <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap text-white"
-              style={{ textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)' }}
-            >{t('press_to_call', language)}</span>
+            {language === 'fr' ? (
+              <span className="text-sm sm:text-lg lg:text-2xl font-bold text-white px-2 text-center"
+                style={{ textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)' }}
+              >{t('press_to_call', language)}</span>
+            ) : language === 'ru' || language === 'ko' ? (
+              <span className="text-sm sm:text-lg lg:text-xl font-bold text-white px-2 text-center"
+                style={{ textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)' }}
+              >{t('press_to_call', language)}</span>
+            ) : (
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold whitespace-nowrap text-white"
+                style={{ textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)' }}
+              >{t('press_to_call', language)}</span>
+            )}
             <span className="absolute w-full h-full rounded-full pointer-events-none"></span>
           </button>
         </div>
@@ -275,10 +285,10 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
         </div>
         {/* Active orders status panels - thêm hiệu ứng 3D và đường viền sáng */}
         {activeOrders && activeOrders.length > 0 && (
-          <div className="flex flex-col items-center gap-y-4 mb-6 w-full px-2 sm:flex-row sm:flex-nowrap sm:gap-x-4 sm:overflow-x-auto sm:justify-start"
+          <div className="flex flex-col items-center gap-y-4 mb-16 pb-10 w-full px-2 sm:mb-6 sm:pb-0 sm:flex-row sm:flex-nowrap sm:gap-x-4 sm:overflow-x-auto sm:justify-start"
             style={{ perspective: '1000px' }}
           >
-            {activeOrders.map((o: ActiveOrder) => {
+            {[...activeOrders].sort((a, b) => b.requestedAt.getTime() - a.requestedAt.getTime()).map((o: ActiveOrder) => {
               const deadline = new Date(o.requestedAt.getTime() + 60 * 60 * 1000);
               const diffSec = Math.max(Math.ceil((deadline.getTime() - now.getTime()) / 1000), 0);
               if (diffSec <= 0) return null;
@@ -300,10 +310,14 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
                     transformStyle: 'preserve-3d'
                   }}
                 >
+                  {/* Đồng hồ đếm ngược ở trên đầu */}
+                  <div className="flex justify-center items-center mb-1.5">
+                    <span className="font-bold text-lg text-blue-800 bg-blue-50 px-3 py-1 rounded-lg shadow-sm">{`${mins}:${secs}`}</span>
+                  </div>
+                  
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('order_ref', language)}:</strong> {o.reference}</p>
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('requested_at', language)}:</strong> {o.requestedAt.toLocaleString('en-US', {timeZone: 'Asia/Ho_Chi_Minh', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
                   <p className="text-xs sm:text-sm mb-0.5"><strong>{t('estimated_completion', language)}:</strong> {o.estimatedTime}</p>
-                  <p className="text-xs sm:text-sm"><strong>{t('time_remaining', language)}:</strong> <span className="font-bold text-blue-800">{`${mins}:${secs}`}</span></p>
                 </div>
               );
             })}
