@@ -426,12 +426,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
           )}
           {/* Reference container below (full width, auto height) */}
           <div className="w-full mt-1">
-            <div className="block sm:hidden">
-              <div className="w-full flex flex-row items-center gap-x-2 mb-3 px-2">
-                <Reference references={references} />
-              </div>
-            </div>
-            <div className="hidden sm:block">
+            <div className="w-full flex flex-row items-center gap-x-2 mb-3 px-2">
               <Reference references={references} />
             </div>
           </div>
