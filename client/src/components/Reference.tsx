@@ -167,7 +167,31 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
   };
 
   // Lọc reference theo category
-  const filteredReferences = references.filter(ref => (ref as any).category === activeCategory);
+  const filteredReferences = references.filter(ref => {
+    // Handle whitespace and case insensitive comparison
+    const refCategory = ((ref as any).category || '').trim();
+    return refCategory.toLowerCase() === activeCategory.toLowerCase();
+  });
+
+  // Debug logs to identify issues
+  useEffect(() => {
+    console.log(`Category changed to: "${activeCategory}"`);
+    
+    // Log all unique categories found in the references
+    const categories = references.map(ref => ((ref as any).category || '').trim()).filter(Boolean);
+    const uniqueCategories = Array.from(new Set(categories));
+    console.log('Available categories in data:', uniqueCategories);
+    
+    // Log how many references match the current category
+    console.log(`Found ${filteredReferences.length} references for "${activeCategory}":`);
+    if (filteredReferences.length > 0) {
+      console.log('Sample reference:', {
+        title: filteredReferences[0].title,
+        category: (filteredReferences[0] as any).category,
+        url: filteredReferences[0].url
+      });
+    }
+  }, [activeCategory, references, filteredReferences]);
 
   // Main render
   return (
