@@ -284,10 +284,20 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               <button
                 id="confirmButton"
                 onClick={handleNext}
-                className="flex items-center justify-center px-2 py-1 bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors sm:hidden"
-                style={{fontFamily:'inherit', letterSpacing:0.2}}
+                className="flex items-center justify-center px-4 py-2 bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 rounded-full text-base font-bold border-4 border-[#d4af37] shadow-2xl transition-all duration-200 sm:hidden"
+                style={{
+                  fontFamily: 'inherit',
+                  letterSpacing: 0.2,
+                  boxShadow: '0 6px 24px 0 rgba(212,175,55,0.25), 0 1.5px 4px 0 rgba(0,0,0,0.12)',
+                  borderWidth: 4,
+                  borderColor: '#d4af37',
+                  background: 'linear-gradient(180deg, #ffe066 0%, #ffd700 100%)',
+                  textShadow: '0 1px 2px #fff, 0 1px 8px #ffd700',
+                  minHeight: 48,
+                  minWidth: 180
+                }}
               >
-                <span className="material-icons text-base mr-1">send</span>{t('confirm', language)}
+                <span className="material-icons text-lg mr-2">send</span>{t('confirm', language)}
               </button>
               {/* Nút MicLevel bên phải */}
               <button
@@ -425,8 +435,18 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
           <button
             id="endCallButton"
             onClick={handleNext}
-            className="w-full md:w-auto bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-colors border border-white/30 text-xs sm:text-sm"
-            style={{fontFamily:'inherit', letterSpacing:0.5}}
+            className="w-full md:w-auto bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 font-bold py-2 px-6 rounded-full shadow-2xl flex items-center justify-center space-x-2 transition-all duration-200 border-4 border-[#d4af37] text-base sm:text-lg"
+            style={{
+              fontFamily: 'inherit',
+              letterSpacing: 0.5,
+              boxShadow: '0 6px 24px 0 rgba(212,175,55,0.25), 0 1.5px 4px 0 rgba(0,0,0,0.12)',
+              borderWidth: 4,
+              borderColor: '#d4af37',
+              background: 'linear-gradient(180deg, #ffe066 0%, #ffd700 100%)',
+              textShadow: '0 1px 2px #fff, 0 1px 8px #ffd700',
+              minHeight: 56,
+              minWidth: 220
+            }}
           >
             <span className="material-icons">send</span>
             <span className="whitespace-nowrap">{t('confirm_request', language)}</span>
