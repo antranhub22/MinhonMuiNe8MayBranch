@@ -166,8 +166,8 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
     return 4;
   };
 
-  // Lọc reference theo category
-  const filteredReferences = references.filter(ref => (ref as any).category === activeCategory);
+  // Lọc reference theo category, không phân biệt hoa thường và loại bỏ dấu cách thừa
+  const filteredReferences = references.filter(ref => (ref as any).category && (ref as any).category.trim().toLowerCase() === activeCategory.trim().toLowerCase());
 
   // Main render
   return (
