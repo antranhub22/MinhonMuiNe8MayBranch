@@ -33,6 +33,7 @@ const StaffDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('Tất cả');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [expandedContent, setExpandedContent] = useState<number | null>(null);
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
@@ -172,25 +173,25 @@ const StaffDashboard: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-6">
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-blue-900">Staff Request Management</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-2 sm:p-6">
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-3 sm:p-6 border border-gray-200">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-blue-900">Staff Request Management</h2>
           <button
             onClick={fetchRequests}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold"
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold"
           >
             Refresh
           </button>
         </div>
 
         {/* Filters */}
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mb-4 grid grid-cols-1 gap-4">
           {/* Filter status */}
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="font-semibold text-blue-900">Lọc theo trạng thái:</label>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <label className="font-semibold text-blue-900 w-full sm:w-auto">Lọc theo trạng thái:</label>
             <select
-              className="border rounded px-3 py-1 text-sm"
+              className="w-full sm:w-auto border rounded px-3 py-1 text-sm"
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
             >
@@ -201,40 +202,111 @@ const StaffDashboard: React.FC = () => {
           </div>
           
           {/* Filter thời gian */}
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="font-semibold text-blue-900">Lọc theo thời gian:</label>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Từ:</label>
-              <input 
-                type="date" 
-                className="border rounded px-2 py-1 text-sm"
-                value={startDate}
-                onChange={e => setStartDate(e.target.value)}
-              />
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <label className="font-semibold text-blue-900 w-full sm:w-auto">Lọc theo thời gian:</label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <label className="text-sm text-gray-600 min-w-10">Từ:</label>
+                <input 
+                  type="date" 
+                  className="border rounded px-2 py-1 text-sm w-full"
+                  value={startDate}
+                  onChange={e => setStartDate(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <label className="text-sm text-gray-600 min-w-10">Đến:</label>
+                <input 
+                  type="date" 
+                  className="border rounded px-2 py-1 text-sm w-full"
+                  value={endDate}
+                  onChange={e => setEndDate(e.target.value)}
+                />
+              </div>
+              {(startDate || endDate) && (
+                <button
+                  onClick={() => {
+                    setStartDate('');
+                    setEndDate('');
+                  }}
+                  className="text-blue-600 hover:text-blue-800 text-sm mt-2 sm:mt-0"
+                >
+                  Xóa lọc
+                </button>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Đến:</label>
-              <input 
-                type="date" 
-                className="border rounded px-2 py-1 text-sm"
-                value={endDate}
-                onChange={e => setEndDate(e.target.value)}
-              />
-            </div>
-            {(startDate || endDate) && (
-              <button
-                onClick={() => {
-                  setStartDate('');
-                  setEndDate('');
-                }}
-                className="text-blue-600 hover:text-blue-800 text-sm"
-              >
-                Xóa lọc
-              </button>
+          </div>
+        </div>
+
+        {/* Mobile version of requests - Card style */}
+        <div className="block sm:hidden">
+          <div className="space-y-4">
+            {(Array.isArray(filteredRequests) ? [...filteredRequests].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) : []).map(req => (
+              <div key={req.id} className="border rounded-lg p-3 bg-white shadow-sm">
+                <div className="flex justify-between mb-2">
+                  <div className="font-semibold">Phòng: {req.room_number}</div>
+                  <div className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)}`}>{req.status}</div>
+                </div>
+                <div className="text-sm text-gray-500 mb-2">Order ID: {req.orderId || req.id}</div>
+                <div className="text-xs text-gray-500 mb-3">
+                  {req.created_at && (
+                    <>
+                      {new Date(req.created_at).toLocaleDateString()} {new Date(req.created_at).toLocaleTimeString()}
+                    </>
+                  )}
+                </div>
+
+                {/* Collapsible content */}
+                <div className="mb-3">
+                  <button 
+                    onClick={() => setExpandedContent(expandedContent === req.id ? null : req.id)}
+                    className="w-full flex justify-between items-center py-1 px-2 border rounded bg-gray-50 hover:bg-gray-100"
+                  >
+                    <span className="text-sm font-medium text-blue-700">
+                      {expandedContent === req.id ? 'Ẩn nội dung' : 'Xem nội dung'}
+                    </span>
+                    <svg 
+                      className={`w-4 h-4 text-blue-700 transition-transform ${expandedContent === req.id ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {expandedContent === req.id && (
+                    <div className="mt-2 p-2 bg-gray-50 rounded-md whitespace-pre-line break-words text-sm">
+                      {req.request_content}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <select
+                    className="border rounded px-2 py-2 text-sm w-full"
+                    value={req.status}
+                    onChange={e => handleStatusChange(e.target.value, req.id)}
+                  >
+                    {statusOptions.filter(opt => opt !== 'Tất cả').map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => handleOpenDetail(req)}>Chi tiết</button>
+                    <button className="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => { setSelectedRequest(req); handleOpenMessage(); }}>Nhắn khách</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {filteredRequests.length === 0 && (
+              <div className="text-center py-8 text-gray-500">Không có yêu cầu nào</div>
             )}
           </div>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Desktop version - Table */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
               <tr className="bg-blue-100 text-blue-900">
@@ -278,6 +350,11 @@ const StaffDashboard: React.FC = () => {
                   </td>
                 </tr>
               ))}
+              {filteredRequests.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-gray-500">Không có yêu cầu nào</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
