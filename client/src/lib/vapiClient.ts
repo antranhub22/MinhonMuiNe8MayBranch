@@ -146,16 +146,47 @@ export const startCall = async (assistantId: string, assistantOverrides?: any) =
   }
 };
 
-export const stopCall = () => {
+export const stopCall = (): boolean => {
   if (!vapiInstance) {
-    throw new Error('Vapi not initialized. Call initVapi first.');
+    console.warn('Vapi not initialized. Cannot stop call.');
+    return false;
   }
 
   try {
-    vapiInstance.stop();
+    console.log('Stopping Vapi call...');
+    
+    // Gửi thông báo trước khi dừng nếu đang có cuộc gọi
+    try {
+      // Kiểm tra xem vapiInstance có phải là một đối tượng Vapi hợp lệ không
+      if (vapiInstance && typeof vapiInstance.send === 'function') {
+        // Gửi thông báo system khi người dùng muốn kết thúc cuộc gọi
+        (vapiInstance as Vapi).send({
+          type: 'add-message',
+          message: {
+            role: 'system',
+            content: 'User has ended the call.'
+          }
+        });
+      }
+    } catch (e) {
+      // Bỏ qua lỗi nếu không thể gửi thông báo
+      console.warn('Could not send end call notification:', e);
+    }
+    
+    // Dừng cuộc gọi
+    (vapiInstance as Vapi).stop();
+    
+    // Phát event tùy chỉnh để thông báo cuộc gọi đã dừng
+    const callEndEvent = new CustomEvent('vapi-call-ended', {
+      detail: { timestamp: Date.now() }
+    });
+    window.dispatchEvent(callEndEvent);
+    
+    console.log('Vapi call stopped successfully');
+    return true;
   } catch (error) {
     console.error('Failed to stop call:', error);
-    throw error;
+    return false;
   }
 };
 

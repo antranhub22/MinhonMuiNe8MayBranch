@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAssistant } from '@/context/AssistantContext';
 import Interface1 from './Interface1';
 import Interface2 from './Interface2';
@@ -10,12 +10,38 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { Link } from 'wouter';
 import { History } from 'lucide-react';
 import InfographicSteps from './InfographicSteps';
+import { useVapiEvents } from '@/hooks/useVapiEvents';
+import { logEvent } from '@/lib/voiceMonitoring';
+import { handleVoiceError, VoiceErrorType } from '@/lib/voiceErrorHandler';
 
 const VoiceAssistant: React.FC = () => {
-  const { currentInterface, language } = useAssistant();
+  const { currentInterface, language, setCurrentInterface } = useAssistant();
   
   // Initialize WebSocket connection
   useWebSocket();
+  
+  // Theo dõi các sự kiện từ Vapi SDK
+  const { isCallActive, isSpeaking } = useVapiEvents({
+    onCallEnd: () => {
+      console.log('Voice Assistant: Call ended, checking if interface needs to be updated');
+      logEvent('call_end', { interfaceState: currentInterface });
+    },
+    onError: (error) => {
+      // Xử lý các lỗi từ Vapi SDK
+      handleVoiceError(
+        error,
+        VoiceErrorType.API_ERROR,
+        { component: 'VoiceAssistant', currentInterface }
+      );
+    }
+  });
+  
+  // Theo dõi thay đổi trạng thái cuộc gọi để phản ứng phù hợp
+  useEffect(() => {
+    if (!isCallActive && currentInterface === 'interface2') {
+      console.log('Voice Assistant: Call is not active but interface2 is showing');
+    }
+  }, [isCallActive, currentInterface]);
 
   return (
     <div className="relative h-screen overflow-hidden font-sans text-gray-800 bg-neutral-50" id="app">
@@ -73,6 +99,14 @@ const VoiceAssistant: React.FC = () => {
           isActive={currentInterface === 'interface4'} 
         />
       </div>
+      
+      {/* Thông báo trạng thái speech - chỉ hiển thị trong development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed bottom-0 right-0 p-2 bg-black/70 text-white text-xs rounded-tl-md z-50">
+          Call: {isCallActive ? 'Active' : 'Inactive'} | 
+          Speech: {isSpeaking ? 'Speaking' : 'Silent'}
+        </div>
+      )}
     </div>
   );
 };

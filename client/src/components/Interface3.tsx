@@ -466,7 +466,17 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                   <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
                 </button>
                 <button
-                  onClick={handleConfirmOrder}
+                  onClick={async () => {
+                    // Stop voice assistant before redirecting
+                    try {
+                      const { stopCall } = await import('@/lib/vapiClient');
+                      stopCall();
+                    } catch (error) {
+                      console.error('Failed to stop voice assistant:', error);
+                    }
+                    
+                    handleConfirmOrder();
+                  }}
                   className="flex-1 bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 font-bold py-1.5 px-3 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-colors border border-white/30 text-xs"
                   style={{letterSpacing:0.5}}
                 >
@@ -551,7 +561,17 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                   <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
                 </button>
                 <button
-                  onClick={handleConfirmOrder}
+                  onClick={async () => {
+                    // Stop voice assistant before redirecting
+                    try {
+                      const { stopCall } = await import('@/lib/vapiClient');
+                      stopCall();
+                    } catch (error) {
+                      console.error('Failed to stop voice assistant:', error);
+                    }
+                    
+                    handleConfirmOrder();
+                  }}
                   className="w-full md:w-auto bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-colors border border-white/30 text-xs sm:text-sm"
                   style={{letterSpacing:0.5}}
                 >
