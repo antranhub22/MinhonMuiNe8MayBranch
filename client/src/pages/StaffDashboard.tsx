@@ -57,6 +57,7 @@ const StaffDashboard: React.FC = () => {
         return;
       }
       const data = await res.json();
+      console.log('Fetched requests data:', data); // Debug log
       setRequests(data);
     } catch (err) {
       console.error('Failed to fetch requests:', err);
@@ -251,66 +252,76 @@ const StaffDashboard: React.FC = () => {
         {/* Mobile version of requests - Card style */}
         <div className="block sm:hidden">
           <div className="space-y-4">
-            {(Array.isArray(filteredRequests) ? [...filteredRequests].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) : []).map(req => (
-              <div key={req.id} className="border rounded-lg p-3 bg-white shadow-sm">
-                <div className="flex justify-between mb-2">
-                  <div className="font-semibold">Phòng: {req.room_number}</div>
-                  <div className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)}`}>{req.status}</div>
-                </div>
-                <div className="text-sm text-gray-500 mb-2">Order ID: {req.orderId || req.id}</div>
-                <div className="text-xs text-gray-500 mb-3">
-                  {req.created_at && (
-                    <>
-                      {new Date(req.created_at).toLocaleDateString()} {new Date(req.created_at).toLocaleTimeString()}
-                    </>
-                  )}
-                </div>
-
-                {/* Collapsible content */}
-                <div className="mb-3">
-                  <button 
-                    onClick={() => setExpandedContent(expandedContent === req.id ? null : req.id)}
-                    className="w-full flex justify-between items-center py-1 px-2 border rounded bg-gray-50 hover:bg-gray-100"
-                  >
-                    <span className="text-sm font-medium text-blue-700">
-                      {expandedContent === req.id ? 'Ẩn nội dung' : 'Xem nội dung'}
-                    </span>
-                    <svg 
-                      className={`w-4 h-4 text-blue-700 transition-transform ${expandedContent === req.id ? 'rotate-180' : ''}`} 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  
-                  {expandedContent === req.id && (
-                    <div className="mt-2 p-2 bg-gray-50 rounded-md whitespace-pre-line break-words text-sm">
-                      {req.request_content}
+            {/* Debug log */}
+            {(() => { console.log('Mobile rendering - filteredRequests:', filteredRequests); return null; })()}
+            {filteredRequests.length > 0 ? (
+              [...filteredRequests]
+                .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                .map(req => (
+                  <div key={req.id} className="border rounded-lg p-3 bg-white shadow-sm">
+                    <div className="flex justify-between mb-2">
+                      <div className="font-semibold">Phòng: {req.room_number || 'N/A'}</div>
+                      <div className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor(req.status)}`}>{req.status || 'Chưa xác định'}</div>
                     </div>
-                  )}
-                </div>
+                    <div className="text-sm text-gray-500 mb-2">Order ID: {req.orderId || req.id || 'N/A'}</div>
+                    <div className="text-xs text-gray-500 mb-3">
+                      {req.created_at ? (
+                        <>
+                          {new Date(req.created_at).toLocaleDateString()} {new Date(req.created_at).toLocaleTimeString()}
+                        </>
+                      ) : (
+                        'Thời gian không xác định'
+                      )}
+                    </div>
 
-                <div className="flex flex-col gap-2">
-                  <select
-                    className="border rounded px-2 py-2 text-sm w-full"
-                    value={req.status}
-                    onChange={e => handleStatusChange(e.target.value, req.id)}
-                  >
-                    {statusOptions.filter(opt => opt !== 'Tất cả').map(opt => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => handleOpenDetail(req)}>Chi tiết</button>
-                    <button className="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => { setSelectedRequest(req); handleOpenMessage(); }}>Nhắn khách</button>
+                    {/* Collapsible content */}
+                    <div className="mb-3">
+                      <button 
+                        onClick={() => setExpandedContent(expandedContent === req.id ? null : req.id)}
+                        className="w-full flex justify-between items-center py-1 px-2 border rounded bg-gray-50 hover:bg-gray-100"
+                      >
+                        <span className="text-sm font-medium text-blue-700">
+                          {expandedContent === req.id ? 'Ẩn nội dung' : 'Xem nội dung'}
+                        </span>
+                        <svg 
+                          className={`w-4 h-4 text-blue-700 transition-transform ${expandedContent === req.id ? 'rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      
+                      {expandedContent === req.id && (
+                        <div className="mt-2 p-2 bg-gray-50 rounded-md whitespace-pre-line break-words text-sm">
+                          {req.request_content || 'Không có nội dung'}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <select
+                        className="border rounded px-2 py-2 text-sm w-full"
+                        value={req.status}
+                        onChange={e => handleStatusChange(e.target.value, req.id)}
+                      >
+                        {statusOptions.filter(opt => opt !== 'Tất cả').map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => handleOpenDetail(req)}>Chi tiết</button>
+                        <button className="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => { setSelectedRequest(req); handleOpenMessage(); }}>Nhắn khách</button>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <p>Không có yêu cầu nào</p>
+                <p className="mt-2 text-sm">Nhấn Refresh để tải lại dữ liệu</p>
               </div>
-            ))}
-            {filteredRequests.length === 0 && (
-              <div className="text-center py-8 text-gray-500">Không có yêu cầu nào</div>
             )}
           </div>
         </div>
