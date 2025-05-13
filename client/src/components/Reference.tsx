@@ -161,7 +161,7 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
 
   // Responsive breakpoints
   const getSlidesPerView = () => {
-    if (window.innerWidth < 640) return 1;
+    if (window.innerWidth < 640) return 'auto'; // mobile: cuốn auto
     if (window.innerWidth < 1024) return 2;
     if (window.innerWidth < 1280) return 3;
     return 4;
@@ -251,7 +251,7 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
           style={{ paddingBottom: 32 }}
         >
           {filteredReferences.map((reference, idx) => (
-            <SwiperSlide key={reference.url + idx} className="flex justify-center">
+            <SwiperSlide key={reference.url + idx} className="flex justify-center" style={window.innerWidth < 640 ? {width: 240, maxWidth: 280, minWidth: 200} : {}}>
               {renderReferenceCard(reference)}
             </SwiperSlide>
           ))}
