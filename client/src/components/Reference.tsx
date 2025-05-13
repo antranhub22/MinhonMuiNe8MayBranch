@@ -198,16 +198,17 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
       
       {/* Dropdown category - phong cách mới giống Interface1 */}
       <div className="flex items-center mb-4 px-2">
-        <div className="flex items-center px-3 py-2 sm:py-1.5 gap-2 transition-all duration-300"
+        <div className="flex items-center px-3 py-2 sm:py-1.5 gap-2 transition-all duration-300 mx-auto sm:mx-0"
           style={{
             background: 'linear-gradient(135deg, #4e5ab7 0%, #3f51b5 100%)',
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)', 
             borderRadius: '8px',
-            minWidth: '180px',
+            minWidth: '150px',
+            maxWidth: '95%',
             width: 'auto',
             border: '1px solid rgba(255, 255, 255, 0.1)'
           }}>
-          <FaBookOpen className="text-[#F9BF3B] text-xl mr-1.5" 
+          <FaBookOpen className="text-[#F9BF3B] text-xl mr-1.5"
             style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
           />
           <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap text-sm sm:text-base">Category:</label>
@@ -215,8 +216,7 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
             <select
               value={activeCategory}
               onChange={e => setActiveCategory(e.target.value)}
-              onBlur={e => e.target.blur()}
-              className="appearance-none w-full pl-2 pr-6 py-1 font-sans bg-transparent focus:outline-none transition-all duration-200"
+              className="appearance-none w-full pl-6 sm:pl-8 pr-6 py-1 sm:py-1.5 font-sans bg-transparent focus:outline-none transition-all duration-200"
               style={{
                 fontWeight: 600,
                 color: '#fff',
@@ -228,7 +228,7 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
                 <option key={cat} value={cat} className="bg-blue-800 text-white">{cat}</option>
               ))}
             </select>
-            <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-[#F9BF3B] pointer-events-none text-lg" />
+            <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-[#F9BF3B] pointer-events-none text-lg" />
           </div>
         </div>
       </div>
