@@ -278,19 +278,19 @@ const StaffDashboard: React.FC = () => {
 
         {/* Filters */}
         <div className="mb-4 grid grid-cols-1 gap-4">
-          {/* Filter status */}
+        {/* Filter status */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <label className="font-semibold text-blue-900 w-full sm:w-auto">Lọc theo trạng thái:</label>
-            <select
+          <select
               className="w-full sm:w-auto border rounded px-3 py-1 text-sm"
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-            >
-              {statusOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+          >
+            {statusOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        </div>
           
           {/* Filter thời gian */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
