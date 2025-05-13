@@ -31,6 +31,8 @@ const StaffDashboard: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMsg, setLoadingMsg] = useState(false);
   const [statusFilter, setStatusFilter] = useState('Tất cả');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
@@ -142,10 +144,32 @@ const StaffDashboard: React.FC = () => {
     setLoadingMsg(false);
   };
 
-  // Filter requests theo status
-  const filteredRequests = statusFilter === 'Tất cả'
-    ? requests
-    : requests.filter(r => r.status === statusFilter);
+  // Filter requests theo status và thời gian
+  const filteredRequests = requests.filter(r => {
+    // Filter theo status
+    if (statusFilter !== 'Tất cả' && r.status !== statusFilter) {
+      return false;
+    }
+    
+    // Filter theo thời gian
+    if (startDate || endDate) {
+      const requestDate = new Date(r.created_at);
+      
+      if (startDate) {
+        const filterStartDate = new Date(startDate);
+        filterStartDate.setHours(0, 0, 0, 0);
+        if (requestDate < filterStartDate) return false;
+      }
+      
+      if (endDate) {
+        const filterEndDate = new Date(endDate);
+        filterEndDate.setHours(23, 59, 59, 999);
+        if (requestDate > filterEndDate) return false;
+      }
+    }
+    
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-6">
@@ -159,18 +183,56 @@ const StaffDashboard: React.FC = () => {
             Refresh
           </button>
         </div>
-        {/* Filter status */}
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <label className="font-semibold text-blue-900">Lọc theo trạng thái:</label>
-          <select
-            className="border rounded px-3 py-1 text-sm"
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-          >
-            {statusOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
+
+        {/* Filters */}
+        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Filter status */}
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="font-semibold text-blue-900">Lọc theo trạng thái:</label>
+            <select
+              className="border rounded px-3 py-1 text-sm"
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+            >
+              {statusOptions.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Filter thời gian */}
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="font-semibold text-blue-900">Lọc theo thời gian:</label>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Từ:</label>
+              <input 
+                type="date" 
+                className="border rounded px-2 py-1 text-sm"
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Đến:</label>
+              <input 
+                type="date" 
+                className="border rounded px-2 py-1 text-sm"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
+              />
+            </div>
+            {(startDate || endDate) && (
+              <button
+                onClick={() => {
+                  setStartDate('');
+                  setEndDate('');
+                }}
+                className="text-blue-600 hover:text-blue-800 text-sm"
+              >
+                Xóa lọc
+              </button>
+            )}
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
