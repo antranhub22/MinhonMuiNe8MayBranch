@@ -30,4 +30,8 @@ export const getMessages = async (requestId: number) => {
 
 export const sendMessage = async (requestId: number, sender: string, content: string) => {
   await db.insert(message).values({ requestId, sender, content });
+};
+
+export const deleteAllRequests = async () => {
+  return await db.delete(request).returning();
 }; 

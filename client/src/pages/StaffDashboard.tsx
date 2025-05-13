@@ -34,6 +34,10 @@ const StaffDashboard: React.FC = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [expandedContent, setExpandedContent] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
@@ -146,6 +150,59 @@ const StaffDashboard: React.FC = () => {
     setLoadingMsg(false);
   };
 
+  // Xóa tất cả requests
+  const handleDeleteAllRequests = async () => {
+    setShowPasswordDialog(true);
+    setDeletePassword('');
+    setPasswordError('');
+  };
+
+  // Xác nhận xóa sau khi nhập mật khẩu
+  const confirmDelete = async () => {
+    // Kiểm tra mật khẩu
+    if (deletePassword !== '2208') {
+      setPasswordError('Mật khẩu không đúng');
+      return;
+    }
+    
+    setIsDeleting(true);
+    
+    try {
+      const token = getToken();
+      if (!token) {
+        setShowPasswordDialog(false);
+        return navigate('/staff');
+      }
+      
+      const response = await fetch('/api/staff/requests/all', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      });
+      
+      const result = await response.json();
+      
+      setShowPasswordDialog(false);
+      
+      if (result.success) {
+        alert(`${result.message}`);
+        // Cập nhật state để hiển thị danh sách trống
+        setRequests([]);
+      } else {
+        alert(`Lỗi: ${result.error || 'Không thể xóa requests'}`);
+      }
+    } catch (error) {
+      console.error('Error deleting all requests:', error);
+      alert('Đã xảy ra lỗi khi xóa requests');
+      setShowPasswordDialog(false);
+    } finally {
+      setIsDeleting(false);
+      setDeletePassword('');
+    }
+  };
+
   // Filter requests theo status và thời gian
   const filteredRequests = requests.filter(r => {
     // Filter theo status
@@ -173,6 +230,22 @@ const StaffDashboard: React.FC = () => {
     return true;
   });
 
+  // Xử lý khi nhấn Enter trong hộp mật khẩu
+  const handlePasswordKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      confirmDelete();
+    }
+    // Xóa thông báo lỗi khi người dùng bắt đầu nhập lại
+    if (passwordError) {
+      setPasswordError('');
+    }
+  };
+
+  // Ngăn chặn việc đóng modal khi click bên ngoài
+  const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-2 sm:p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-3 sm:p-6 border border-gray-200">
@@ -187,10 +260,17 @@ const StaffDashboard: React.FC = () => {
         </div>
 
         {/* Nút Refresh */}
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <button
+            onClick={handleDeleteAllRequests}
+            disabled={isDeleting || requests.length === 0}
+            className={`w-auto bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold ${(isDeleting || requests.length === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {isDeleting ? 'Đang xóa...' : 'Xóa tất cả Requests'}
+          </button>
           <button
             onClick={fetchRequests}
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold"
+            className="w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold"
           >
             Refresh
           </button>
@@ -397,6 +477,60 @@ const StaffDashboard: React.FC = () => {
           onSend={handleSendMessage}
           loading={loadingMsg}
         />
+      )}
+      {/* Password Dialog for Delete */}
+      {showPasswordDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4" onClick={handleDialogClick}>
+            <h3 className="text-lg font-bold text-red-600 mb-4">Xác nhận xóa toàn bộ requests</h3>
+            <p className="mb-4 text-gray-700">Hành động này sẽ xóa tất cả requests và không thể hoàn tác. Vui lòng nhập mật khẩu để xác nhận:</p>
+            
+            <div className="mb-4">
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                onKeyDown={handlePasswordKeyDown}
+                className={`w-full px-3 py-2 border rounded ${passwordError ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-red-500`}
+                placeholder="Nhập mật khẩu xác nhận"
+                autoFocus
+              />
+              {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+              <p className="text-gray-500 text-xs mt-2 italic">Biện pháp bảo vệ: Chức năng xóa yêu cầu mật khẩu xác nhận để ngăn ngừa xóa dữ liệu do nhầm lẫn.</p>
+            </div>
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowPasswordDialog(false)}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded transition duration-200"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition duration-200 flex items-center disabled:opacity-70"
+              >
+                {isDeleting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Đang xóa...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Xác nhận xóa
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

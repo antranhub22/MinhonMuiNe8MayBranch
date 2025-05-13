@@ -22,6 +22,7 @@ import { db } from '../src/db';
 import { request as requestTable } from '../src/db/schema';
 import { eq } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
+import { deleteAllRequests } from '../src/api/staff';
 
 // Initialize OpenAI client 
 const openai = new OpenAI({
@@ -1158,6 +1159,28 @@ Mi Nhon Hotel Mui Ne`
     };
     messageList.push(msg);
     res.status(201).json(msg);
+  });
+
+  // Xóa tất cả requests
+  app.delete('/api/staff/requests/all', verifyJWT, async (req, res) => {
+    try {
+      console.log('Attempting to delete all requests');
+      // Xóa tất cả dữ liệu từ bảng request sử dụng API function
+      const result = await deleteAllRequests();
+      console.log(`Deleted ${result.length} requests from database`);
+      
+      res.json({ 
+        success: true, 
+        message: `Đã xóa ${result.length} requests`, 
+        deletedCount: result.length 
+      });
+    } catch (error) {
+      console.error('Error deleting all requests:', error);
+      res.status(500).json({ 
+        error: 'Failed to delete requests',
+        details: (error as any)?.message
+      });
+    }
   });
 
   return httpServer;
