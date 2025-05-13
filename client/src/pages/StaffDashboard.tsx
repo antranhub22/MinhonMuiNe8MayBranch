@@ -175,8 +175,18 @@ const StaffDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-2 sm:p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-3 sm:p-6 border border-gray-200">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-blue-900">Staff Request Management</h2>
+        {/* Logo và tiêu đề */}
+        <div className="flex flex-col items-center mb-6">
+          <img 
+            src="/assets/references/images/minhon-logo.jpg" 
+            alt="Minhon Logo" 
+            className="h-16 object-contain mb-2"
+          />
+          <h2 className="text-xl sm:text-2xl font-bold text-blue-900 text-center">Staff Request Management</h2>
+        </div>
+
+        {/* Nút Refresh */}
+        <div className="flex justify-end mb-4">
           <button
             onClick={fetchRequests}
             className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold"
