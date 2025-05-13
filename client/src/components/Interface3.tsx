@@ -459,8 +459,12 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                 </button>
                 <button
                   onClick={handleConfirmOrder}
-                  className="flex-1 bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 font-bold py-1.5 px-3 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-colors border border-white/30 text-xs"
-                  style={{letterSpacing:0.5}}
+                  className="flex-1 bg-gradient-to-b from-[#ffd700] to-[#d4af37] text-blue-900 font-bold py-1.5 px-3 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-transform active:scale-95 active:translate-y-0.5 border-2 border-amber-400 text-xs"
+                  style={{
+                    letterSpacing: 0.5,
+                    boxShadow: '0 3px 0 #b8860b, 0 4px 6px rgba(0, 0, 0, 0.2)',
+                    transform: 'translateY(-1px)'
+                  }}
                 >
                   <span className="material-icons">send</span>
                   <span className="whitespace-nowrap">{t('send_to_reception', language)}</span>
@@ -544,8 +548,12 @@ const Interface3: React.FC<Interface3Props> = ({ isActive }) => {
                 </button>
                 <button
                   onClick={handleConfirmOrder}
-                  className="w-full md:w-auto bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-colors border border-white/30 text-xs sm:text-sm"
-                  style={{letterSpacing:0.5}}
+                  className="w-full md:w-auto bg-gradient-to-b from-[#ffd700] to-[#d4af37] text-blue-900 font-bold py-1.5 sm:py-2.5 px-3 sm:px-5 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-transform active:scale-95 active:translate-y-0.5 border-2 border-amber-400 text-xs sm:text-sm"
+                  style={{
+                    letterSpacing: 0.5,
+                    boxShadow: '0 3px 0 #b8860b, 0 4px 6px rgba(0, 0, 0, 0.2)',
+                    transform: 'translateY(-1px)'
+                  }}
                 >
                   <span className="material-icons">send</span>
                   <span className="whitespace-nowrap">{t('send_to_reception', language)}</span>

@@ -278,8 +278,13 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               <button
                 id="confirmButton"
                 onClick={handleNext}
-                className="flex items-center justify-center px-2 py-1 bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors sm:hidden"
-                style={{fontFamily:'inherit', letterSpacing:0.2}}
+                className="flex items-center justify-center px-3 py-1.5 bg-gradient-to-b from-[#ffd700] to-[#d4af37] text-blue-900 rounded-full text-xs font-semibold border-2 border-amber-400 shadow-lg transition-transform active:scale-95 active:translate-y-0.5 sm:hidden"
+                style={{
+                  fontFamily: 'inherit',
+                  letterSpacing: 0.2,
+                  boxShadow: '0 3px 0 #b8860b, 0 4px 6px rgba(0, 0, 0, 0.2)',
+                  transform: 'translateY(-1px)'
+                }}
               >
                 <span className="material-icons text-base mr-1">send</span>{t('confirm', language)}
               </button>
@@ -419,8 +424,13 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
           <button
             id="endCallButton"
             onClick={handleNext}
-            className="w-full md:w-auto bg-[#d4af37] hover:bg-[#ffd700] text-blue-900 font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-colors border border-white/30 text-xs sm:text-sm"
-            style={{fontFamily:'inherit', letterSpacing:0.5}}
+            className="w-full md:w-auto bg-gradient-to-b from-[#ffd700] to-[#d4af37] text-blue-900 font-bold py-2 sm:py-2.5 px-4 sm:px-5 rounded-full shadow-lg flex items-center justify-center space-x-2 transition-transform active:scale-95 active:translate-y-0.5 border-2 border-amber-400 text-xs sm:text-sm"
+            style={{
+              fontFamily:'inherit', 
+              letterSpacing:0.5,
+              boxShadow: '0 3px 0 #b8860b, 0 4px 6px rgba(0, 0, 0, 0.2)',
+              transform: 'translateY(-1px)'
+            }}
           >
             <span className="material-icons">send</span>
             <span className="whitespace-nowrap">{t('confirm_request', language)}</span>
