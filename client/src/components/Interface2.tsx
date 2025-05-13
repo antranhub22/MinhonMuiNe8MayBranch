@@ -269,10 +269,17 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               <button
                 id="cancelButton"
                 onClick={handleCancel}
-                className="flex items-center justify-center px-2 py-1 bg-white/80 hover:bg-blue-100 text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors sm:hidden"
-                style={{fontFamily:'inherit', letterSpacing:0.2}}
+                className="flex items-center justify-center px-4 py-3 bg-white/80 hover:bg-blue-100 text-blue-900 rounded-full text-base font-semibold border-2 border-blue-200 shadow transition-colors sm:hidden active:scale-95 active:bg-blue-100"
+                style={{
+                  fontFamily: 'inherit',
+                  letterSpacing: 0.2,
+                  minHeight: 56,
+                  minWidth: 120,
+                  touchAction: 'manipulation',
+                  zIndex: 10
+                }}
               >
-                <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
+                <span className="material-icons text-lg mr-2">cancel</span>{t('cancel', language)}
               </button>
               {/* Duration ở giữa, luôn căn giữa */}
               <div className="flex-1 flex justify-center">
@@ -284,7 +291,7 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               <button
                 id="confirmButton"
                 onClick={handleNext}
-                className="flex items-center justify-center px-4 py-2 bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 rounded-full text-base font-bold border-4 border-[#d4af37] shadow-2xl transition-all duration-200 sm:hidden"
+                className="flex items-center justify-center px-4 py-3 bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 rounded-full text-base font-bold border-4 border-[#d4af37] shadow-2xl transition-all duration-200 sm:hidden active:scale-95 active:bg-[#ffe066]"
                 style={{
                   fontFamily: 'inherit',
                   letterSpacing: 0.2,
@@ -293,8 +300,10 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
                   borderColor: '#d4af37',
                   background: 'linear-gradient(180deg, #ffe066 0%, #ffd700 100%)',
                   textShadow: '0 1px 2px #fff, 0 1px 8px #ffd700',
-                  minHeight: 48,
-                  minWidth: 180
+                  minHeight: 56,
+                  minWidth: 200,
+                  touchAction: 'manipulation',
+                  zIndex: 10
                 }}
               >
                 <span className="material-icons text-lg mr-2">send</span>{t('confirm', language)}
@@ -429,13 +438,10 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
         </div>
         {/* Right: Control buttons */}
         <div className="w-1/4 lg:w-1/3 flex-col items-center lg:items-end p-2 space-y-4 overflow-auto hidden sm:flex" style={{ maxHeight: '100%' }}>
-          <button id="cancelButton" onClick={handleCancel} className="w-full md:w-auto flex items-center justify-center px-2 sm:px-3 py-1.5 bg-white/80 hover:bg-blue-100 text-blue-900 rounded-full text-xs font-semibold border border-white/30 shadow transition-colors mb-2" style={{fontFamily:'inherit', letterSpacing:0.2}}>
-            <span className="material-icons text-base mr-1">cancel</span>{t('cancel', language)}
-          </button>
           <button
             id="endCallButton"
             onClick={handleNext}
-            className="w-full md:w-auto bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 font-bold py-2 px-6 rounded-full shadow-2xl flex items-center justify-center space-x-2 transition-all duration-200 border-4 border-[#d4af37] text-base sm:text-lg"
+            className="w-full md:w-auto bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 font-bold py-3 px-8 rounded-full shadow-2xl flex items-center justify-center space-x-2 transition-all duration-200 border-4 border-[#d4af37] text-base sm:text-lg active:scale-95 active:bg-[#ffe066]"
             style={{
               fontFamily: 'inherit',
               letterSpacing: 0.5,
@@ -445,7 +451,9 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
               background: 'linear-gradient(180deg, #ffe066 0%, #ffd700 100%)',
               textShadow: '0 1px 2px #fff, 0 1px 8px #ffd700',
               minHeight: 56,
-              minWidth: 220
+              minWidth: 220,
+              touchAction: 'manipulation',
+              zIndex: 10
             }}
           >
             <span className="material-icons">send</span>
