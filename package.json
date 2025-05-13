@@ -13,7 +13,7 @@
     "test:watch": "vitest",
     "test:voice": "vitest run -c ./tests/voice-assistant/vitest.config.ts",
     "test:voice:watch": "vitest -c ./tests/voice-assistant/vitest.config.ts",
-    "analyze:voice": "npx vite-bundle-analyzer --root client/src/lib --pattern '*.ts' --output voice-report.json"
+    "analyze:voice": "npx vite-bundle-visualizer --root client/src/lib --pattern '*.ts' --output voice-report.json"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.37.0",
