@@ -7,13 +7,18 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { ChevronDown } from 'lucide-react';
+import { FaBookOpen } from 'react-icons/fa';
+import { FiChevronDown } from 'react-icons/fi';
 
 const CATEGORIES = [
   'Landmark',
   'Hotel Amenities',
   'Local Cuisine',
   'Area Map',
-  'Activity and Experiences'
+  'Activity and Experiences',
+  'Tours',
+  'Transportation',
+  'Dining'
 ];
 
 interface ReferenceProps {
@@ -189,22 +194,43 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
           </div>
         </div>
       )}
-      {/* Dropdown category */}
-      <div className="flex items-center mb-4 px-2 relative">
-        <select
-          value={activeCategory}
-          onChange={e => setActiveCategory(e.target.value)}
-          className="px-4 py-2 rounded-full font-poppins font-semibold text-sm bg-white/90 text-blue-900 border border-[#d4af37] shadow focus:outline-none focus:ring-2 focus:ring-[#d4af37] appearance-none pr-10"
-          style={{ minWidth: 180 }}
-        >
-          {CATEGORIES.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[#d4af37]">
-          <ChevronDown size={22} strokeWidth={2.2} />
-        </span>
+      
+      {/* Dropdown category - phong cách mới giống Interface1 */}
+      <div className="flex items-center mb-4 px-2">
+        <div className="flex items-center px-3 py-2 sm:py-1.5 gap-2 transition-all duration-300"
+          style={{
+            background: 'linear-gradient(135deg, #4e5ab7 0%, #3f51b5 100%)',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)', 
+            borderRadius: '8px',
+            minWidth: '180px',
+            width: 'auto',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}>
+          <FaBookOpen className="text-[#F9BF3B] text-xl mr-1.5" 
+            style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
+          />
+          <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap text-sm sm:text-base">Category:</label>
+          <div className="relative flex-1">
+            <select
+              value={activeCategory}
+              onChange={e => setActiveCategory(e.target.value)}
+              className="appearance-none w-full pl-2 pr-6 py-1 font-sans bg-transparent focus:outline-none transition-all duration-200"
+              style={{
+                fontWeight: 600,
+                color: '#fff',
+                textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px'
+              }}
+            >
+              {CATEGORIES.map(cat => (
+                <option key={cat} value={cat} className="bg-blue-800 text-white">{cat}</option>
+              ))}
+            </select>
+            <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-[#F9BF3B] pointer-events-none text-lg" />
+          </div>
+        </div>
       </div>
+
       {/* Loading state */}
       {loading ? (
         <div className="flex gap-4 overflow-x-auto pb-2">
