@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StaffRequestDetailModal from '../components/StaffRequestDetailModal';
 import StaffMessagePopup from '../components/StaffMessagePopup';
-import ConnectionStatus from '../components/ConnectionStatus';
 import { useNavigate } from 'react-router-dom';
 
 const statusOptions = [
@@ -41,66 +40,31 @@ const StaffDashboard: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
 
-  // Lấy token từ localStorage với logs
-  const getToken = () => {
-    const token = localStorage.getItem('staff_token');
-    if (token) {
-      console.log(`[STAFF] Token found in localStorage: ${token.substring(0, 15)}...`);
-    } else {
-      console.error('[STAFF] No token found in localStorage');
-    }
-    return token;
-  };
+  // Lấy token từ localStorage
+  const getToken = () => localStorage.getItem('staff_token');
 
-  // Fetch requests from API với error handling tốt hơn
+  // Fetch requests from API
   const fetchRequests = async () => {
     const token = getToken();
     if (!token) {
-      console.error('[STAFF] No token found, redirecting to login page');
       navigate('/staff');
       return;
     }
-    
-    const isMobile = /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(navigator.userAgent);
-    console.log(`[STAFF] Fetching requests from ${isMobile ? 'MOBILE' : 'DESKTOP'} device`);
-    
     try {
-      console.log('[STAFF] Sending request to /api/staff/requests');
       const res = await fetch('/api/staff/requests', {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'X-Device-Type': isMobile ? 'mobile' : 'desktop'
-        },
-        credentials: 'include',
-        // Thêm cache: 'no-store' để tránh caching trên mobile
-        cache: 'no-store'
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
       });
-      
-      console.log(`[STAFF] Response status: ${res.status}`);
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error(`[STAFF] API request failed: ${res.status} - ${errorText}`);
-        
-        if (res.status === 401 || res.status === 403) {
-          console.error('[STAFF] Authentication failed, removing token and redirecting');
-          localStorage.removeItem('staff_token');
-          navigate('/staff');
-          return;
-        }
-        
-        // Nếu lỗi không phải 401/403, hiển thị lỗi trên UI
-        alert(`Không thể tải dữ liệu: ${res.status}. Vui lòng thử lại sau.`);
+      if (res.status === 401) {
+        localStorage.removeItem('staff_token');
+        navigate('/staff');
         return;
       }
-      
       const data = await res.json();
-      console.log(`[STAFF] Fetched ${data.length} requests`);
+      console.log('Fetched requests data:', data); // Debug log
       setRequests(data);
     } catch (err) {
-      console.error('[STAFF] Failed to fetch requests:', err);
-      alert('Có lỗi khi kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng và thử lại.');
+      console.error('Failed to fetch requests:', err);
     }
   };
 
@@ -121,51 +85,25 @@ const StaffDashboard: React.FC = () => {
     setShowDetailModal(false);
     setSelectedRequest(null);
   };
-  // Cập nhật trạng thái request với error handling tốt hơn
+  // Cập nhật trạng thái request
   const handleStatusChange = async (status: string, reqId: number) => {
     const token = getToken();
-    if (!token) {
-      console.error('[STAFF] No token for status update, redirecting');
-      return navigate('/staff');
-    }
-    
+    if (!token) return navigate('/staff');
     try {
-      console.log(`[STAFF] Updating status for request ${reqId} to "${status}"`);
-      const res = await fetch(`/api/staff/requests/${reqId}/status`, {
+      await fetch(`/api/staff/requests/${reqId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'X-Device-Type': /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+          'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
-        cache: 'no-store',
         body: JSON.stringify({ status })
       });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error(`[STAFF] Status update failed: ${res.status} - ${errorText}`);
-        
-        if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('staff_token');
-          navigate('/staff');
-          return;
-        }
-        
-        alert(`Không thể cập nhật trạng thái: ${res.status}`);
-        return;
-      }
-      
       // Cập nhật local state ngay
-      console.log(`[STAFF] Status update successful for request ${reqId}`);
       setRequests(reqs => reqs.map(r => r.id === reqId ? { ...r, status } : r));
-      if (selectedRequest && selectedRequest.id === reqId) {
-        setSelectedRequest({ ...selectedRequest, status });
-      }
+      if (selectedRequest && selectedRequest.id === reqId) setSelectedRequest({ ...selectedRequest, status });
     } catch (err) {
-      console.error('[STAFF] Failed to update status:', err);
-      alert('Có lỗi khi cập nhật trạng thái. Vui lòng thử lại sau.');
+      console.error('Failed to update status:', err);
     }
   };
   // Mở popup nhắn tin
@@ -308,16 +246,6 @@ const StaffDashboard: React.FC = () => {
     e.stopPropagation();
   };
 
-  const handleConnectionStatusChange = (isConnected: boolean) => {
-    console.log(`[STAFF] Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
-    
-    if (!isConnected) {
-      // Có thể hiển thị thông báo hoặc retry lại fetch
-      console.log('[STAFF] Attempting to reconnect and refresh data...');
-      setTimeout(fetchRequests, 2000);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 p-2 sm:p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-3 sm:p-6 border border-gray-200">
@@ -350,19 +278,19 @@ const StaffDashboard: React.FC = () => {
 
         {/* Filters */}
         <div className="mb-4 grid grid-cols-1 gap-4">
-          {/* Filter status */}
+        {/* Filter status */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <label className="font-semibold text-blue-900 w-full sm:w-auto">Lọc theo trạng thái:</label>
-            <select
+          <select
               className="w-full sm:w-auto border rounded px-3 py-1 text-sm"
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-            >
-              {statusOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+          >
+            {statusOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        </div>
           
           {/* Filter thời gian */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -604,8 +532,6 @@ const StaffDashboard: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Connection status indicator - thêm vào cuối */}
-      <ConnectionStatus onStatusChange={handleConnectionStatusChange} />
     </div>
   );
 };

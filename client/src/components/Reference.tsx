@@ -221,47 +221,38 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
       
       {/* Dropdown category - phong cách mới giống Interface1 */}
       <div className="flex items-center mb-4 px-2">
-        <div className="flex items-center py-2 px-3 gap-2 transition-all duration-300"
+        <div className="flex items-center px-3 py-2 sm:py-1.5 gap-2 transition-all duration-300"
           style={{
             background: 'linear-gradient(135deg, #4e5ab7 0%, #3f51b5 100%)',
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)', 
             borderRadius: '8px',
+            minWidth: '180px',
             width: 'auto',
             border: '1px solid rgba(255, 255, 255, 0.1)'
           }}>
           <FaBookOpen className="text-[#F9BF3B] text-xl mr-1.5" 
             style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
           />
-          <span className="font-semibold font-sans text-white whitespace-nowrap text-sm sm:text-base">Category:</span>
+          <label className="mr-2 font-semibold font-sans text-white whitespace-nowrap text-sm sm:text-base">Category:</label>
+          <div className="relative flex-1">
+            <select
+              value={activeCategory}
+              onChange={e => setActiveCategory(e.target.value)}
+              className="appearance-none w-full pl-2 pr-6 py-1 font-sans bg-transparent focus:outline-none transition-all duration-200"
+              style={{
+                fontWeight: 600,
+                color: '#fff',
+                textShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px'
+              }}
+            >
+              {CATEGORIES.map(cat => (
+                <option key={cat} value={cat} className="bg-blue-800 text-white">{cat}</option>
+              ))}
+            </select>
+            <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-[#F9BF3B] pointer-events-none text-lg" />
+          </div>
         </div>
-      </div>
-
-      {/* Category buttons */}
-      <div className="flex flex-wrap gap-2 mb-5 px-2 justify-center">
-        {CATEGORIES.map(category => (
-          <button
-            key={category}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 border ${
-              activeCategory === category 
-                ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-blue-900 shadow-md border-amber-500 font-semibold transform scale-105' 
-                : 'bg-blue-800/80 text-white hover:bg-blue-700 border-blue-700/50 hover:border-blue-600'
-            }`}
-            onClick={() => setActiveCategory(category)}
-            style={{ minWidth: '120px', position: 'relative', overflow: 'hidden' }}
-          >
-            {activeCategory === category && (
-              <span 
-                className="absolute inset-0 bg-white opacity-10"
-                style={{ 
-                  backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)',
-                  backgroundPosition: 'center',
-                  backgroundSize: '200% 200%'
-                }}
-              ></span>
-            )}
-            {category}
-          </button>
-        ))}
       </div>
 
       {/* Loading state */}
