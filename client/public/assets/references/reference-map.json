@@ -981,5 +981,101 @@
       "beach",
       "landmark"
     ]
+  },
+  "BusTicketMiNhon": {
+    "type": "image",
+    "category": "Transportation",
+    "title": "Mi Nhon Bus Tickets",
+    "url": "/assets/references/images/bus-tickets/MiNhon-Bus Tickets01.jpg",
+    "description": "Information about bus tickets from Mi Nhon Hotel",
+    "keywords": [
+      "bus ticket",
+      "transportation",
+      "travel",
+      "mi nhon hotel",
+      "bus service",
+      "shuttle",
+      "coach"
+    ]
+  },
+  "MenuMiNhonBasic": {
+    "type": "image",
+    "category": "Dining",
+    "title": "Mi Nhon Basic Menu",
+    "url": "/assets/references/images/menu-minhon/Menu-Minhon-basic.jpg",
+    "description": "Basic menu options at Mi Nhon restaurant",
+    "keywords": [
+      "restaurant menu",
+      "mi nhon",
+      "dining",
+      "food options",
+      "cuisine",
+      "dishes",
+      "restaurant"
+    ]
+  },
+  "MenuMiNhonVegetarian": {
+    "type": "image",
+    "category": "Dining",
+    "title": "Mi Nhon Vegetarian Menu",
+    "url": "/assets/references/images/menu-minhon/Menu-Minhon-Vegetarian.jpg",
+    "description": "Vegetarian menu options at Mi Nhon restaurant",
+    "keywords": [
+      "vegetarian menu",
+      "mi nhon",
+      "plant-based",
+      "vegetarian options",
+      "vegan",
+      "healthy food",
+      "dining"
+    ]
+  },
+  "PhanThietTour": {
+    "type": "image",
+    "category": "Tours",
+    "title": "Phan Thiet Tour",
+    "url": "/assets/references/images/muine-tours/Phanthiet-tour.jpg",
+    "description": "Information about guided tours around Phan Thiet area",
+    "keywords": [
+      "phan thiet",
+      "guided tour",
+      "tourism",
+      "sightseeing",
+      "local attractions",
+      "travel experience",
+      "excursion"
+    ]
+  },
+  "TourWestEast01": {
+    "type": "image",
+    "category": "Tours",
+    "title": "West-East Tour Part 1",
+    "url": "/assets/references/images/muine-tours/Tour01.jpg",
+    "description": "Details of the West-East tour itinerary part 1",
+    "keywords": [
+      "west-east tour",
+      "mui ne",
+      "tourism",
+      "guided tour",
+      "attractions",
+      "landmarks",
+      "travel"
+    ]
+  },
+  "TourWestEast02": {
+    "type": "image",
+    "category": "Tours",
+    "title": "West-East Tour Part 2",
+    "url": "/assets/references/images/muine-tours/Tour02.jpg",
+    "description": "Details of the West-East tour itinerary part 2",
+    "keywords": [
+      "west-east tour",
+      "mui ne",
+      "tourism",
+      "guided tour",
+      "attractions",
+      "landmarks",
+      "travel"
+    ]
   }
 }
