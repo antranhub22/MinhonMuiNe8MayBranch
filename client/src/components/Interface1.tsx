@@ -138,6 +138,16 @@ const Interface1: React.FC<Interface1Props> = ({ isActive }) => {
       >
         {/* Language Switcher nâng cao */}
         <div className="flex items-center justify-center sm:justify-end w-full max-w-2xl mb-4 sm:mb-2">
+          {/* Nút Refresh bên trái */}
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center justify-center mr-3 px-3 py-2 sm:py-1.5 bg-white/80 hover:bg-yellow-100 border border-amber-400 rounded-full shadow transition-all duration-200 text-blue-900 font-bold text-base sm:text-lg"
+            style={{ minWidth: 40, minHeight: 40 }}
+            title="Refresh"
+          >
+            <span className="material-icons text-xl sm:text-2xl mr-1 text-amber-400">refresh</span>
+            <span className="hidden sm:inline font-semibold">Refresh</span>
+          </button>
           <div className="flex items-center px-3 py-2 sm:py-1.5 gap-2 transition-all duration-300 mx-auto sm:mx-0" 
             style={{
               background: 'linear-gradient(135deg, #4e5ab7 0%, #3f51b5 100%)',
