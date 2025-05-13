@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface StaffRequestDetailModalProps {
   request: any;
@@ -16,6 +16,7 @@ const statusOptions = [
 ];
 
 const StaffRequestDetailModal: React.FC<StaffRequestDetailModalProps> = ({ request, onClose, onStatusChange, onOpenMessage }) => {
+  const [pendingStatus, setPendingStatus] = useState<string>(request.status);
   if (!request) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
@@ -30,7 +31,7 @@ const StaffRequestDetailModal: React.FC<StaffRequestDetailModalProps> = ({ reque
           <div><b>Time:</b> {request.time}</div>
           <div className="flex items-center gap-2">
             <b>Status:</b>
-            <select className="border rounded px-2 py-1 text-xs" value={request.status} onChange={e => onStatusChange(e.target.value)}>
+            <select className="border rounded px-2 py-1 text-xs" value={pendingStatus} onChange={e => setPendingStatus(e.target.value)}>
               {statusOptions.map(opt => (
                 <option key={opt} value={opt}>{opt}</option>
               ))}
@@ -39,6 +40,7 @@ const StaffRequestDetailModal: React.FC<StaffRequestDetailModalProps> = ({ reque
           <div><b>Notes:</b> {request.notes || '-'}</div>
         </div>
         <div className="flex gap-2 justify-end">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold" onClick={() => { if (pendingStatus !== request.status) onStatusChange(pendingStatus); }}>Cập Nhật</button>
           <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold" onClick={onOpenMessage}>Nhắn khách</button>
           <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-semibold" onClick={onClose}>Đóng</button>
         </div>

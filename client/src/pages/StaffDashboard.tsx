@@ -38,6 +38,7 @@ const StaffDashboard: React.FC = () => {
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [pendingStatus, setPendingStatus] = useState<{ [id: number]: string }>({});
   const navigate = useNavigate();
 
   // Lấy token từ localStorage
@@ -383,15 +384,27 @@ const StaffDashboard: React.FC = () => {
                     <div className="flex flex-col gap-2">
                       <select
                         className="border rounded px-2 py-2 text-sm w-full"
-                        value={req.status}
-                        onChange={e => handleStatusChange(e.target.value, req.id)}
+                        value={pendingStatus[req.id] ?? req.status}
+                        onChange={e => setPendingStatus(s => ({ ...s, [req.id]: e.target.value }))}
                       >
                         {statusOptions.filter(opt => opt !== 'Tất cả').map(opt => (
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
                       </select>
                       <div className="grid grid-cols-2 gap-2">
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => handleOpenDetail(req)}>Chi tiết</button>
+                        <button
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded text-sm font-semibold"
+                          onClick={async () => {
+                            const newStatus = pendingStatus[req.id];
+                            if (newStatus && newStatus !== req.status) {
+                              await handleStatusChange(newStatus, req.id);
+                              setPendingStatus(s => {
+                                const { [req.id]: _, ...rest } = s;
+                                return rest;
+                              });
+                            }
+                          }}
+                        >Cập Nhật</button>
                         <button className="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded text-sm font-semibold" onClick={() => { setSelectedRequest(req); handleOpenMessage(); }}>Nhắn khách</button>
                       </div>
                     </div>
@@ -439,14 +452,26 @@ const StaffDashboard: React.FC = () => {
                   <td className="py-2 px-3 space-x-2">
                     <select
                       className="border rounded px-2 py-1 text-xs"
-                      value={req.status}
-                      onChange={e => handleStatusChange(e.target.value, req.id)}
+                      value={pendingStatus[req.id] ?? req.status}
+                      onChange={e => setPendingStatus(s => ({ ...s, [req.id]: e.target.value }))}
                     >
                       {statusOptions.filter(opt => opt !== 'Tất cả').map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-semibold" onClick={() => handleOpenDetail(req)}>Chi tiết</button>
+                    <button
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-semibold"
+                      onClick={async () => {
+                        const newStatus = pendingStatus[req.id];
+                        if (newStatus && newStatus !== req.status) {
+                          await handleStatusChange(newStatus, req.id);
+                          setPendingStatus(s => {
+                            const { [req.id]: _, ...rest } = s;
+                            return rest;
+                          });
+                        }
+                      }}
+                    >Cập Nhật</button>
                     <button className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-semibold" onClick={() => { setSelectedRequest(req); handleOpenMessage(); }}>Nhắn khách</button>
                   </td>
                 </tr>
