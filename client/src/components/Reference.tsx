@@ -115,9 +115,10 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
             <img
               src={getAssetUrl(reference.url)}
               alt={reference.title}
-              className="object-cover w-full h-full rounded-t-xl hover:opacity-80 transition"
+              className="object-cover w-full h-full rounded-t-xl hover:opacity-80 transition cursor-zoom-in"
               onClick={e => { e.stopPropagation(); setLightboxImg(getAssetUrl(reference.url)); }}
-              style={{ cursor: 'zoom-in' }}
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setLightboxImg(getAssetUrl(reference.url)); } }}
             />
           )}
           {(reference as any).type === 'document' && reference.url.endsWith('.pdf') && (
@@ -214,6 +215,7 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
             <select
               value={activeCategory}
               onChange={e => setActiveCategory(e.target.value)}
+              onBlur={e => e.target.blur()}
               className="appearance-none w-full pl-2 pr-6 py-1 font-sans bg-transparent focus:outline-none transition-all duration-200"
               style={{
                 fontWeight: 600,
