@@ -181,9 +181,15 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
     // Capture the current duration for the email
     const finalDuration = callDuration > 0 ? callDuration : localDuration;
     console.log('Ending call with duration:', finalDuration);
-    // Call the context's endCall and switch to interface3 hoặc interface3fr
+    // Call the context's endCall and switch to interface3, interface3fr (French), hoặc interface3vi (Vietnamese)
     contextEndCall();
-    setCurrentInterface(language === 'fr' ? 'interface3fr' : 'interface3');
+    if (language === 'fr') {
+      setCurrentInterface('interface3fr');
+    } else if (language === 'vi') {
+      setCurrentInterface('interface3vi');
+    } else {
+      setCurrentInterface('interface3');
+    }
   }, [callDuration, localDuration, contextEndCall, setCurrentInterface, transcripts, language]);
   
   // Format duration for display
