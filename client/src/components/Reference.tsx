@@ -6,20 +6,7 @@ import { Navigation, Pagination, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import { ChevronDown } from 'lucide-react';
 import { FaBookOpen } from 'react-icons/fa';
-import { FiChevronDown } from 'react-icons/fi';
-
-const CATEGORIES = [
-  'Landmark',
-  'Hotel Amenities',
-  'Local Cuisine',
-  'Area Map',
-  'Activity and Experiences',
-  'Tours',
-  'Transportation',
-  'Dining'
-];
 
 interface ReferenceProps {
   references: ReferenceItem[];
@@ -32,7 +19,6 @@ interface DocContents {
 const Reference = ({ references }: ReferenceProps): JSX.Element => {
   const [docContents, setDocContents] = useState<DocContents>({});
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -65,10 +51,12 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
     }
   }, [references]);
 
+  // Properly encode URLs including handling spaces
   const getAssetUrl = (url: string) => {
     if (/^https?:\/\//.test(url)) return url;
     const path = url.replace(/^\//, '');
-    return `${import.meta.env.BASE_URL}${path}`;
+    // Use encodeURI to properly handle spaces and special characters
+    return `${import.meta.env.BASE_URL}${encodeURI(path)}`;
   };
 
   const handleDownload = async (url: string, filename: string) => {
@@ -103,6 +91,16 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
 
   // Card rendering
   const renderReferenceCard = (reference: ReferenceItem) => {
+    // Debug reference properties
+    console.log(`Rendering reference: ${reference.title}`, {
+      url: reference.url,
+      type: (reference as any).type,
+      category: (reference as any).category
+    });
+
+    const imageUrl = getAssetUrl(reference.url);
+    console.log(`Full image URL: ${imageUrl}`);
+
     return (
       <div
         className="group bg-white/90 rounded-xl shadow-md h-[180px] flex flex-col justify-between cursor-pointer transition-transform duration-200 hover:scale-[1.03] active:scale-95 border border-white/40 backdrop-blur-md"
@@ -113,11 +111,15 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
         <div className="flex-1 flex items-center justify-center overflow-hidden rounded-t-xl" style={{ height: '60%' }}>
           {(reference as any).type === 'image' && (
             <img
-              src={getAssetUrl(reference.url)}
+              src={imageUrl}
               alt={reference.title}
               className="object-cover w-full h-full rounded-t-xl hover:opacity-80 transition"
-              onClick={e => { e.stopPropagation(); setLightboxImg(getAssetUrl(reference.url)); }}
+              onClick={e => { e.stopPropagation(); setLightboxImg(imageUrl); }}
               style={{ cursor: 'zoom-in' }}
+              onError={(e) => {
+                console.error(`Error loading image: ${imageUrl}`);
+                e.currentTarget.src = '/assets/references/images/minhon-logo.jpg'; // Fallback image
+              }}
             />
           )}
           {(reference as any).type === 'document' && reference.url.endsWith('.pdf') && (
@@ -166,32 +168,42 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
     return 4;
   };
 
-  // Lọc reference theo category
-  const filteredReferences = references.filter(ref => {
-    // Handle whitespace and case insensitive comparison
-    const refCategory = ((ref as any).category || '').trim();
-    return refCategory.toLowerCase() === activeCategory.toLowerCase();
-  });
-
   // Debug logs to identify issues
   useEffect(() => {
-    console.log(`Category changed to: "${activeCategory}"`);
+    // Log all references
+    console.log(`Total references: ${references.length}`);
     
     // Log all unique categories found in the references
     const categories = references.map(ref => ((ref as any).category || '').trim()).filter(Boolean);
     const uniqueCategories = Array.from(new Set(categories));
     console.log('Available categories in data:', uniqueCategories);
     
-    // Log how many references match the current category
-    console.log(`Found ${filteredReferences.length} references for "${activeCategory}":`);
-    if (filteredReferences.length > 0) {
-      console.log('Sample reference:', {
-        title: filteredReferences[0].title,
-        category: (filteredReferences[0] as any).category,
-        url: filteredReferences[0].url
-      });
+    // Check for transportation, dining, and tours references
+    const transportationRefs = references.filter(ref => 
+      ((ref as any).category || '').trim().toLowerCase() === 'transportation'
+    );
+    const diningRefs = references.filter(ref => 
+      ((ref as any).category || '').trim().toLowerCase() === 'dining'
+    );
+    const toursRefs = references.filter(ref => 
+      ((ref as any).category || '').trim().toLowerCase() === 'tours'
+    );
+    
+    console.log(`Transportation references: ${transportationRefs.length}`);
+    console.log(`Dining references: ${diningRefs.length}`);
+    console.log(`Tours references: ${toursRefs.length}`);
+    
+    // Log details of these specific categories for debugging
+    if (transportationRefs.length > 0) {
+      console.log('Sample transportation reference:', transportationRefs[0]);
     }
-  }, [activeCategory, references, filteredReferences]);
+    if (diningRefs.length > 0) {
+      console.log('Sample dining reference:', diningRefs[0]);
+    }
+    if (toursRefs.length > 0) {
+      console.log('Sample tours reference:', toursRefs[0]);
+    }
+  }, [references]);
 
   // Main render
   return (
@@ -219,7 +231,7 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
         </div>
       )}
       
-      {/* Dropdown category - phong cách mới giống Interface1 */}
+      {/* Reference title */}
       <div className="flex items-center mb-4 px-2">
         <div className="flex items-center py-2 px-3 gap-2 transition-all duration-300"
           style={{
@@ -232,36 +244,8 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
           <FaBookOpen className="text-[#F9BF3B] text-xl mr-1.5" 
             style={{ filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2))' }}
           />
-          <span className="font-semibold font-sans text-white whitespace-nowrap text-sm sm:text-base">Category:</span>
+          <span className="font-semibold font-sans text-white whitespace-nowrap text-sm sm:text-base">References</span>
         </div>
-      </div>
-
-      {/* Category buttons */}
-      <div className="flex flex-wrap gap-2 mb-5 px-2 justify-center">
-        {CATEGORIES.map(category => (
-          <button
-            key={category}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 border ${
-              activeCategory === category 
-                ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-blue-900 shadow-md border-amber-500 font-semibold transform scale-105' 
-                : 'bg-blue-800/80 text-white hover:bg-blue-700 border-blue-700/50 hover:border-blue-600'
-            }`}
-            onClick={() => setActiveCategory(category)}
-            style={{ minWidth: '120px', position: 'relative', overflow: 'hidden' }}
-          >
-            {activeCategory === category && (
-              <span 
-                className="absolute inset-0 bg-white opacity-10"
-                style={{ 
-                  backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)',
-                  backgroundPosition: 'center',
-                  backgroundSize: '200% 200%'
-                }}
-              ></span>
-            )}
-            {category}
-          </button>
-        ))}
       </div>
 
       {/* Loading state */}
@@ -269,19 +253,19 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
         <div className="flex gap-4 overflow-x-auto pb-2">
           {[...Array(3)].map((_, i) => <SkeletonCard key={i} />)}
         </div>
-      ) : filteredReferences.length === 0 ? (
+      ) : references.length === 0 ? (
         <div className="flex items-center justify-center h-[120px] text-white/80 text-base font-medium">No references available</div>
       ) : (
         <Swiper
           modules={[Navigation, Pagination, A11y]}
           spaceBetween={16}
           slidesPerView={getSlidesPerView()}
-          navigation={filteredReferences.length > 3}
+          navigation={references.length > 3}
           pagination={{ clickable: true, dynamicBullets: true }}
           className="w-full"
           style={{ paddingBottom: 32 }}
         >
-          {filteredReferences.map((reference, idx) => (
+          {references.map((reference, idx) => (
             <SwiperSlide key={reference.url + idx} className="flex justify-center">
               {renderReferenceCard(reference)}
             </SwiperSlide>
