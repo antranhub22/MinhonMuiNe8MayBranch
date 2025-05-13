@@ -207,7 +207,7 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
 
   // Main render
   return (
-    <div className="w-full max-w-5xl mx-auto mt-2 mb-2 px-2 py-3 rounded-2xl" style={{ background: 'rgba(26,35,126,0.85)', minHeight: 260 }}>
+    <div className="w-full max-w-5xl mx-auto mt-2 mb-2 px-2 py-3 rounded-2xl" style={{ background: 'rgba(26,35,126,0.85)' }}>
       {/* Lightbox modal */}
       {lightboxImg && (
         <div
@@ -256,21 +256,22 @@ const Reference = ({ references }: ReferenceProps): JSX.Element => {
       ) : references.length === 0 ? (
         <div className="flex items-center justify-center h-[120px] text-white/80 text-base font-medium">No references available</div>
       ) : (
-        <Swiper
-          modules={[Navigation, Pagination, A11y]}
-          spaceBetween={16}
-          slidesPerView={getSlidesPerView()}
-          navigation={references.length > 3}
-          pagination={{ clickable: true, dynamicBullets: true }}
-          className="w-full"
-          style={{ paddingBottom: 32 }}
-        >
-          {references.map((reference, idx) => (
-            <SwiperSlide key={reference.url + idx} className="flex justify-center">
-              {renderReferenceCard(reference)}
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <div className="pb-10 pt-2">
+          <Swiper
+            modules={[Navigation, Pagination, A11y]}
+            spaceBetween={16}
+            slidesPerView={getSlidesPerView()}
+            navigation={references.length > 3}
+            pagination={{ clickable: true, dynamicBullets: true }}
+            className="w-full"
+          >
+            {references.map((reference, idx) => (
+              <SwiperSlide key={reference.url + idx} className="flex justify-center">
+                {renderReferenceCard(reference)}
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       )}
     </div>
   );
