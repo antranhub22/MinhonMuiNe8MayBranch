@@ -22,7 +22,6 @@ interface AddMessage {
 }
 
 let vapiInstance: Vapi | null = null;
-let eventListenersAttached = false;
 
 interface VapiConnectionStatus {
   status: 'connecting' | 'connected' | 'disconnected';
@@ -34,83 +33,41 @@ interface VapiMessage {
   [key: string]: any;
 }
 
-// Helper for cleanup
-const cleanupVapiInstance = () => {
-  if (vapiInstance) {
-    // Remove all event listeners to prevent memory leaks
-    try {
-      // Attempt to remove event listeners - handle any errors silently
-      vapiInstance.removeAllListeners?.();
-    } catch (error) {
-      console.warn('Failed to remove event listeners:', error);
-    }
-    eventListenersAttached = false;
-  }
-};
-
 export const initVapi = async (publicKey: string): Promise<Vapi> => {
   try {
-    // If instance exists but with different key, clean up first
     if (vapiInstance) {
-      // Check if we're initializing with a new key by attempting to compare
-      // Since we can't directly access private properties, we'll start clean
-      // if the publicKey is different than what we last used
-      try {
-        const vapiPublicKey = (vapiInstance as any).publicKey;
-        if (vapiPublicKey && vapiPublicKey !== publicKey) {
-          cleanupVapiInstance();
-          vapiInstance = null;
-        } else {
-          return vapiInstance;
-        }
-      } catch (error) {
-        // If we can't compare keys, just return existing instance
-        return vapiInstance;
-      }
+      return vapiInstance;
     }
+    vapiInstance = new Vapi(publicKey);
 
-    // Check for invalid API key
-    if (!publicKey || publicKey.trim() === '') {
-      throw new Error('Invalid Vapi API key');
-    }
+    // Add event listeners
+    vapiInstance.on('call-start', () => {
+      console.log('Call started');
+    });
 
-    // Create new instance with secure HTTPS connection
-    const newVapiInstance = new Vapi(publicKey);
-    vapiInstance = newVapiInstance;
+    vapiInstance.on('call-end', () => {
+      console.log('Call ended');
+    });
 
-    // Only attach event listeners once
-    if (!eventListenersAttached) {
-      // Add event listeners
-      vapiInstance.on('call-start', () => {
-        console.log('Call started');
-      });
+    vapiInstance.on('speech-start', () => {
+      console.log('Speech started');
+    });
 
-      vapiInstance.on('call-end', () => {
-        console.log('Call ended');
-      });
+    vapiInstance.on('speech-end', () => {
+      console.log('Speech ended');
+    });
 
-      vapiInstance.on('speech-start', () => {
-        console.log('Speech started');
-      });
+    vapiInstance.on('volume-level', (volume) => {
+      console.log(`Volume level: ${volume}`);
+    });
 
-      vapiInstance.on('speech-end', () => {
-        console.log('Speech ended');
-      });
+    vapiInstance.on('message', (message) => {
+      console.log('Message received:', message);
+    });
 
-      vapiInstance.on('volume-level', (volume) => {
-        console.log(`Volume level: ${volume}`);
-      });
-
-      vapiInstance.on('message', (message) => {
-        console.log('Message received:', message);
-      });
-
-      vapiInstance.on('error', (error) => {
-        console.error('Error:', error);
-      });
-      
-      eventListenersAttached = true;
-    }
+    vapiInstance.on('error', (error) => {
+      console.error('Error:', error);
+    });
 
     return vapiInstance;
   } catch (error) {
@@ -133,11 +90,6 @@ export const startCall = async (assistantId: string, assistantOverrides?: any) =
   }
 
   try {
-    // Validate assistantId
-    if (!assistantId || assistantId.trim() === '') {
-      throw new Error('Invalid assistant ID');
-    }
-    
     const call = await vapiInstance.start(assistantId, assistantOverrides);
     return call;
   } catch (error) {
@@ -146,47 +98,16 @@ export const startCall = async (assistantId: string, assistantOverrides?: any) =
   }
 };
 
-export const stopCall = (): boolean => {
+export const stopCall = () => {
   if (!vapiInstance) {
-    console.warn('Vapi not initialized. Cannot stop call.');
-    return false;
+    throw new Error('Vapi not initialized. Call initVapi first.');
   }
 
   try {
-    console.log('Stopping Vapi call...');
-    
-    // Gửi thông báo trước khi dừng nếu đang có cuộc gọi
-    try {
-      // Kiểm tra xem vapiInstance có phải là một đối tượng Vapi hợp lệ không
-      if (vapiInstance && typeof vapiInstance.send === 'function') {
-        // Gửi thông báo system khi người dùng muốn kết thúc cuộc gọi
-        (vapiInstance as Vapi).send({
-          type: 'add-message',
-          message: {
-            role: 'system',
-            content: 'User has ended the call.'
-          }
-        });
-      }
-    } catch (e) {
-      // Bỏ qua lỗi nếu không thể gửi thông báo
-      console.warn('Could not send end call notification:', e);
-    }
-    
-    // Dừng cuộc gọi
-    (vapiInstance as Vapi).stop();
-    
-    // Phát event tùy chỉnh để thông báo cuộc gọi đã dừng
-    const callEndEvent = new CustomEvent('vapi-call-ended', {
-      detail: { timestamp: Date.now() }
-    });
-    window.dispatchEvent(callEndEvent);
-    
-    console.log('Vapi call stopped successfully');
-    return true;
+    vapiInstance.stop();
   } catch (error) {
     console.error('Failed to stop call:', error);
-    return false;
+    throw error;
   }
 };
 
@@ -246,12 +167,6 @@ export const say = (message: string, endCallAfterSpoken?: boolean) => {
     console.error('Failed to say message:', error);
     throw error;
   }
-};
-
-// Clean up resources when component unmounts or app closes
-export const cleanupVapi = () => {
-  cleanupVapiInstance();
-  vapiInstance = null;
 };
 
 export const buttonConfig = {

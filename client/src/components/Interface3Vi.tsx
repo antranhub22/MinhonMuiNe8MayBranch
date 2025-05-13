@@ -208,15 +208,6 @@ const Interface3Vi: React.FC<Interface3ViProps> = ({ isActive }) => {
   // Handle confirm order
   const handleConfirmOrder = async () => {
     if (!orderSummary) return;
-    
-    // Dừng voice assistant khi nhấn nút xác nhận
-    try {
-      const { stopCall } = await import('@/lib/vapiClient');
-      stopCall();
-    } catch (error) {
-      console.error('Failed to stop voice assistant:', error);
-    }
-    
     // Làm sạch nội dung summary trước khi gửi
     const summaryContent = vietnameseSummary || (callSummary ? callSummary.content : 'Không có tóm tắt');
     const cleanedSummary = cleanSummaryContent(summaryContent);
