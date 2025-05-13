@@ -1010,15 +1010,50 @@ Mi Nhon Hotel Mui Ne`
     }
   });
 
-  // Simple endpoint to test database connectivity
-  app.get('/api/db-test', async (req, res) => {
+  // API kiểm tra kết nối DB
+  app.get('/api/db-test', verifyJWT, async (req, res) => {
+    const userAgent = req.headers['user-agent'] || 'Unknown';
+    const isMobile = /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(userAgent);
+    const deviceType = req.headers['x-device-type'] || (isMobile ? 'mobile' : 'desktop');
+
+    console.log(`[DB-TEST] Connection test requested from ${deviceType} device`);
+    
     try {
-      // Try a simple read operation
-      const recent = await storage.getRecentCallSummaries(1);
-      return res.json({ success: true, count: recent.length });
-    } catch (dbError: any) {
-      console.error('DB test error:', dbError);
-      return res.status(500).json({ success: false, error: dbError.message });
+      // Kiểm tra kết nối đến DB
+      console.log('[DB-TEST] Testing database connection...');
+      await db.execute(sql`SELECT 1`);
+      
+      // Kiểm tra truy vấn đơn giản tới bảng requests
+      console.log('[DB-TEST] Testing query to request table...');
+      const count = await db.select({ count: sql`COUNT(*)` }).from(requestTable);
+      
+      const result = {
+        success: true,
+        database: 'connected',
+        timestamp: new Date().toISOString(),
+        requestsCount: count[0]?.count || 0,
+        deviceType
+      };
+      
+      console.log(`[DB-TEST] Connection test successful: ${JSON.stringify(result)}`);
+      
+      // Đảm bảo không cache kết quả
+      res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      
+      return res.json(result);
+    } catch (dbError) {
+      console.error('[DB-TEST] Database connection test failed:', dbError);
+      return res.status(500).json({
+        success: false,
+        database: 'disconnected',
+        error: (dbError as any)?.message || 'Unknown database error',
+        timestamp: new Date().toISOString(),
+        deviceType
+      });
     }
   });
 
@@ -1082,28 +1117,47 @@ Mi Nhon Hotel Mui Ne`
 
   // Lấy danh sách request
   app.get('/api/staff/requests', verifyJWT, async (req, res) => {
-    console.log('API /api/staff/requests called');
-    console.log('Authorization header:', req.headers.authorization);
+    const userAgent = req.headers['user-agent'] || 'Unknown';
+    const isMobile = /iPhone|iPad|iPod|Android|Mobile|webOS|BlackBerry/i.test(userAgent);
+    const deviceType = req.headers['x-device-type'] || (isMobile ? 'mobile' : 'desktop');
+    
+    console.log(`[STAFF-API] /api/staff/requests called from ${deviceType} device`);
+    console.log(`[STAFF-API] User-Agent: ${userAgent}`);
+    console.log(`[STAFF-API] Authorization header present: ${Boolean(req.headers.authorization)}`);
+    
     try {
       // Kiểm tra kết nối DB trước
-      console.log('Checking database connection before querying requests...');
-      const dbTest = await db.execute(sql`SELECT 1`);
-      console.log('Database connection test:', dbTest);
-      
-      console.log('Fetching requests from database...');
-      const dbRequests = await db.select().from(requestTable);
-      console.log(`Found ${dbRequests.length} requests in database:`, dbRequests);
-      
-      // Thêm kiểm tra nếu không có requests từ DB
-      if (dbRequests.length === 0) {
-        console.log('No requests found in database, checking if we need to create test data');
-        // TODO: Có thể thêm logic tạo dữ liệu test nếu cần
+      console.log('[STAFF-API] Checking database connection...');
+      try {
+        const dbTest = await db.execute(sql`SELECT 1`);
+        console.log('[STAFF-API] Database connection successful');
+      } catch (dbConnErr) {
+        console.error('[STAFF-API] Database connection test failed:', dbConnErr);
+        return res.status(500).json({ 
+          error: 'Database connection error', 
+          details: (dbConnErr as any)?.message 
+        });
       }
+      
+      console.log('[STAFF-API] Fetching requests from database...');
+      const dbRequests = await db.select().from(requestTable);
+      console.log(`[STAFF-API] Found ${dbRequests.length} requests in database`);
+      
+      // Trả kết quả cho client
+      res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
       
       res.json(dbRequests);
     } catch (err) {
-      console.error('Error in /api/staff/requests:', err);
-      res.status(500).json({ error: 'Internal server error', details: (err as any)?.message });
+      console.error('[STAFF-API] Error in /api/staff/requests:', err);
+      res.status(500).json({ 
+        error: 'Internal server error', 
+        details: (err as any)?.message,
+        deviceType: deviceType
+      });
     }
   });
 
