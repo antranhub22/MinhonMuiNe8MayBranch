@@ -9,15 +9,34 @@ const StaffLogin: React.FC<StaffLoginProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
       setError('Please enter both username and password.');
       return;
     }
     setError('');
-    // Gọi callback đăng nhập thành công
-    onLogin();
+    try {
+      const res = await fetch('/api/staff/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Login failed.');
+        return;
+      }
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem('staff_token', data.token);
+        onLogin();
+      } else {
+        setError('Login failed: No token received.');
+      }
+    } catch (err) {
+      setError('Login failed: Network or server error.');
+    }
   };
 
   return (
