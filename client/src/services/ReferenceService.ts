@@ -41,14 +41,6 @@ class ReferenceService {
     return matches;
   }
 
-  // This function helps properly encode URLs, especially with spaces
-  getAssetUrl(url: string): string {
-    if (/^https?:\/\//.test(url)) return url;
-    const path = url.replace(/^\//, '');
-    // Properly encode the URL to handle spaces and special characters
-    return `${import.meta.env.BASE_URL}${encodeURI(path)}`;
-  }
-
   async addReference(key: string, reference: ReferenceItem) {
     this.referenceMap[key] = reference;
     // Optionally save to backend
@@ -69,9 +61,5 @@ class ReferenceService {
   }
 }
 
-// Create a single instance of ReferenceService
-const referenceService = new ReferenceService();
-
-// Export the service and its types
-export { referenceService };
+export const referenceService = new ReferenceService();
 export type { ReferenceItem, ReferenceMap }; 
