@@ -433,27 +433,44 @@ const Interface2: React.FC<Interface2Props> = ({ isActive }) => {
         </div>
         {/* Right: Control buttons */}
         <div className="w-1/4 lg:w-1/3 flex-col items-center lg:items-end p-2 space-y-4 overflow-auto hidden sm:flex" style={{ maxHeight: '100%' }}>
-          <button
-            id="endCallButton"
-            onClick={handleNext}
-            className="w-full md:w-auto bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 font-bold py-3 px-8 rounded-full shadow-2xl flex items-center justify-center space-x-2 transition-all duration-200 border-4 border-[#d4af37] text-base sm:text-lg active:scale-95 active:bg-[#ffe066]"
-            style={{
-              fontFamily: 'inherit',
-              letterSpacing: 0.5,
-              boxShadow: '0 6px 24px 0 rgba(212,175,55,0.25), 0 1.5px 4px 0 rgba(0,0,0,0.12)',
-              borderWidth: 4,
-              borderColor: '#d4af37',
-              background: 'linear-gradient(180deg, #ffe066 0%, #ffd700 100%)',
-              textShadow: '0 1px 2px #fff, 0 1px 8px #ffd700',
-              minHeight: 56,
-              minWidth: 220,
-              touchAction: 'manipulation',
-              zIndex: 10
-            }}
-          >
-            <span className="material-icons">send</span>
-            <span className="whitespace-nowrap">{t('confirm_request', language)}</span>
-          </button>
+          <div className="flex flex-col gap-4 w-full md:w-auto">
+            <button
+              id="endCallButton"
+              onClick={handleNext}
+              className="w-full md:w-auto bg-[#ffd700] hover:bg-[#ffe066] text-blue-900 font-bold py-3 px-8 rounded-full shadow-2xl flex items-center justify-center space-x-2 transition-all duration-200 border-4 border-[#d4af37] text-base sm:text-lg active:scale-95 active:bg-[#ffe066]"
+              style={{
+                fontFamily: 'inherit',
+                letterSpacing: 0.5,
+                boxShadow: '0 6px 24px 0 rgba(212,175,55,0.25), 0 1.5px 4px 0 rgba(0,0,0,0.12)',
+                borderWidth: 4,
+                borderColor: '#d4af37',
+                background: 'linear-gradient(180deg, #ffe066 0%, #ffd700 100%)',
+                textShadow: '0 1px 2px #fff, 0 1px 8px #ffd700',
+                minHeight: 56,
+                minWidth: 220,
+                touchAction: 'manipulation',
+                zIndex: 10
+              }}
+            >
+              <span className="material-icons">send</span>
+              <span className="whitespace-nowrap">{t('confirm_request', language)}</span>
+            </button>
+            <button
+              id="cancelButtonDesktop"
+              onClick={handleCancel}
+              className="w-full md:w-auto bg-white hover:bg-blue-100 text-blue-900 font-semibold py-3 px-8 rounded-full shadow flex items-center justify-center space-x-2 transition-all duration-200 border-2 border-blue-200 text-base sm:text-lg active:scale-95 active:bg-blue-100"
+              style={{
+                fontFamily: 'inherit',
+                letterSpacing: 0.2,
+                minHeight: 56,
+                minWidth: 120,
+                touchAction: 'manipulation',
+                zIndex: 10
+              }}
+            >
+              <span className="material-icons text-lg mr-2">cancel</span>{t('cancel', language)}
+            </button>
+          </div>
         </div>
       </div>
     </div>
